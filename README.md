@@ -13,7 +13,7 @@ El notebook principal del proyecto es:
 
 Una vez publicado este repositorio en GitHub, reemplaza `TU_USUARIO` en el enlace siguiente por el nombre de usuario u organización que contiene el repositorio:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/TU_USUARIO/GenAI-Optimization/blob/main/Deliverable2.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable2.ipynb)
 
 También puede abrirse manualmente desde Google Colab:
 
