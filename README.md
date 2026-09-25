@@ -11,7 +11,7 @@ El notebook principal del proyecto es:
 
 `Deliverable2.ipynb`
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable2.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/notebooks/Deliverable2.ipynb)
 
 ## Estructura
 
