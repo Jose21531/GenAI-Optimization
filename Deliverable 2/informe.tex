@@ -31,7 +31,7 @@
  flow/.style={-Stealth,line width=.7pt}]
 \node[train] (pairs) {1050 pares sintéticos\\enunciado + formulación};
 \node[train,right=6mm of pairs] (learn) {QLoRA: base 4 bits\\+ adapter entrenable};
-\node[box,below=7mm of pairs] (test) {30 enunciados oficiales\\sin solución de referencia};
+\node[box,below=7mm of pairs] (test) {30 enunciados oficiales\\como entrada del generador};
 \node[box,below=7mm of learn] (generate) {Mismo Qwen: base\\y base + adapter};
 \node[box,right=6mm of generate] (answers) {Dos respuestas\\por cada ID};
 \node[box,right=6mm of answers,fill=soft] (judge) {FOM-5 v2 + referencia\\cambio pareado};
@@ -52,12 +52,12 @@ La salida exigida en la Entrega 1 es una formulación \emph{paramétrica} equiva
 \sum_i y_i=2,\quad\sum_i x_{ij}=1,\quad x_{ij}\le y_i.
 \]
 
-Elegimos \textbf{Qwen/Qwen2.5-1.5B-Instruct}, revisión de pesos \texttt{989aa7980e4c}, por su tamaño (1.5B) y viabilidad en T4 frente a Gemma-2-2B-IT (2B) y Phi-3-mini (3.8B), también probados en la Entrega 1. Los benchmarks generales orientaron la elección; el resultado de esta tarea se mide abajo. One-shot, representación intermedia IR/JSON/DSL, blueprint y autorrevisión se exploraron antes; persistieron errores de estructura o repetición. Son antecedentes, no una nueva ablación.
+Elegimos \textbf{Qwen/Qwen2.5-1.5B-Instruct}, revisión de pesos \texttt{989aa7980e4c}, por su tamaño (1.5B) y viabilidad en T4 frente a Gemma-2-2B-IT (2B) y Phi-3-mini (3.8B), también probados en la Entrega 1. Los benchmarks generales orientaron la elección; el resultado de esta tarea se mide abajo. One-shot, representación intermedia IR/JSON/DSL, blueprint y autorrevisión se exploraron antes; persistieron errores de estructura o repetición. Estas pruebas guiaron el diseño del ajuste.
 
 \sect{Intervención y datos}
 \textbf{QLoRA} (adaptación de bajo rango sobre una base cuantizada) congela los pesos de Qwen en 4 bits NF4 y entrena matrices pequeñas de atención y MLP. LoRA $r=16$, $\alpha=32$; pérdida solo en la respuesta. El entrenamiento final usó 1050 entradas user-only, una época, semilla 42, LR $2\cdot10^{-4}$ y acumulación 8: \textbf{131 pasos, 982 s, 9.04 GiB} reservados en Colab T4.
 
-Los datos son 50 familias $\times$ 21 variantes (315 LP, 735 MILP), con \textbf{50 formulaciones canónicas}; no son 1050 estructuras independientes. Verificamos IDs únicos, cero truncamientos bajo 1024 tokens y máscara assistant en 1050/1050. Dos pilotos 160/40 guiaron el formato; por cuota de GPU se omitió el desarrollo 840/210 previsto. El resultado final es exploratorio. Los hashes \textbf{SHA-256} identifican los bytes exactos de datos y adapter descargados; son controles de integridad, no puntajes.
+Los datos son 50 familias $\times$ 21 variantes (315 LP, 735 MILP), con \textbf{50 formulaciones canónicas}. Verificamos IDs únicos, cero truncamientos bajo 1024 tokens y máscara assistant en 1050/1050. Dos pilotos 160/40 guiaron el formato; por cuota de GPU se omitió el desarrollo 840/210 previsto. El resultado final es exploratorio. Los hashes \textbf{SHA-256} identifican los bytes exactos de datos y adapter descargados para comprobar su integridad.
 
 \columnbreak
 \sect{Benchmark FOM-5 v2}

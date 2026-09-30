@@ -1,28 +1,14 @@
 # GenAI-Optimization
 
-En el caso de localización de centros oftalmológicos, omitir la ponderación por población cambia el criterio de servicio; omitir el vínculo de apertura permitiría asignar demanda a centros cerrados. Este proyecto estudia si un modelo pequeño puede producir **borradores LP/MILP paramétricos y verificables** en una GPU T4. La tarea es formular para revisión matemática posterior.
+Formulación matemática LP/MILP desde enunciados en español con Qwen2.5-1.5B-Instruct. El caso de localización de centros oftalmológicos ilustra la relevancia: omitir la población cambia el objetivo y omitir la apertura de centros permite asignaciones inviables. El proyecto produce borradores paramétricos para revisión matemática.
 
-| Entrega | Acceso |
+| Entrega | Contenido |
 |---|---|
-| [Deliverable 1](Deliverable%201/) | [Informe](Deliverable%201/Grupo1_GenAI.pdf) y [notebook](Deliverable%201/Deliverable_1.ipynb): diagnóstico del caso de localización de centros oftalmológicos. |
-| [Deliverable 2](Deliverable%202/) | [Informe de una página](Deliverable%202/report/informe.pdf), [notebook](Deliverable%202/Deliverable_2.ipynb), [datos](Deliverable%202/data/), [resultados por caso](Deliverable%202/outputs/) y [guía técnica](Deliverable%202/README.md). |
+| [Deliverable 1](Deliverable%201/) | [Diagnóstico y ejemplo original](Deliverable%201/README.md). |
+| [Deliverable 2](Deliverable%202/) | [Ajuste QLoRA, benchmark de 30 casos y demostración](Deliverable%202/README.md). |
 
-**[Abrir Deliverable 2 en Google Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** (seleccionar GPU T4). Los datos y el adapter entrenado se descargan del repositorio con verificación SHA-256; basta una cuenta propia de Colab.
+**[Abrir Deliverable 2 en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe PDF](Deliverable%202/informe.pdf)
 
-```mermaid
-flowchart LR
-    A[1050 pares sintéticos] --> B[QLoRA sobre Qwen2.5-1.5B]
-    B --> C[Adapter entrenado]
-    D[30 enunciados sin referencia] --> E[Qwen base]
-    D --> F[Qwen + adapter]
-    C --> F
-    E --> G[Dos respuestas por problema]
-    F --> G
-    G --> H[FOM-5 v2: juez posterior]
-    I[Referencia y requisitos] --> H
-    H --> J[Comparación pareada]
-```
+Para reproducir el video, selecciona una GPU T4, ejecuta las secciones **1–3** y luego la **4**. Esa celda muestra el enunciado, genera baseline y QLoRA sobre el mismo caso de Entrega 1 y presenta ambas respuestas junto con la formulación de referencia. Las secciones 5–7 reproducen la evaluación extensa y el ajuste completo.
 
-Para **reproducir el video**, abre el Colab, ejecuta las secciones **1–3** (instalación, archivos/resultados y carga del modelo), y ejecuta la sección **5**. Esa celda genera una respuesta base y una QLoRA sobre el **mismo caso de Entrega 1**; la siguiente las muestra lado a lado. Las secciones 4 y 6 permiten repetir y juzgar los 30 problemas, pero son corridas largas ajenas al video. La sección 7 permite repetir el entrenamiento.
-
-En el benchmark oficial de **30 entradas**, la media FOM-5 v2 pasó de **0.5884 a 0.8024/5**: 14 casos mejoraron, 8 empataron y 8 empeoraron. El [README técnico](Deliverable%202/README.md) explica la rúbrica, el origen de las respuestas, el intervalo bootstrap y los límites del resultado. La grabación de pantalla se enlazará aquí cuando quede guardada en [`Deliverable 2/video/`](Deliverable%202/video/).
+En los **30 casos oficiales**, el promedio FOM-5 v2 fue **0.5884/5** para el baseline y **0.8024/5** para QLoRA: 14 mejoraron, 8 empataron y 8 empeoraron. Los dos CSV con respuestas y juicios por caso están en [Deliverable 2/output](Deliverable%202/output/).

@@ -1,73 +1,55 @@
-# Deliverable 2 · Formulación LP/MILP con QLoRA
+# Deliverable 2 · QLoRA para formulación LP/MILP
 
-**[Abrir el notebook en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe PDF](report/informe.pdf) · [Fuente LaTeX](report/informe.tex) · [Adapter entrenado](model/adapter_qlora_qwen25_final.zip)
+**[Abrir el notebook en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe de una página](informe.pdf) · [Fuente LaTeX](informe.tex)
 
-## Problema e intervención
+## Problema y método
 
-Formular un problema de localización, asignación o capacidad exige traducir sus decisiones y límites a índices, dominios, función objetivo y restricciones coherentes. Un error puede cambiar el conjunto factible o el criterio que se optimiza. La Entrega 1 mostró un fallo concreto en localización de centros oftalmológicos: Qwen omitió la apertura de centros y la ponderación por población, y escribió condiciones contradictorias de asignación. La salida buscada es una **formulación paramétrica**, sin resolver el óptimo.
+Formular un problema de localización, asignación o capacidad requiere definir decisiones, dominios, objetivo y restricciones coherentes. En el ejemplo de centros oftalmológicos, una apertura omitida permite asignar demanda a un centro cerrado y un peso poblacional omitido cambia el criterio de atención.
 
-Elegimos **Qwen/Qwen2.5-1.5B-Instruct**, revisión de pesos `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. Tiene 1.5B parámetros, frente a los 2B de Gemma-2-2B-IT y 3.8B de Phi-3-mini considerados en la Entrega 1, y se adapta y ejecuta en una T4. Se probaron previamente one-shot, representación intermedia IR/JSON/DSL, blueprint y autorrevisión; persistieron errores estructurales o repetición. Esas pruebas guiaron el diseño, sin constituir una ablación nueva.
-
-**QLoRA** es adaptación de bajo rango sobre un modelo cuantizado (*Quantized Low-Rank Adaptation*). Mantiene congelados los pesos base en 4 bits y entrena matrices pequeñas añadidas a las capas de atención y MLP. El ajuste final usó LoRA `r=16`, `alpha=32`, pérdida solo en la respuesta, 1050 ejemplos, una época, semilla 42 y T4 (131 pasos, 982 s, 9.04 GiB reservados). El [adapter](model/README.md) y el modelo base público se cargan desde el notebook sin acceso al Drive del equipo.
-
-## Flujo y archivos
+El modelo es **Qwen/Qwen2.5-1.5B-Instruct**, revisión `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. **QLoRA** (*Quantized Low-Rank Adaptation*) ajusta matrices pequeñas mientras mantiene congelado el modelo base cuantizado en 4 bits. El entrenamiento final usó 1050 ejemplos, una época y GPU T4. El [adapter entrenado](adapter_qlora_qwen25_final.zip) se descarga desde el notebook.
 
 ```mermaid
 flowchart LR
-    A[1050 pares: enunciado + formulación] --> B[QLoRA: Qwen base 4 bits]
-    B --> C[Adapter final]
-    D[30 enunciados sin gold] --> E[Qwen base]
+    A[1050 pares de entrenamiento] --> B[Qwen + QLoRA]
+    B --> C[Adapter entrenado]
+    D[30 enunciados oficiales] --> E[Qwen base]
     D --> F[Qwen + adapter]
     C --> F
-    E --> G[Respuestas guardadas por ID]
+    E --> G[Dos respuestas por ID]
     F --> G
-    G --> H[Juez FOM-5 v2]
-    I[Gold + requisitos] --> H
-    H --> J[Medias y cambio pareado]
+    G --> H[FOM-5 v2]
+    I[Referencia y requisitos] --> H
+    H --> J[Comparación pareada]
 ```
 
-| Ruta | Contenido |
+## Archivos para revisión
+
+| Archivo | Contenido |
 |---|---|
-| [`data/train_1050_user_only.jsonl`](data/train_1050_user_only.jsonl) | 1050 conversaciones user/assistant: 50 familias × 21 variantes, 315 LP y 735 MILP. Hay 50 formulaciones canónicas. |
-| [`data/benchmark_30_generation_only.jsonl`](data/benchmark_30_generation_only.jsonl) | Las 30 entradas oficiales que ven ambos generadores, sin soluciones ni requisitos. |
-| [`data/caso_entrega1_generation_only.jsonl`](data/caso_entrega1_generation_only.jsonl) | Caso oftalmológico del video, separado de la media principal. |
-| [`outputs/baseline_31_respuestas_y_fom5.csv`](outputs/baseline_31_respuestas_y_fom5.csv) | Respuestas y juicios base recuperados del CSV original: 30 benchmark + 1 diagnóstico determinista. |
-| [`outputs/qlora_31_respuestas_y_fom5.csv`](outputs/qlora_31_respuestas_y_fom5.csv) | Respuestas y juicios de la corrida final QLoRA sobre esos mismos IDs. |
+| [Deliverable_2.ipynb](Deliverable_2.ipynb) | Datos, comparación, demo, generación de 30 + 30, juez FOM-5 v2 y entrenamiento. |
+| [data/train_1050_user_only.jsonl](data/train_1050_user_only.jsonl) | 1050 pares: 50 familias × 21 variantes; 315 LP y 735 MILP. |
+| [data/benchmark_30.jsonl](data/benchmark_30.jsonl) | 30 enunciados oficiales con referencia y requisitos. El notebook pasa **solo el enunciado** al generador y lee la referencia en el juicio posterior. |
+| [output/baseline_respuestas_fom5.csv](output/baseline_respuestas_fom5.csv) | Respuesta completa y juicio por ID del baseline archivado. |
+| [output/qlora_respuestas_fom5.csv](output/qlora_respuestas_fom5.csv) | Respuesta completa y juicio por ID de QLoRA. |
+| [informe.pdf](informe.pdf) | Informe final; [informe.tex](informe.tex) contiene la fuente. |
 
-Los dos CSV de salida incluyen el texto completo (`candidate`), puntaje y dimensiones FOM-5 v2, juicio bruto, tokens y tiempos. [`data/source/`](data/source/) conserva el ZIP sintético y el benchmark con referencias para auditoría. [`data/build_datasets.py`](data/build_datasets.py) reconstruye los JSONL publicados desde esas fuentes; el generador original que redactó desde cero las 30 instancias y las 50 familias no se entregó. [`src/build_outputs.py`](src/build_outputs.py) reconstruye ambos CSV a partir de los resultados originales. Los **SHA-256** son huellas digitales de los bytes de archivos: el notebook comprueba que datos y adapter descargados coincidan con la versión publicada. No miden calidad matemática.
+Cada CSV de `output/` tiene **31 filas**: 30 problemas del benchmark y el diagnóstico oftalmológico marcado aparte. Las medias principales usan solo las 30 filas con `split=benchmark`. **SHA-256** es una huella de integridad: el notebook verifica que los datos, CSV y adapter descargados coincidan con los publicados.
 
-## Cómo se calcula FOM-5 v2
+## Benchmark FOM-5 v2
 
-**FOM-5 v2** es la rúbrica propia del proyecto para juzgar formulaciones en escala **0–5**. Un juez Qwen3-14B NF4 recibe en una fase posterior el enunciado, la referencia, los requisitos y la respuesta candidata; el generador solo recibe el enunciado. Se aceptan formulaciones algebraicamente equivalentes y se penalizan omisiones, contradicciones y respuestas que resuelven en vez de formular.
+Un juez Qwen3-14B NF4 recibe el enunciado, la referencia, los requisitos y la respuesta candidata **después** de la generación. Evalúa cinco componentes en escala 0–5: decisiones y dominios (15 %), objetivo (20 %), restricciones (35 %), validez algebraica (15 %) y generalización (15 %). El total es `F = 0.15D + 0.20O + 0.35R + 0.15A + 0.15G`. La cobertura de requisitos limita los componentes pertinentes; una salida sin formulación reconocible tiene tope 1.5/5.
 
-| Componente | Símbolo | Peso |
-|---|:---:|---:|
-| Decisiones, índices y dominios | D | 15 % |
-| Función objetivo | O | 20 % |
-| Restricciones y lógica | R | 35 % |
-| Validez algebraica | A | 15 % |
-| Generalización paramétrica | G | 15 % |
-
-Cada componente se puntúa de 0 a 5. El resultado es `F = 0.15D + 0.20O + 0.35R + 0.15A + 0.15G`. Además, cada requisito de referencia se marca como cumplido (`1`), parcial (`0.5`), ausente (`0`) o erróneo (`0`): su cobertura limita los puntajes de decisiones/dominios, objetivo y restricciones. Si no hay formulación matemática reconocible, el score total queda como máximo en `1.5`. El notebook original del [evaluador autoritativo](evidence/evaluador_fom5_local.ipynb) y sus juicios están archivados.
-
-La media principal es el promedio de los **30 scores** de cada variante. El cambio pareado se calcula por ID (`score_QLoRA - score_base`) y después se promedian esos 30 cambios. El IC bootstrap remuestrea esos cambios 10 000 veces con semilla 42; lo calcula el análisis **después** del juez. No refleja variación entre entrenamientos ni entre jueces.
-
-## Resultados y límites
-
-| 30 casos oficiales | Base | QLoRA |
+| 30 problemas oficiales | Baseline | QLoRA |
 |---|---:|---:|
 | FOM-5 v2 medio | 0.5884 | 0.8024 |
-| Puntaje cero | 21 | 12 |
+| Casos con 0/5 | 21 | 12 |
 
-**14 mejoraron, 8 empataron y 8 empeoraron.** Cambio medio +0.2140/5; IC bootstrap 95 % `[-0.2136, +0.7007]`. Al incluir cero, el cambio observado no establece una mejora robusta. El diagnóstico de Entrega 1 se informa aparte: histórico muestreado 0.369, baseline determinista 0.650 y QLoRA 3.850. QLoRA aún omite el peso poblacional `p_j` del objetivo. En [`opt_02`](docs/failure_case_opt02.md) bajó de 1.300 a 0.000 por inventar variables y omitir una entrega mínima.
-
-Los 1050 enunciados comparten 50 formulaciones canónicas y varias familias tienen estructura similar. Se realizaron dos pilotos 160/40; por límite de GPU se omitió la etapa 840/210 prevista antes de la corrida completa. El diagnóstico se usó durante el diseño y tres casos oficiales (`opt_01`, `opt_16`, `opt_30`) tenían exposición histórica previa. Una semilla final y un juez automático limitan la conclusión. Véanse la [auditoría de datos](docs/dataset_review.md) y el [protocolo](docs/experimental_protocol.md).
+**14 mejoraron, 8 empataron y 8 empeoraron.** El cambio medio pareado fue +0.2140/5. El análisis remuestreó 10 000 veces las 30 diferencias por ID y obtuvo un IC bootstrap del 95 % de `[-0.2136, +0.7007]`; incluye cero. Los 1050 ejemplos comparten 50 formulaciones canónicas, y el resultado usa una semilla final y un juez automático. El caso de Entrega 1 se presenta aparte: baseline determinista 0.650/5 y QLoRA 3.850/5; la respuesta ajustada todavía omite el peso poblacional en el objetivo.
 
 ## Reproducir el video y el experimento
 
-1. Abre [el Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb) y selecciona GPU T4. Ejecuta las secciones **1–3**: instala dependencias, descarga datos y adapter con SHA-256, muestra resultados archivados y carga el SLM.
-2. Ejecuta la sección **5** sobre el caso oftalmológico. Genera baseline directo con el adapter apagado y QLoRA con el adapter encendido, con la misma entrada y decodificación. El notebook guarda ambas respuestas nuevas en `/content/deliverable_2/outputs/live_demo.json` y las muestra lado a lado. Los scores del diagnóstico publicados corresponden a las respuestas archivadas.
-3. Para repetir la evaluación extensa, activa `RUN_REGENERATE_30=True` en la sección **4**. Genera y guarda 30 baseline y 30 QLoRA por ID, con reanudación. Después de la demo, activa `RUN_JUDGE_NEW_30=True` en la sección **6**: descarga la referencia solo entonces, calibra el juez y guarda dos nuevos CSV puntuados. Estas corridas pueden consumir bastante tiempo de T4 y quedan identificadas por separado.
-4. La sección **7** permite reentrenar el adapter desde los 1050 ejemplos. Los notebooks originales de [entrenamiento](src/qlora_user_only_original.ipynb), [generación](src/generacion_final_original.ipynb) y [juicio](src/evaluacion_final_original.ipynb), con sus manifiestos en [`evidence/`](evidence/), documentan la corrida que produjo los resultados publicados.
+1. Abre el [Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb), selecciona GPU T4 y ejecuta las secciones **1–3**. Se descargan los datos y el adapter público, se verifican sus SHA-256 y se carga Qwen.
+2. Ejecuta la sección **4** durante la grabación. La celda contiene el enunciado oftalmológico, genera las dos respuestas y muestra la referencia y ambas salidas. También guarda las nuevas respuestas en `/content/deliverable_2/output/live_demo.json`.
+3. Para reproducir el benchmark, activa `RUN_REGENERATE_30=True` en la sección **5** y luego `RUN_JUDGE_NEW_30=True` en la **6**. Se crean resultados nuevos por ID en Colab. La sección **7** permite repetir el entrenamiento con los 1050 ejemplos.
 
-El video real de pantalla (máximo tres minutos) se añadirá en [`video/`](video/). Muestra únicamente las dos generaciones del caso de Entrega 1 y su comparación; la ejecución de 30 + 30 y el juez se revisan en el notebook y en sus archivos de salida.
+Los puntajes publicados corresponden a las respuestas guardadas en `output/`. La sección 4 produce dos respuestas nuevas para la demostración.
