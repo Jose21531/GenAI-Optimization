@@ -1,6 +1,6 @@
 # GenAI-Optimization
 
-Un enunciado de optimización puede describir correctamente una decisión y aun así terminar en un modelo matemático equivocado: basta omitir un vínculo entre variables o cambiar un índice para alterar las soluciones posibles. Este proyecto estudia si un modelo pequeño puede producir **borradores LP/MILP paramétricos y verificables** en una GPU T4. La tarea es formular; la revisión matemática sigue siendo necesaria.
+En el caso de localización de centros oftalmológicos, omitir la ponderación por población cambia el criterio de servicio; omitir el vínculo de apertura permitiría asignar demanda a centros cerrados. Este proyecto estudia si un modelo pequeño puede producir **borradores LP/MILP paramétricos y verificables** en una GPU T4. La tarea es formular para revisión matemática posterior.
 
 | Entrega | Acceso |
 |---|---|
