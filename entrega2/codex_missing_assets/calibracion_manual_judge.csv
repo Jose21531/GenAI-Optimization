@@ -1,6 +1,0 @@
-﻿id,max_expected_fom5_v2,manual_reason
-opt_02,2.8,Usa las horas extra Y en lugar de x_C en las tres restricciones de recursos y omite -10Y del objetivo.
-opt_10,1.5,No entrega un modelo matemático y además interpreta incorrectamente varias incompatibilidades y costos.
-opt_14,1.5,"Resuelve verbalmente un max-flow en vez de formularlo; faltan F, balances y capacidades matemáticas completas."
-opt_16,1.8,"Variables binarias erróneas, balances por producto ausentes y capacidades compartidas mal modeladas."
-diagnostic_oftalmo_historical,2.5,"Falta variable de apertura, falta ponderación por población y hay restricciones contradictorias/inventadas."

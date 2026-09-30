@@ -1,0 +1,87 @@
+\documentclass[10pt,a4paper]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[margin=12mm]{geometry}
+\usepackage{lmodern,microtype,amsmath,booktabs,tabularx,multicol,tikz,xcolor,hyperref}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{navy}{HTML}{183B56}
+\definecolor{teal}{HTML}{087F8C}
+\definecolor{soft}{HTML}{EDF4F7}
+\hypersetup{colorlinks=true,urlcolor=teal,linkcolor=navy}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\setlength{\columnsep}{6mm}
+\raggedcolumns
+\newcommand{\sect}[1]{\vspace{3pt}{\color{navy}\bfseries\large #1}\par\vspace{1pt}}
+\begin{document}
+{\color{navy}\LARGE\bfseries Formulación LP/MILP desde español con QLoRA}\par
+{\small Entrega 2 · Inteligencia Artificial Generativa (580694) · Universidad de Concepción}\par
+{\small Rayen Muñoz · Isidora Rivera · Sebastián Soto · José Luis Erices}\par
+\vspace{2pt}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth,
+ box/.style={draw=navy,rounded corners=2pt,align=center,minimum height=8mm,text width=36mm,fill=soft},
+ flow/.style={-Stealth,line width=.65pt}]
+\node[box] (train) {1050 ejemplos sintéticos\\enunciado + target};
+\node[box,right=8mm of train] (fit) {Qwen2.5-1.5B\\QLoRA, 1 época};
+\node[box,right=8mm of fit] (adapter) {Adapter final\\congelado};
+\draw[flow] (train)--(fit); \draw[flow] (fit)--(adapter);
+\node[box,below=7mm of train] (test) {30 problemas sin gold\\+ diagnóstico aparte};
+\node[box,right=8mm of test] (generate) {Misma entrada:\\base y base+adapter};
+\node[box,right=8mm of generate] (judge) {Respuestas fijadas\\FOM-5 v2 post-hoc};
+\draw[flow] (test)--(generate); \draw[flow] (generate)--(judge);
+\draw[flow] (adapter.south) |- (generate.north);
+\node[below=1mm of judge,font=\tiny,text=navy,align=center] {Gold y requisitos solo aquí};
+\end{tikzpicture}
+\end{center}
+\vspace{-5pt}
+\begin{multicols}{2}
+\sect{Tarea y falla diagnosticada}
+La tarea de la Entrega 1 es convertir un problema determinista de optimización en una formulación \emph{paramétrica} equivalente, con índices, dominios, objetivo y restricciones completos, sin calcular el óptimo. En el caso oftalmológico, la salida inicial omitió la apertura $y_i$ y los pesos $p_j$, y exigió a la vez $\sum_i x_{ij}=2$ y $\sum_i x_{ij}=1$. La estructura esperada incluye
+\[
+\min\sum_{i,j}p_jd_{ij}x_{ij},\quad
+\sum_i y_i=2,\quad\sum_i x_{ij}=1,\quad x_{ij}\le y_i,
+\]
+con $x_{ij},y_i$ binarias. El ajuste busca aprender esta disciplina estructural.
+
+\sect{Modelo e intervención}
+Se mantiene \textbf{Qwen/Qwen2.5-1.5B-Instruct}, revisión \texttt{989aa7980e4c}: es el menor de los tres candidatos de la Entrega 1 (frente a Gemma-2-2B-IT y Phi-3-mini, 3.8B) y cabe en la T4 para adaptar y ejecutar la tarea. Se consideraron one-shot, IR/JSON/DSL, blueprint y autorrevisión; en la bitácora previa persistieron errores algebraicos o repetición. No constituyen una ablación controlada nueva.
+
+\textbf{QLoRA/SFT:} base NF4, doble cuantización y cómputo FP16; LoRA $r=16$, $\alpha=32$, dropout 0.05 en atención y MLP. Entrada user-only como en el baseline; pérdida solo en tokens del assistant. LR $2\cdot10^{-4}$, batch 1, acumulación 8, semilla 42, una época. Ajuste completo en T4: \textbf{1050 ejemplos, 131 pasos, 982 s, 9.04 GiB} de VRAM reservada.
+
+\sect{Datos y protocolo}
+Los 1050 enunciados tienen 50 familias $\times$ 21 variantes: 315 LP y 735 MILP. Son \textbf{50 targets canónicos}, no 1050 estructuras independientes. Auditoría: entradas únicas, cero truncamientos con máximo 887 tokens de entrada user-only y límite 1024; máscara assistant comprobada en 1050/1050. Dos pilotos 160/40 por familias motivaron el formato final; el primero repetía respuestas y 5/10 generaciones agotaban tokens, el segundo redujo ese número a 1/10 pero seguía cometiendo errores. Luego se entrenó un adapter nuevo con los 1050. Se omitió por cuota T4 la fase 840/210 planificada: la corrida completa es \textbf{exploratoria}, sin selección por validación.
+
+\columnbreak
+\sect{Resultados medidos}
+Los \textbf{30 mismos problemas} se generaron sin gold, con decodificación determinista, hasta 1200 tokens y entrada user-only. El baseline \textbf{0.5884/5} proviene de respuestas oficiales ya guardadas; las 31 respuestas QLoRA son nuevas. Qwen3-14B NF4 actuó solo como juez FOM-5 v2 posterior, calibrado 5/5; se conservó su protocolo y se verificaron los 31 juicios.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}Xrr@{}}
+\toprule
+\textbf{30 casos oficiales} & \textbf{Base} & \textbf{QLoRA}\\
+\midrule
+FOM-5 v2 medio (0--5) & 0.5884 & 0.8024\\
+Puntaje cero & 21/30 & 12/30\\
+Cobertura de requisitos & 0.1644 & 0.1953\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\vspace{-3pt}
+\textbf{Cambio pareado:} +0.2140/5; \textbf{14 mejoran, 8 se mantienen, 8 empeoran}. IC bootstrap 95\%: $[-0.2136,\,+0.7007]$, con 10\,000 remuestreos de los 30 cambios. El juez puntúa cada respuesta; \emph{el intervalo se calcula después} y no mide variación entre semillas o jueces. Incluye cero, así que no demuestra una mejora robusta.
+
+\textbf{Caso de Entrega 1, fuera de la media de 30:} la respuesta histórica muestreada obtuvo 0.369; baseline determinista 0.650; QLoRA 3.850. El adapter recuperó estructura, pero aún omitió $p_j$ del objetivo. En la demo se ejecutan \emph{dos inferencias nuevas} sobre ese mismo enunciado y se guardan aparte; no se les adjudican estos puntajes archivados.
+
+\sect{Falla real y límites}
+\texttt{opt\_02} empeoró de \textbf{1.300 a 0.000}. Las horas extra debían ser $h\in[0,20]$, ampliar solo trabajo ($2x_A+3x_B+x_C\le140+h$) y costar $10h$. QLoRA inventó variables $y_k$ y omitió $x_C\ge10$: la plantilla aprendida sustituyó condiciones del enunciado.
+
+Las familias comparten estructuras; el split por familia no garantiza independencia algebraica. El diagnóstico influyó en el diseño y tres casos oficiales (\texttt{opt\_01}, \texttt{opt\_16}, \texttt{opt\_30}) tuvieron exposición histórica previa. Una semilla y un juez automático no certifican equivalencia universal. Al excluir esos tres, el cambio medio de 27 casos es +0.2464.
+
+\sect{Reproducción}
+\href{https://github.com/Jose21531/GenAI-Optimization}{Repositorio público}: README, notebook Colab, datos reconstruibles, respuestas y juicios caso a caso, código del evaluador, manifiestos y fuente \LaTeX. El adapter original persiste en Drive; el notebook permite volver a entrenarlo en T4 desde los datos públicos. \href{https://github.com/Jose21531/GenAI-Optimization/tree/main/Deliverable\%202}{Entrega 2 y acceso a la demostración}.
+
+{\scriptsize\color{navy}Fuentes: Entrega 1 y archivos originales del curso; \href{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}{Qwen2.5-1.5B-Instruct}; \href{https://arxiv.org/abs/2305.14314}{Dettmers et al., QLoRA (2023)}.}
+\end{multicols}
+\end{document}

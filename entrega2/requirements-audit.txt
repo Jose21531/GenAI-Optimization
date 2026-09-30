@@ -1,6 +1,0 @@
-transformers==4.51.3
-numpy>=1.26,<3
-jinja2>=3.1.6,<4
-# Opcional para revisar los PDF locales:
-pypdf>=6,<7
-pymupdf>=1.26,<2

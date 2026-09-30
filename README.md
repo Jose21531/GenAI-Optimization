@@ -1,9 +1,16 @@
 # GenAI-Optimization
 
-Proyecto de **Generative Artificial Intelligence (580694)**: convertir enunciados de programación lineal y entera mixta en formulaciones matemáticas paramétricas, sin resolver la instancia.
+Formulación matemática LP/MILP desde enunciados en español con un modelo pequeño. Proyecto de Inteligencia Artificial Generativa (580694), Universidad de Concepción.
 
-La [Entrega 1](deliverables/Deliverable1.pdf) diagnostica errores de índices, apertura de centros y restricciones contradictorias en modelos pequeños. La **Entrega 2** conserva Qwen2.5-1.5B-Instruct y estudia un ajuste QLoRA en una GPU Tesla T4. Los experimentos, los datos, la evaluación FOM-5 v2 y los resultados medidos están documentados en [entrega2/README.md](entrega2/README.md). El informe de una página se compila desde [LaTeX](entrega2/report/entrega2.tex); el PDF con el enlace del video se añadirá después de la grabación.
+| Entrega | Material principal |
+|---|---|
+| [Deliverable 1](Deliverable%201/) | [Informe](Deliverable%201/Grupo1_GenAI.pdf) y [notebook original](Deliverable%201/Deliverable_1.ipynb). Diagnóstico del caso oftalmológico. |
+| [Deliverable 2](Deliverable%202/) | [Informe de una página](Deliverable%202/report/informe.pdf), [código y datos](Deliverable%202/README.md), [respuestas y juicios](Deliverable%202/outputs/). |
 
-Para reproducir la demostración se abre [el notebook de generación](entrega2/notebooks/02_generacion_final_31.ipynb) en Colab con T4, se monta Drive con el paquete y el adapter indicados en el README de Entrega 2, y se activa la celda final `RUN_LIVE_DEMO=True`. Esa celda ejecuta el baseline directo y el adapter sobre el mismo caso oftalmológico fijado en Entrega 1; guarda sus salidas y tiempos. La comparación de 30 casos usa las respuestas congeladas del baseline y el juez original, no selecciona una muestra favorable.
+**[Abrir Deliverable 2 en Google Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · Seleccionar T4 GPU.
 
-El notebook [`notebooks/Deliverable2.ipynb`](notebooks/Deliverable2.ipynb) se conserva como versión anterior del trabajo. La ejecución controlada y los manifiestos verificables están en `entrega2/`.
+El notebook descarga los datos desde este repositorio y verifica sus hashes. La sección 2 muestra la evaluación pareada de los mismos 30 problemas: **0.5884 → 0.8024/5**, con 14 mejoras, 8 empates y 8 degradaciones. El baseline se tomó de las respuestas oficiales guardadas: no se volvió a ejecutar para producir esa media. La sección 3 ejecuta **dos inferencias nuevas** sobre el mismo caso de Entrega 1, primero con el adapter desactivado y luego con QLoRA, y guarda ambos textos en Drive. La sección 4 permite volver a entrenar el adapter desde los 1050 ejemplos públicos si no está disponible en Drive.
+
+Para reproducir la demostración del video: abrir el enlace Colab, ejecutar las secciones 1 y 2, conectar el Drive que contiene `MyDrive/IA/qwen25_qlora_or_v2/final/user_only_run01/final_adapter`, ejecutar la celda de carga de la sección 3 y después la celda de generación. La última celda muestra ambas respuestas lado a lado. Los puntajes 0.650 y 3.850 del caso diagnóstico corresponden a respuestas archivadas, no a las dos inferencias nuevas de esa celda.
+
+El [README de Deliverable 2](Deliverable%202/README.md) explica el origen de cada archivo, las limitaciones y cómo reconstruir datos y resultados. El video de pantalla se añadirá aquí tras grabar la ejecución real; el enunciado exige mostrar la generación visible y trazable al código del repositorio.
