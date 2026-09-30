@@ -1,16 +1,28 @@
 # GenAI-Optimization
 
-Formulación matemática LP/MILP desde enunciados en español con un modelo pequeño. Proyecto de Inteligencia Artificial Generativa (580694), Universidad de Concepción.
+Un enunciado de optimización puede describir correctamente una decisión y aun así terminar en un modelo matemático equivocado: basta omitir un vínculo entre variables o cambiar un índice para alterar las soluciones posibles. Este proyecto estudia si un modelo pequeño puede producir **borradores LP/MILP paramétricos y verificables** en una GPU T4. La tarea es formular; la revisión matemática sigue siendo necesaria.
 
-| Entrega | Material principal |
+| Entrega | Acceso |
 |---|---|
-| [Deliverable 1](Deliverable%201/) | [Informe](Deliverable%201/Grupo1_GenAI.pdf) y [notebook original](Deliverable%201/Deliverable_1.ipynb). Diagnóstico del caso oftalmológico. |
-| [Deliverable 2](Deliverable%202/) | [Informe de una página](Deliverable%202/report/informe.pdf), [código y datos](Deliverable%202/README.md), [respuestas y juicios](Deliverable%202/outputs/). |
+| [Deliverable 1](Deliverable%201/) | [Informe](Deliverable%201/Grupo1_GenAI.pdf) y [notebook](Deliverable%201/Deliverable_1.ipynb): diagnóstico del caso de localización de centros oftalmológicos. |
+| [Deliverable 2](Deliverable%202/) | [Informe de una página](Deliverable%202/report/informe.pdf), [notebook](Deliverable%202/Deliverable_2.ipynb), [datos](Deliverable%202/data/), [resultados por caso](Deliverable%202/outputs/) y [guía técnica](Deliverable%202/README.md). |
 
-**[Abrir Deliverable 2 en Google Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · Seleccionar T4 GPU.
+**[Abrir Deliverable 2 en Google Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** (seleccionar GPU T4). Los datos y el adapter entrenado se descargan del repositorio con verificación SHA-256; basta una cuenta propia de Colab.
 
-El notebook descarga los datos y el **adapter QLoRA entrenado** desde este repositorio y verifica sus hashes: **no requiere nuestro Gmail ni Drive**. La sección 2 muestra la evaluación pareada de los mismos 30 problemas: **0.5884 → 0.8024/5**, con 14 mejoras, 8 empates y 8 degradaciones. El baseline se tomó de las respuestas oficiales guardadas: no se volvió a ejecutar para producir esa media. El mismo notebook también permite **volver a generar los 30 problemas con cada variante** (sección 4) y evaluarlos después con FOM-5 v2 (sección 6), guardando los resultados nuevos por separado. La sección 5 ejecuta dos inferencias nuevas sobre el caso de Entrega 1 y muestra los textos lado a lado; la sección 7 permite volver a entrenar desde los 1050 ejemplos públicos.
+```mermaid
+flowchart LR
+    A[1050 pares sintéticos] --> B[QLoRA sobre Qwen2.5-1.5B]
+    B --> C[Adapter entrenado]
+    D[30 enunciados sin referencia] --> E[Qwen base]
+    D --> F[Qwen + adapter]
+    C --> F
+    E --> G[Dos respuestas por problema]
+    F --> G
+    G --> H[FOM-5 v2: juez posterior]
+    I[Referencia y requisitos] --> H
+    H --> J[Comparación pareada]
+```
 
-Para reproducir la demostración del video: abrir el enlace Colab con una T4, ejecutar las secciones 1 y 2, cargar el modelo y el adapter público en la sección 3, omitir la ejecución larga opcional de la sección 4 y ejecutar la celda de generación de la sección 5. La celda siguiente muestra ambas respuestas lado a lado. Los puntajes 0.650 y 3.850 del caso diagnóstico corresponden a respuestas archivadas, no a las dos inferencias nuevas de esa celda.
+Para **reproducir el video**, abre el Colab, ejecuta las secciones **1–3** (instalación, archivos/resultados y carga del modelo), y ejecuta la sección **5**. Esa celda genera una respuesta base y una QLoRA sobre el **mismo caso de Entrega 1**; la siguiente las muestra lado a lado. Las secciones 4 y 6 permiten repetir y juzgar los 30 problemas, pero son corridas largas ajenas al video. La sección 7 permite repetir el entrenamiento.
 
-El [README de Deliverable 2](Deliverable%202/README.md) explica el origen de cada archivo, las limitaciones y cómo reconstruir datos y resultados. El video de pantalla se añadirá aquí tras grabar la ejecución real; el enunciado exige mostrar la generación visible y trazable al código del repositorio.
+En el benchmark oficial de **30 entradas**, la media FOM-5 v2 pasó de **0.5884 a 0.8024/5**: 14 casos mejoraron, 8 empataron y 8 empeoraron. El [README técnico](Deliverable%202/README.md) explica la rúbrica, el origen de las respuestas, el intervalo bootstrap y los límites del resultado. La grabación de pantalla se enlazará aquí cuando quede guardada en [`Deliverable 2/video/`](Deliverable%202/video/).
