@@ -2,7 +2,7 @@
 
 **[Abrir notebook principal en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe PDF](report/informe.pdf) · [Fuente LaTeX](report/informe.tex)
 
-El notebook principal ofrece, en orden, instalación, descarga de datos por URL con verificación de hashes, comparación caso a caso, demostración de baseline y QLoRA sobre una entrada idéntica, reproducción opcional del entrenamiento y referencias de auditoría. Requiere una T4 para las celdas de generación o entrenamiento. La demostración usa el adapter final guardado en `MyDrive/IA/qwen25_qlora_or_v2/final/user_only_run01/final_adapter`; si no está disponible, se puede crear uno nuevo en la sección 4 (una época, aproximadamente 16 min en la T4 observada). Un adapter nuevo debe ser evaluado de nuevo; no hereda los puntajes publicados.
+El notebook principal ofrece, en orden, instalación, descarga de datos por URL con verificación de hashes, comparación caso a caso, demostración de baseline y QLoRA sobre una entrada idéntica, reproducción opcional del entrenamiento y referencias de auditoría. Requiere una T4 para las celdas de generación o entrenamiento. La demostración descarga el [adapter final público](model/adapter_qlora_qwen25_final.zip) desde este repositorio; **no requiere acceso al Gmail ni al Drive del equipo**. La sección 4 permite crear un adapter nuevo (una época, aproximadamente 16 min en la T4 observada). Un adapter nuevo debe ser evaluado de nuevo; no hereda los puntajes publicados.
 
 ## Datos y procedencia
 
@@ -36,7 +36,7 @@ python data/build_datasets.py
 python src/build_outputs.py
 ```
 
-Para reproducir la demo, ejecutar las celdas 1–3 de [`Deliverable_2.ipynb`](Deliverable_2.ipynb) en Colab. El archivo `live_demo.json` escrito por la sección 3 contiene **nuevas respuestas** y tiempos bajo un mismo hash de entrada, separado de los CSV evaluados. La sección 4 puede repetir el ajuste completo sobre una T4. Los notebooks `src/qlora_user_only_original.ipynb`, `src/generacion_final_original.ipynb` y `src/evaluacion_final_original.ipynb` conservan el pipeline de investigación completo y sus controles originales.
+Para reproducir la demo, ejecutar las celdas 1–3 de [`Deliverable_2.ipynb`](Deliverable_2.ipynb) en Colab. El archivo `/content/deliverable_2/outputs/live_demo.json` escrito por la sección 3 contiene **nuevas respuestas** y tiempos bajo un mismo hash de entrada, separado de los CSV evaluados. La sección 4 puede repetir el ajuste completo sobre una T4. Los notebooks `src/qlora_user_only_original.ipynb`, `src/generacion_final_original.ipynb` y `src/evaluacion_final_original.ipynb` conservan el pipeline de investigación completo y sus controles originales.
 
 ## Límites metodológicos
 
