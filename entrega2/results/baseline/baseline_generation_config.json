@@ -1,0 +1,11 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "dtype": "float16",
+  "quantization": null,
+  "messages": "user_only",
+  "max_new_tokens": 1200,
+  "do_sample": false,
+  "system_prompt": null,
+  "revision": "not pinned in original notebook; record resolved revision in new runs",
+  "source": "qwen_baseline_30_pipeline.ipynb cells 7-8"
+}

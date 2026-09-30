@@ -1,0 +1,53 @@
+{
+  "n_main": 30,
+  "n_diagnostic": 1,
+  "n_extended": 31,
+  "baseline_mean": 0.5884,
+  "qlora_mean": 0.8023666666666667,
+  "delta_mean": 0.21396666666666672,
+  "delta_bootstrap_95": [
+    -0.21356999999999998,
+    0.7007266666666662
+  ],
+  "improved": 14,
+  "tied": 8,
+  "worsened": 8,
+  "qlora_dimensions": {
+    "requirement_coverage_v2": 0.19527777777777777,
+    "decision_domains_v2": 0.9,
+    "objective_v2": 1.4,
+    "constraints_logic_v2": 0.5638888888888889,
+    "algebra_validity_v2": 0.8666666666666667,
+    "generalization_v2": 0.4
+  },
+  "diagnostic_qlora": 3.85,
+  "diagnostic_baseline_deterministic": 0.65,
+  "diagnostic_entrega1_historical_sampled": 0.369,
+  "extended_qlora_mean": 0.9006774193548387,
+  "extended_baseline_deterministic_mean": 0.5903870967741935,
+  "worst_qlora_case": {
+    "id": "opt_02",
+    "baseline": 1.3,
+    "qlora": 0.0,
+    "delta": -1.3
+  },
+  "largest_gain_case": {
+    "id": "opt_05",
+    "baseline": 0.0,
+    "qlora": 5.0,
+    "delta": 5.0
+  },
+  "secondary_27_excluding_documented_exposure": {
+    "n": 27,
+    "excluded_ids": [
+      "opt_01",
+      "opt_16",
+      "opt_30"
+    ],
+    "baseline_mean": 0.47414814814814815,
+    "qlora_mean": 0.7205185185185186,
+    "delta_mean": 0.24637037037037038
+  },
+  "interpretation": "Bootstrap across fixed paired inputs, not training-seed or judge uncertainty.",
+  "source_final_csv": "C:\\Users\\josee\\OneDrive\\Documentos\\Udec\\Semestre 10\\IA\\Trabajo\\2\\CODEX_IA\\results\\colab\\final\\user_only_run01\\evaluation\\qlora_fom5_v2_final.csv"
+}

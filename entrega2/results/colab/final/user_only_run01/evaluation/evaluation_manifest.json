@@ -1,0 +1,14 @@
+{
+  "generations_sha256": "cc22d51536a82edd49937029aa5deeb4e9c3a109ba18228ee74016031e7b656e",
+  "evaluator_sha256": "caa338da5a8a851657f8008b50d96feaf06b6613b14011153744ea860c2d10fe",
+  "gold_sha256": "c3d6ffff05a2b3b14ef21bb989d8cf23704af0be0ee8226bd149acee5915a834",
+  "diagnostic_gold_sha256": "ac598791f4412c5a940bcd42d8f5eabd5ec2602802d133dc04a5f5e148972c71",
+  "judge_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+  "gpu": "Tesla T4",
+  "versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "4.51.3",
+    "accelerate": "1.6.0",
+    "bitsandbytes": "0.45.5"
+  }
+}

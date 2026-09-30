@@ -1,0 +1,59 @@
+### Modelo Matemático
+
+#### Conjuntos Definidos:
+- **L**: Lista de posibles sitios para construir los centros (Barrio Norte, Los Carrera, Collao).
+- **S**: Lista de sectores de demanda (Concepción Centro, Sector Lomas, Costanera, Barrio Universitario, Nonguén).
+
+#### Parámetros:
+- \(d_{ij}\): Distancia en kilómetros entre el sitio \(i\) y el sector \(j\), donde \(i \in L\) y \(j \in S\).
+- \(p_j\): Población en miles de personas del sector \(j\), donde \(j \in S\).
+
+#### Variables de Decisión:
+- \(x_{ij} = \begin{cases}
+   1 & \text{si el sector } j \text{ está asignado al sitio } i \\
+   0 & \text{en caso contrario}
+\end{cases}\)
+
+#### Función Objetivo:
+Minimizar la suma total de las distancias de atención:
+
+\[ \min \sum_{i \in L} \sum_{j \in S} d_{ij} x_{ij} p_j \]
+
+#### Restricciones Necesarias:
+1. **Cuantos Centros Se Instalan**:
+   - Solo se instala exactamente 2 centros.
+   
+   \[ \sum_{i \in L} x_{ij} = 2 \quad \forall j \in S \]
+
+2. **Asignación de Sectores a Centros**:
+   - Cada sector debe estar asignado a un único centro.
+   
+   \[ \sum_{i \in L} x_{ij} = 1 \quad \forall j \in S \]
+
+3. **No Asignación de Sector a Sitio Sin Construir**:
+   - Un sector no puede ser asignado a un sitio si ese sitio aún no fue construido.
+   
+   \[ x_{ij} = 0 \quad \forall i \notin L, j \in S \]
+
+4. **Distancia Máxima Permitida**:
+   - Las distancias deben cumplirse con ciertos límites establecidos.
+
+   \[ d_{ij} \leq D_i \quad \forall i \in L, j \in S \]
+   Donde \(D_i\) es una constante máxima permitida para la distancia entre el sitio \(i\) y el sector \(j\).
+
+### Ejemplo de Formulación Matemática
+
+Supongamos que los valores de las distancias \(d_{ij}\) y las poblaciones \(p_j\) están disponibles. Entonces, la formulación sería algo así:
+
+```plaintext
+minimize sum(d_ij * x_ij * p_j for i in L and j in S)
+subject to 
+    sum(x_ij for i in L and j in S) == 2
+    sum(x_ij for i in L and j in S) == 1 for all j in S
+    sum(x_ij for i in L and j in S) == 0 for all i not in L and j in S
+    d_ij <= D_i for all i in L and j in S
+```
+
+Donde \(D_i\) es una lista de constantes máximas permitidas para las distancias.
+
+Este modelo matemático permite encontrar la combinación óptima de sitios para construir los centros y asignar los sectores de manera que minimice la distancia de atención, teniendo en cuenta la población de cada sector.

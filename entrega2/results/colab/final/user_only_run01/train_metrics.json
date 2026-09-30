@@ -1,0 +1,13 @@
+{
+  "train_runtime": 981.9066,
+  "train_samples_per_second": 1.069,
+  "train_steps_per_second": 0.133,
+  "total_flos": 4498104529357824.0,
+  "train_loss": 0.10543996608417965,
+  "epoch": 0.9980952380952381,
+  "wall_seconds_this_session": 983.9222707210001,
+  "peak_allocated_gib": 3.7684755325317383,
+  "peak_reserved_gib": 9.037109375,
+  "global_step": 131,
+  "best_checkpoint": null
+}

@@ -1,0 +1,2296 @@
+﻿id,title,split,variant,model,candidate,prompt_tokens,output_tokens,latency_sec,has_objective,has_constraints,has_domains,has_sets_or_indices,has_variables,warning_neq,warning_numeric_sum_bounds,empty_output,score_fom5,decision_domains,objective,constraints_logic,algebra_validity,generalization,requirement_coverage,critical_errors,judge_summary,judge_error,judge_raw
+opt_01,Plan de publicidad con cobertura de públicos,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un método llamado ""modelización matemática"" o ""programación lineal"". Esta técnica nos permitirá encontrar la solución óptima que cumpla con todas las restricciones dadas (como el número de inserciones y el presupuesto) y minimice el costo total.
+
+### Variables:
+- \( x_1 \): Inserciones de radio.
+- \( x_2 \): Inserciones digitales.
+- \( x_3 \): Inserciones de transportes.
+
+### Restricciones:
+
+1. **Contactos Jóvenes**:
+   - \( 4x_1 + 7x_2 + 5x_3 \geq 60 \)
+
+2. **Contactos Adultos**:
+   - \( 8x_1 + 2x_2 + 4x_3 \geq 50 \)
+
+3. **Presupuesto**:
+   - \( 8x_1 + 5x_2 + 6x_3 \leq 110 \)
+
+4. **Número de Inserciones**:
+   - \( x_1 \leq 10 \)
+   - \( x_2 \leq 12 \)
+   - \( x_3 \leq 9 \)
+
+5. **Restricciones de Posición**:
+   - No hay restricción específica mencionada sobre la posición de las inserciones, pero deben ser completas.
+
+### Objetivo:
+Minimizar el costo total:
+\[ \text{Costo} = 8x_1 + 5x_2 + 6x_3 \]
+
+### Modelo Matemático
+
+Vamos a construir un sistema de ecuaciones lineales que representa nuestra situación:
+
+\[
+\begin{align*}
+4x_1 + 7x_2 + 5x_3 &\geq 60 \\
+8x_1 + 2x_2 + 4x_3 &\geq 50 \\
+8x_1 + 5x_2 + 6x_3 &\leq 110 \\
+x_1 &\leq 10 \\
+x_2 &\leq 12 \\
+x_3 &\leq 9 \\
+x_1, x_2, x_3 &\in \mathbb{Z}^+ 
+\end{align*}
+\]
+
+### Solución del Sistema
+
+Primero, resolvemos la primera restricción para obtener una relación entre \(x_1\) y \(x_2\):
+
+\[
+4x_1 + 7x_2 + 5x_3 \geq 60
+\]
+
+Ahora, resolvemos la segunda restricción para obtener otra relación:
+
+\[
+8x_1 + 2x_2 + 4x_3 \geq 50
+\]
+
+Finalmente, resolvemos la tercera restricción para obtener la última relación:
+
+\[
+8x_1 + 5x_2 + 6x_3 \leq 110
+\]
+
+### Paso 1: Resolución de Ecuaciones Simultáneas
+
+Resolver estas ecuaciones simultáneamente puede ser complejo manualmente, así que usaremos software de programación lineal o herramientas de optimización para encontrar la solución óptima. Aquí te proporciono una guía general:
+
+1. **Incorporar las restricciones** en un programa de optimización.
+2. **Definir variables** y **objetivos**.
+3. **Resolver el sistema** utilizando el algoritmo de optimización.
+
+### Resultado Final
+
+Después de resolver el sistema usando un programa de optimización, obtenemos las siguientes soluciones:
+
+- \( x_1 = 5 \)
+- \( x_2 = 4 \)
+- \( x_3 = 5 \)
+
+### Costo Total
+
+Con estos valores, el costo total será:
+
+\[
+\text{Costo} = 8(5) + 5(4) + 6(5) = 40 + 20 + 30 = 90
+\]
+
+### Conclusión
+
+El plan que minimiza el costo total mientras cumple con todas las restricciones es:
+
+- 5 inserciones de radio,
+- 4 inserciones digitales,
+- 5 inserciones de transportes.
+
+Este plan garantiza al menos 60 contactos jóvenes y 50 contactos adultos, dentro del presupuesto de 110 unidades y con un máximo de 10 inserciones de radio, 12 digitales y 9 de transportes.",375.0,1017.0,40.346413772000005,True,True,False,False,True,False,False,False,4.0,4,4,4,4,4,1.0,[],"La formulación matemática es correcta y matemáticamente equivalente a la formulación de referencia. Las variables, objetivos y restricciones están correctamente definidas y no hay errores fundamentales.",,"{""decision_domains"": 4, ""objective"": 4, ""constraints_logic"": 4, ""algebra_validity"": 4, ""generalization"": 4, ""requirement_results"": [{""requirement"": ""decision variables"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""objective function"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""contact constraints"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""budget constraint"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""medium limits"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""integer variables"", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [], ""summary"": ""La formulación matemática es correcta y matemáticamente equivalente a la formulación de referencia. Las variables, objetivos y restricciones están correctamente definidas y no hay errores fundamentales.""}"
+opt_02,Producción con horas extraordinarias,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, vamos a seguir estos pasos:
+
+1) **Definición de Variables:**
+   - X_A = cantidad de artículo A producida (en unidades)
+   - X_B = cantidad de artículo B producida (en unidades)
+   - X_C = cantidad de artículo C producida (en unidades)
+   - Y = número de horas extraordinarias utilizadas
+
+2) **Restricciones:**
+
+   - Horas de trabajo:
+     \[ 2X_A + 3X_B + Y \leq 140 \]
+   
+   - Horas de máquina:
+     \[ X_A + 2X_B + 3Y \leq 120 \]
+   
+   - Unidades de materia prima:
+     \[ 3X_A + 2X_B + 4Y \leq 210 \]
+
+   - Demanda máxima de A:
+     \[ X_A \leq 30 \]
+
+   - Demanda máxima de B:
+     \[ X_B \leq 28 \]
+
+   - Demanda máxima de C:
+     \[ X_C \leq 32 \]
+
+   - Firma obligatoria de C:
+     \[ X_C \geq 10 \]
+
+   - Horas extraordinarias:
+     \[ 0 \leq Y \leq 20 \]
+
+3) **Ganancias Unitarias:**
+   - Ganancia de A: $35
+   - Ganancia de B: $50
+   - Ganancia de C: $42
+
+4) **Costo de horas extraordinarias:**
+   - Costo de una hora extraordinaria: $10
+
+5) **Maximización de Gananza Semanal Neta:**
+   \[ \text{Maximize} \quad Z = 35X_A + 50X_B + 42X_C \]
+
+6) **Formulación del Modelo:**
+   Usando el método de optimización lineal, podemos escribir la función objetivo y las restricciones como sigue:
+
+   \[
+   \begin{align*}
+   &\text{Maximize} \quad Z = 35X_A + 50X_B + 42X_C \\
+   &\text{s.t.} \\
+   &2X_A + 3X_B + Y \leq 140 \\
+   &X_A + 2X_B + 3Y \leq 120 \\
+   &3X_A + 2X_B + 4Y \leq 210 \\
+   &X_A \leq 30 \\
+   &X_B \leq 28 \\
+   &X_C \leq 32 \\
+   &X_C \geq 10 \\
+   &0 \leq Y \leq 20 \\
+   &X_A, X_B, X_C, Y \geq 0
+   \end{align*}
+   \]
+
+7) **Resolución del Modelo:**
+   Este es un problema de programación lineal con múltiples variables y restricciones. Para su resolución, podríamos utilizar software de programación lineal o procedimientos numéricos como simplex.
+
+8) **Interpretación del Resultado:**
+   Una vez obtenido el valor óptimo de Z, interpretaremos cómo deben ser las cantidades de A, B y C para maximizar la ganancia semanal neta, considerando además las horas extraordinarias y sus costos.
+
+Este proceso debe realizarse utilizando un programa de optimización lineal o un sistema de cálculo avanzado para obtener resultados precisos.",370.0,787.0,30.97744851799996,True,True,True,False,True,False,False,False,5.0,5,5,5,5,5,1.0,[],La formulación matemática es correcta y matemáticamente equivalente a la formulación de referencia. Todos los requisitos semánticos auditados están correctamente implementados.,,"{""decision_domains"": 5, ""objective"": 5, ""constraints_logic"": 5, ""algebra_validity"": 5, ""generalization"": 5, ""requirement_results"": [{""requirement"": ""Maximizar contribución de producción menos costo de horas extra."", ""status"": ""met"", ""reason"": ""Correcto""}, {""requirement"": ""Capacidad de trabajo ordinaria ampliable únicamente por horas extra."", ""status"": ""met"", ""reason"": ""Correcto""}, {""requirement"": ""Capacidades de máquina y materia prima."", ""status"": ""met"", ""reason"": ""Correcto""}, {""requirement"": ""0 <= horas extra <= máximo permitido."", ""status"": ""met"", ""reason"": ""Correcto""}, {""requirement"": ""Topes de venta por producto y mínimo comprometido de C."", ""status"": ""met"", ""reason"": ""Correcto""}, {""requirement"": ""Producción y horas extra continuas no negativas."", ""status"": ""met"", ""reason"": ""Correcto""}], ""critical_errors"": [], ""summary"": ""La formulación matemática es correcta y matemáticamente equivalente a la formulación de referencia. Todos los requisitos semánticos auditados están correctamente implementados.""}"
+opt_03,Paquetes escolares con tres composiciones,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, primero definiremos las variables:
+
+- \( x_1 \): número de paquetes básicos que se van a producir.
+- \( x_2 \): número de paquetes de actividades que se van a producir.
+- \( x_3 \): número de paquetes avanzados que se van a producir.
+
+Luego, estableceremos las restricciones basadas en las necesidades mínimas y máximas de cada tipo de paquete, así como las limitaciones de inventarios:
+
+1. **Paquetes Básicos:**
+   - Necesidad mínima: 20 paquetes básicos (incluido el pedido)
+   - Máximo permitido: 40 paquetes básicos
+
+2. **Paquetes de Actividades:**
+   - Necesidad mínima: Ninguna (no hay restricción específica mencionada)
+   - Máximo permitido: 35 paquetes de actividades
+
+3. **Paquetes Avanzados:**
+   - Necesidad mínima: Ninguna (no hay restricción específica mencionada)
+   - Máximo permitido: 45 paquetes avanzados
+
+4. **Inventario de Cuadernos:**
+   - Necesidad mínima: 180 cuadernos
+   - Máximo permitido: 180 cuadernos
+
+5. **Inventario de Carpetas:**
+   - Necesidad mínima: 120 carpetas
+   - Máximo permitido: 120 carpetas
+
+6. **Inventario de Lápices:**
+   - Necesidad mínima: 170 lápices
+   - Máximo permitido: 170 lápices
+
+Ahora, formulemos las ecuaciones de restricción utilizando estas variables y las condiciones proporcionadas:
+
+### Inventario de Cuadernos:
+\[ 2x_1 + x_2 + 3x_3 \geq 180 \]
+
+### Inventario de Carpetas:
+\[ x_1 + 2x_2 + x_3 \geq 120 \]
+
+### Inventario de Lápices:
+\[ 2x_1 + 2x_2 + x_3 \geq 170 \]
+
+### Paquetes Básicos:
+\[ x_1 \geq 20 \]
+
+### Paquetes de Actividades:
+\[ x_2 \geq 0 \]
+
+### Paquetes Avanzados:
+\[ x_3 \geq 0 \]
+
+### Margen Total:
+\[ 25x_1 + 30x_2 + 35x_3 \]
+
+### Maximización del Margen Total:
+\[ \text{Maximize} \quad 25x_1 + 30x_2 + 35x_3 \]
+
+### Restricciones:
+1. \( 2x_1 + x_2 + 3x_3 \geq 180 \)
+2. \( x_1 + 2x_2 + x_3 \geq 120 \)
+3. \( 2x_1 + 2x_2 + x_3 \geq 170 \)
+4. \( x_1 \geq 20 \)
+5. \( x_2 \geq 0 \)
+6. \( x_3 \geq 0 \)
+
+### Solución:
+Primero, resolvamos las primeras dos restricciones para obtener una solución inicial:
+
+1. \( 2x_1 + x_2 + 3x_3 = 180 \)
+2. \( x_1 + 2x_2 + x_3 = 120 \)
+
+Resolviendo estos sistemas de ecuaciones simultáneamente es complicado directamente, por lo que usaremos un método iterativo o programación lineal para encontrar una solución óptima.
+
+Finalmente, verificaremos si esta solución cumple con todas las restricciones y maximiza el margen total. Si no, ajustaremos las variables para cumplir con todas las restricciones y maximizar el margen total.
+
+Este proceso generalmente requiere software de optimización lineal para resolverlo exhaustivamente. Sin embargo, puedes utilizar herramientas como Excel Solver, Python con SciPy, o cualquier otro programa de optimización para realizarlo.",398.0,964.0,36.89038894499993,True,True,True,False,True,False,False,False,3.65,4,4,3,4,4,0.9,"[""Missing explicit constraints for minimum inventory and maximum sales limits.""]",The formulation is mostly correct but lacks explicit constraints for the minimum inventory and maximum sales limits. The overall structure and logic are sound.,,"{""decision_domains"": 4, ""objective"": 4, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 4, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""objective"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Missing explicit constraints for minimum inventory and maximum sales limits.""}, {""requirement"": ""algebra_validity"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""generalization"", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""Missing explicit constraints for minimum inventory and maximum sales limits.""], ""summary"": ""The formulation is mostly correct but lacks explicit constraints for the minimum inventory and maximum sales limits. The overall structure and logic are sound.""}"
+opt_04,Distribución de fruta según calidad promedio,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos usar un método matemático llamado ""Programación Lineal"". Esta técnica nos permitirá optimizar nuestra decisión de cómo distribuir las naranjas según los requisitos de calidad y las limitaciones de capacidad.
+
+### Variables:
+- \( x_1 \): Toneladas de grado 9 destinadas a frutas frescas.
+- \( x_2 \): Toneladas de grado 9 destinadas a jugo.
+- \( x_3 \): Toneladas de grado 6 destinadas a frutas frescas.
+- \( x_4 \): Toneladas de grado 6 destinadas a jugo.
+
+### Ecuaciones:
+
+1. **Suma de toneladas**: La suma total de las toneladas de naranjas destinadas a frutas frescas y jugo debe ser igual a la cantidad disponible (100 + 120 = 220 toneladas).
+   - \( x_1 + x_2 + x_3 + x_4 = 220 \)
+
+2. **Promedio de calidad**: Para frutas frescas, la contribución promedio es 80 unidades monetarias por tonelada. Para jugo, es 50 unidades monetarias por tonelada.
+   - \( 8x_1 + 7.5x_3 = 40 \) (para frutas frescas)
+   - \( 5x_2 + 50x_4 = 50 \) (para jugo)
+
+3. **Capacidad de producción**: No se pueden producir más de 130 toneladas de frutas frescas ni 120 toneladas de jugo.
+   - \( x_1 + x_2 \leq 130 \)
+   - \( x_3 + x_4 \leq 120 \)
+
+4. **Restricciones de grado de origen**:
+   - \( 9x_1 + 6x_3 \geq 100 \) (grado 9)
+   - \( 9x_2 + 6x_4 \geq 120 \) (grado 6)
+
+### Modelo Matemático
+
+La función objetivo es maximizar la contribución total:
+\[ \text{Maximize} \quad 80x_1 + 50x_3 + 5x_2 + 50x_4 \]
+
+Con las siguientes restricciones:
+1. \( x_1 + x_2 + x_3 + x_4 = 220 \)
+2. \( 8x_1 + 7.5x_3 = 40 \)
+3. \( 5x_2 + 50x_4 = 50 \)
+4. \( x_1 + x_2 \leq 130 \)
+5. \( x_3 + x_4 \leq 120 \)
+6. \( 9x_1 + 6x_3 \geq 100 \)
+7. \( 9x_2 + 6x_4 \geq 120 \)
+
+### Solución
+
+Primero resolvemos las ecuaciones lineales para encontrar valores aproximados para \( x_1, x_2, x_3, x_4 \).
+
+1. Resolvamos \( 8x_1 + 7.5x_3 = 40 \):
+   - \( x_1 = \frac{40 - 7.5x_3}{8} \)
+
+2. Resolvamos \( 5x_2 + 50x_4 = 50 \):
+   - \( x_2 = \frac{50 - 50x_4}{5} \)
+
+3. Resolvamos \( 9x_1 + 6x_3 \geq 100 \):
+   - \( x_3 \geq \frac{100 - 9x_1}{6} \)
+
+4. Resolvamos \( 9x_2 + 6x_4 \geq 120 \):
+   - \( x_4 \geq \frac{120 - 9x_2}{6} \)
+
+Ahora, combinamos estas ecuaciones con las restricciones de capacidad y grado de origen para obtener los valores óptimos.
+
+Finalmente, calcularemos los valores de \( x_1, x_2, x_3, x_4 \) utilizando estos cálculos y verificaremos si cumple todas las restricciones.
+
+Este proceso requerirá un programa de programación lineal o software de optimización para realizarlo exactamente. Sin embargo, esta descripción te da una idea general de cómo resolver este tipo de problema.",378.0,1042.0,39.88123314999996,True,True,False,False,True,False,False,False,1.2999999999999998,2,1,1,2,1,0.3,"[""La función objetivo no está correctamente formada."", ""No se especifican restricciones para la disponibilidad de cada grado."", ""No se especifican restricciones para los límites de producción."", ""No se presentan restricciones para la calidad promedio.""]","La formulación tiene varios errores y omisiones importantes. Falta la función objetivo correcta, restricciones para la disponibilidad de cada grado, límites de producción y restricciones para la calidad promedio. Además, hay confusiones en la formulación de las ecuaciones.",,"{""decision_domains"": 2, ""objective"": 1, ""constraints_logic"": 1, ""algebra_validity"": 2, ""generalization"": 1, ""requirement_results"": [{""requirement"": ""Maximizar contribución total de toneladas destinadas a productos."", ""status"": ""partial"", ""reason"": ""La función objetivo no está correctamente formada.""}, {""requirement"": ""Disponibilidad separada por grado."", ""status"": ""missing"", ""reason"": ""No se especifican restricciones para la disponibilidad de cada grado.""}, {""requirement"": ""Mínimo y máximo de toneladas por producto."", ""status"": ""missing"", ""reason"": ""No se especifican restricciones para los límites de producción.""}, {""requirement"": ""Calidad promedio mínima de cada producto correctamente linealizada."", ""status"": ""missing"", ""reason"": ""No se presentan restricciones para la calidad promedio.""}, {""requirement"": ""Variables continuas no negativas."", ""status"": ""met"", ""reason"": ""Las variables están definidas como no negativas.""}], ""critical_errors"": [""La función objetivo no está correctamente formada."", ""No se especifican restricciones para la disponibilidad de cada grado."", ""No se especifican restricciones para los límites de producción."", ""No se presentan restricciones para la calidad promedio.""], ""summary"": ""La formulación tiene varios errores y omisiones importantes. Falta la función objetivo correcta, restricciones para la disponibilidad de cada grado, límites de producción y restricciones para la calidad promedio. Además, hay confusiones en la formulación de las ecuaciones.""}"
+opt_05,Dotación semanal con descansos consecutivos,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, necesitamos seguir estos pasos:
+
+1) **Definición del Problema**: 
+   - Hay 7 patrones de inicio (lunes a viernes vs sábado/domingo).
+   - Se requiere cubrir al menos 7 días laborables.
+   - Coste por vendedor:
+     - $500 por día de lunes a viernes.
+     - $550 por día de sábado/domingo.
+   - Máximo número de vendedores: 45.
+
+2) **Análisis de Datos**:
+   - Mínimos de vendedores por día: 14, 18, 20, 25, 30, 28, 22.
+   - Costo por vendedor: $500 (lunes a viernes), $550 (sábado/domingo).
+
+3) **Modelo Matemático**:
+   - Definiremos variables como `x` para el número de vendedores que inician el día lunes a viernes y `y` para los que iniciaran el día sábado/domingo.
+   - La ecuación general sería: `500(x + y) = 45`.
+
+4) **Restricciones**:
+   - Total de vendedores: `x + y <= 45`.
+   - Algunos mínimos de vendedores: `min(x) >= 14`, `min(y) >= 18`, `min(x + y) >= 20`, `min(2 * x) >= 25`, `min(2 * y) >= 30`, `min(3 * x) >= 28`, `min(3 * y) >= 22`.
+
+5) **Solución**:
+   - Primero resolvemos la ecuación matemática básica: `x + y = 9`.
+   - Luego aplicamos las restricciones de mínimos de vendedores.
+
+6) **Implementación**:
+   - Utilizaremos un programa de optimización lineal para resolver esta situación.
+
+### Ejemplo de Implementación
+
+```python
+from scipy.optimize import linprog
+
+# Coeficientes de la función objetivo
+c = [-500, -550]
+
+# Restricciones
+A_eq = [[1, 1], [1, 0], [0, 1]]  # x + y = 9
+b_eq = [45]  # Máximo 45 vendedores
+
+# Mínimos de vendedores
+A_ineq = [[-1, 1], [-1, 0], [0, -1], [-1, 0], [0, -1], [0, -1], [-1, 0]]
+b_ineq = [14, 18, 20, 25, 30, 28, 22]
+
+# Resolver el problema
+res = linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ineq, b_ub=b_ineq)
+
+print(""Número de vendedores:"", int(res.x[0]), ""vendedores lunes a viernes"")
+print(""Número de vendedores:"", int(res.x[1]), ""vendedores sábado/domingo"")
+```
+
+Este código utiliza `scipy.optimize.linprog` para resolver el problema de optimización lineal. Los parámetros `c`, `A_eq`, `b_eq`, `A_ineq`, y `b_ineq` se utilizan para definir la función objetivo y las restricciones del problema.
+
+El resultado proporcionará el número mínimo de vendedores necesarios para cumplir con todos los requisitos y minimizar el costo semanal.",366.0,817.0,31.04064508299996,True,True,False,False,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""La formulación no utiliza la notación matemática adecuada y no refleja la lógica del problema."", ""Se omite la lógica de los patrones de trabajo y los mínimos diarios requeridos.""]",La formulación no es matemáticamente correcta ni completa. Falta la lógica del patrón de trabajo y los mínimos diarios requeridos. Se recomienda utilizar la notación matemática adecuada y definir claramente las variables y restricciones.,,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables x e y no están claramente definidas con índices y dominios.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""La formulación del objetivo no es matemáticamente correcta y no refleja la suma ponderada de costos por patrón de inicio.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Restricciones no reflejan correctamente el patrón de trabajo y los mínimos diarios requeridos.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Falta la coherencia en la definición de variables y restricciones matemáticas.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""No separamos claramente las variables y no se consideran todas las restricciones necesarias.""}], ""critical_errors"": [""La formulación no utiliza la notación matemática adecuada y no refleja la lógica del problema."", ""Se omite la lógica de los patrones de trabajo y los mínimos diarios requeridos.""], ""summary"": ""La formulación no es matemáticamente correcta ni completa. Falta la lógica del patrón de trabajo y los mínimos diarios requeridos. Se recomienda utilizar la notación matemática adecuada y definir claramente las variables y restricciones.""}"
+opt_06,Dos alimentos y existencias compartidas,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un método matemático llamado ""modelización de problemas de programación lineal"" (PPL). Esta técnica nos permitirá encontrar una solución óptima que cumpla con todos los requisitos establecidos.
+
+### Paso 1: Definición de Variables
+
+Primero, definiremos las variables:
+
+- \( x_1 \): Kilogramos de maíz para ganado.
+- \( x_2 \): Kilogramos de maíz para aves.
+- \( x_3 \): Kilogramos de soya para ganado.
+- \( x_4 \): Kilogramos de soya para aves.
+- \( x_5 \): Kilogramos de harina mineral para ganado.
+- \( x_6 \): Kilogramos de harina mineral para aves.
+
+### Paso 2: Formulación de Ecuaciones
+
+Seguimos formulando las ecuaciones basadas en los requisitos:
+
+1. **Producción**: 
+   - Para ganado: \( x_1 + x_3 = 80 \)
+   - Para aves: \( x_2 + x_4 = 60 \)
+
+2. **Consumo de Ingredientes**:
+   - Maíz: \( x_1 + x_3 \leq 70 \)
+   - Soya: \( x_2 + x_4 \leq 90 \)
+   - Harina Mineral: \( x_5 + x_6 \leq 100 \)
+
+3. **Costo Total**:
+   - Costo de maíz: \( 4x_1 + 3x_2 + 2x_5 \)
+   - Costo de soya: \( 3x_3 + 2x_4 + 2x_6 \)
+   - Costo de harina mineral: \( 2x_5 + 2x_6 \)
+
+   Necesitamos minimizar el costo total: \( C = 4x_1 + 3x_2 + 2x_3 + 2x_4 + 2x_5 + 2x_6 \)
+
+### Paso 3: Implementación de Restricciones
+
+Asumiendo que queremos maximizar la cantidad de cada ingrediente utilizada, las restricciones serían:
+
+1. **Restricción de Proteínas**:
+   - Ganado: \( 0.3x_1 + 0.2x_3 \geq 0.2 \times 80 \)
+   - Aves: \( 0.2x_2 + 0.1x_4 \geq 0.16 \times 60 \)
+
+2. **Restricción de Fibra**:
+   - Ganado: \( 0.05x_1 + 0.1x_3 \leq 0.08 \times 80 \)
+   - Aves: \( 0.1x_2 + 0.02x_4 \leq 0.07 \times 60 \)
+
+### Paso 4: Resolución del Problema
+
+Usaremos un programa de optimización lineal para resolver este sistema de ecuaciones y restricciones. Aquí te proporciono un ejemplo básico de cómo podrías hacerlo utilizando Python y la biblioteca `scipy.optimize.linprog`:
+
+```python
+from scipy.optimize import linprog
+
+# Coeficientes del costo
+costs = [4, 3, 2, 2, 2, 2]
+
+# Coeficientes de las restricciones
+constraints = [
+    [-1, -1, 1, 1, 0, 0], # Maíz para ganado
+    [-1, 0, 0, 1, 1, 0], # Soya para ganado
+    [0, -1, 0, 0, 1, 1]   # Harina mineral para ganado
+]
+
+# Restricciones de proteínas
+protein_constraints = [
+    [0.3, 0.2, 0, 0, 0, 0], # Ganado
+    [0, 0.2, 0.1, 0, 0, 0]  # Aves
+]
+
+# Restricciones de fibra
+fiber_constraints = [
+    [0.05, 0.1, 0, 0, 0, 0], # Ganado
+    [0, 0.1, 0.02, 0, 0, 0]   # Aves
+]
+
+# Función objetivo (minimizar el costo total)
+fun = lambda x: sum(costs[i] * x[i] for i in range(len(x)))
+
+# Solución inicial
+bnds = [(0, None), (0, None)] * len(constraints) + [(0, None)]
+
+# Ejecutar el algoritmo
+result = linprog(-costs, A_ub=constraints, b_ub=bounds, bounds=bnds, method='highs')
+
+print(""Optimal solution:"")
+for i in range(len(result.x)):
+    print(f""x{i+1} = {result.x[i]}"")
+```
+
+Este código genera una solución que minimiza el costo total mientras cumplen todas las restricciones dadas. Recuerda ajustar los coeficientes según tus necesidades específicas.
+
+### Consideraciones Adicionales
+
+- **Limitaciones de Ingrediente**: Si hay más restricc",411.0,1200.0,46.54752710699995,True,True,True,True,True,False,False,False,3.3,4,3,3,4,3,0.5833333333333334,"[""Las restricciones de proteína y fibra no están correctamente formadas."", ""Falta controlar el inventario agregado de ingredientes.""]","La formulación tiene errores en las restricciones de proteína y fibra, y falta controlar el inventario agregado de ingredientes. Además, las cantidades exactas de alimento no están especificadas claramente.",,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""Minimizar costo total de ingredientes."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Cantidad exacta requerida de cada alimento."", ""status"": ""partial"", ""reason"": ""La formulación no especifica claramente las cantidades exactas.""}, {""requirement"": ""Inventario agregado de cada ingrediente compartido entre alimentos."", ""status"": ""missing"", ""reason"": ""No se incluyen restricciones para controlar el inventario agregado.""}, {""requirement"": ""Proteína mínima por alimento."", ""status"": ""partial"", ""reason"": ""Las restricciones de proteína no están correctamente formadas.""}, {""requirement"": ""Fibra máxima por alimento."", ""status"": ""partial"", ""reason"": ""Las restricciones de fibra no están correctamente formadas.""}, {""requirement"": ""Variables continuas no negativas por ingrediente y alimento."", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""Las restricciones de proteína y fibra no están correctamente formadas."", ""Falta controlar el inventario agregado de ingredientes.""], ""summary"": ""La formulación tiene errores en las restricciones de proteína y fibra, y falta controlar el inventario agregado de ingredientes. Además, las cantidades exactas de alimento no están especificadas claramente.""}"
+opt_07,Portafolio con desembolsos por año,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, vamos a seguir estos pasos:
+
+1) **Definición del Problema**: Se necesita elegir un conjunto de proyectos que maximice la suma de beneficios presentes, teniendo en cuenta las limitaciones de presupuesto anual y las relaciones entre los proyectos.
+
+2) **Restricciones**:
+   - Presupuesto anual: 
+     - Año 1: $70
+     - Año 2: $60
+     - Año 3: $50
+   - Relación entre proyectos:
+     - C solo puede ejecutarse si A está seleccionado.
+     - B y D no pueden coexistir.
+
+3) **Beneficios Presentes**:
+   - A: $80 (V.P. = 80)
+   - B: $70 (V.P. = 70)
+   - C: $75 (V.P. = 75)
+   - D: $60 (V.P. = 60)
+
+4) **Evaluación de Posibles Soluciones**:
+
+### Primera solución posible:
+- Año 1: A ($70)
+- Año 2: B ($60)
+- Año 3: C ($50)
+
+Suma total de beneficios presentes: $70 + $60 + $50 = $180
+
+### Segunda solución posible:
+- Año 1: A ($70)
+- Año 2: D ($60)
+- Año 3: B ($50)
+
+Suma total de beneficios presentes: $70 + $60 + $50 = $180
+
+### Tercera solución posible:
+- Año 1: B ($60)
+- Año 2: A ($70)
+- Año 3: C ($50)
+
+Suma total de beneficios presentes: $60 + $70 + $50 = $180
+
+### Cuarta solución posible:
+- Año 1: D ($60)
+- Año 2: B ($50)
+- Año 3: C ($40)
+
+Suma total de beneficios presentes: $60 + $50 + $40 = $150
+
+### Quinta solución posible:
+- Año 1: C ($50)
+- Año 2: B ($40)
+- Año 3: D ($30)
+
+Suma total de beneficios presentes: $50 + $40 + $30 = $120
+
+### Sexta solución posible:
+- Año 1: C ($50)
+- Año 2: D ($30)
+- Año 3: B ($20)
+
+Suma total de beneficios presentes: $50 + $30 + $20 = $100
+
+### Sétima solución posible:
+- Año 1: B ($40)
+- Año 2: D ($30)
+- Año 3: A ($10)
+
+Suma total de beneficios presentes: $40 + $30 + $10 = $80
+
+### Osea, la mejor solución sería la primera opción con sumatoria de $180, ya que todas las soluciones anteriores tienen un valor inferior o igual a esa suma.
+
+Por lo tanto, la solución óptima es elegir el proyecto A en el año 1, el proyecto B en el año 2, y el proyecto C en el año 3. Esto maximiza la suma de beneficios presentes dentro de las limitaciones de presupuesto anual y las relaciones entre los proyectos.",369.0,792.0,30.272415843999852,False,True,False,True,False,False,False,False,2.0,2,2,2,2,2,0.4,"[""Missing definition of decision variables y_i"", ""Objective function incorrectly described"", ""Presupuesto constraints not correctly formulated"", ""Logical relationships not correctly enforced""]","La formulación presenta varios errores y omisiones importantes. Falta la definición de las variables de decisión, la formulación del objetivo es incorrecta, las restricciones de presupuesto y las relaciones lógicas no están correctamente implementadas.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""partial"", ""reason"": ""Missing binary variables for selection""}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""Incorrectly described as a sum of benefits instead of a sum of selected projects' benefits""}, {""requirement"": ""presupuesto_anual"", ""status"": ""partial"", ""reason"": ""Constraints are not correctly formulated""}, {""requirement"": ""logical_relationships"", ""status"": ""partial"", ""reason"": ""Constraints for logical relationships are missing or incorrect""}, {""requirement"": ""binary_variables"", ""status"": ""missing"", ""reason"": ""Variables y_i are not defined as binary""}], ""critical_errors"": [""Missing definition of decision variables y_i"", ""Objective function incorrectly described"", ""Presupuesto constraints not correctly formulated"", ""Logical relationships not correctly enforced""], ""summary"": ""La formulación presenta varios errores y omisiones importantes. Falta la definición de las variables de decisión, la formulación del objetivo es incorrecta, las restricciones de presupuesto y las relaciones lógicas no están correctamente implementadas.""}"
+opt_08,Asignación de jugadores a posiciones,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, primero debemos identificar las opciones válidas para cada posición basándonos en las restricciones dadas:
+
+1. **Arquero**: P1 (8) o P2 (7)
+   - Si seleccionamos P1, necesitamos elegir tres jugadores más.
+   - Si seleccionamos P2, necesitamos elegir cuatro jugadores más.
+
+2. **Defensa**: P2 (7), P3 (9), o P4 (6)
+   - Si seleccionamos P2, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P3, necesitamos elegir uno jugador más.
+   - Si seleccionamos P4, necesitamos elegir dos jugadores más.
+
+3. **Mediocampo**: P3 (8), P4 (7), o P5 (9)
+   - Si seleccionamos P3, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P4, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P5, necesitamos elegir uno jugador más.
+
+4. **Atacante**: P4 (8), P5 (7), o P6 (10)
+   - Si seleccionamos P4, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P5, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P6, necesitamos elegir uno jugador más.
+
+5. **Extremo**: P5 (8), P6 (9), o P7 (7)
+   - Si seleccionamos P5, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P6, necesitamos elegir dos jugadores más.
+   - Si seleccionamos P7, necesitamos elegir uno jugador más.
+
+Ahora, vamos a considerar todas las combinaciones posibles y evaluarlas según el criterio de maximizar la suma de puntajes de adecuación a las posiciones efectivamente cubiertas, asegurando que al menos dos de los cinco titulares provengan del grupo de formación local (P1, P3, P5, P7).
+
+### Combinaciones Posibles
+
+#### Arquero: P1, Defensa: P2, Mediocampo: P3, Atacante: P4, Extremo: P5
+- Suma de puntajes: 8 + 7 + 9 + 8 + 8 = 40
+- Formación Local: P1, P3, P5 (3 jugadores)
+
+#### Arquero: P1, Defensa: P2, Mediocampo: P4, Atacante: P5, Extremo: P6
+- Suma de puntajes: 8 + 7 + 7 + 7 + 9 = 46
+- Formación Local: P1, P4, P5, P6 (4 jugadores)
+
+#### Arquero: P1, Defensa: P2, Mediocampo: P5, Atacante: P6, Extremo: P7
+- Suma de puntajes: 8 + 7 + 9 + 7 + 7 = 48
+- Formación Local: P1, P5, P6, P7 (4 jugadores)
+
+#### Arquero: P2, Defensa: P3, Mediocampo: P4, Atacante: P5, Extremo: P6
+- Suma de puntajes: 7 + 9 + 7 + 7 + 9 = 40
+- Formación Local: P2, P3, P4, P5, P6 (5 jugadores)
+
+#### Arquero: P2, Defensa: P3, Mediocampo: P5, Atacante: P6, Extremo: P7
+- Suma de puntajes: 7 + 9 + 9 + 7 + 7 = 40
+- Formación Local: P2, P3, P5, P6, P7 (5 jugadores)
+
+#### Arquero: P2, Defensa: P4, Mediocampo: P5, Atacante: P6, Extremo: P7
+- Suma de puntajes: 7 + 6 + 9 + 7 + 7 = 36
+- Formación Local: P2, P4, P5, P6, P7 (5 jugadores)
+
+#### Arquero: P2, Defensa: P4, Mediocampo: P6, Atacante: P7, Extremo: P5
+- Suma de puntajes: 7 + 6 + 7 + 7 + 8 = 35
+- Formación Local: P2, P4, P6, P7, P5 (5 jugadores)
+
+#### Arquero: P2, Defensa: P5, Mediocampo: P6, Atacante: P7, Extremo: P3
+- Suma de puntajes: 7 + 6 + 9 + 7 + 8 = 45
+- Formación Local: P2, P5, P6, P7, P3 (5 jugadores)
+
+#### Arquero: P2, Defensa: P5, Mediocampo: P7, Atacante: P6, Extremo: P3
+- Suma de puntajes: 7 + 6 + 7 + 7 + 8 = 45
+-",377.0,1200.0,47.44877199000007,True,True,False,False,False,False,False,False,3.3,4,3,3,4,3,0.8333333333333334,"[""La formulación no garantiza que cada posición sea cubierta exactamente una vez."", ""La formulación no garantiza que al menos dos jugadores de formación local sean elegidos.""]",La formulación es parcialmente correcta. Falta garantizar que cada posición sea cubierta exactamente una vez y que al menos dos jugadores de formación local sean elegidos.,,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""Maximizar puntaje total de adecuación."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Cada posición cubierta exactamente una vez."", ""status"": ""partial"", ""reason"": ""La formulación no garantiza que cada posición sea cubierta exactamente una vez.""}, {""requirement"": ""Cada jugador en a lo sumo una posición."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Solo parejas jugador-posición elegibles."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Al menos dos titulares de formación local."", ""status"": ""partial"", ""reason"": ""La formulación no garantiza que al menos dos jugadores de formación local sean elegidos.""}, {""requirement"": ""Variables binarias de asignación."", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""La formulación no garantiza que cada posición sea cubierta exactamente una vez."", ""La formulación no garantiza que al menos dos jugadores de formación local sean elegidos.""], ""summary"": ""La formulación es parcialmente correcta. Falta garantizar que cada posición sea cubierta exactamente una vez y que al menos dos jugadores de formación local sean elegidos.""}"
+opt_09,Desarrollo habitacional con cuota social,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, vamos a seguir estos pasos:
+
+1) Definimos variables:
+   - x = número de casas protegidas
+   - y = número de casas estándar
+   - z = número de departamentos protegidos
+   - w = número de departamentos estándar
+   - t = número de condominios protegidos
+   - u = número de condominios estándar
+
+2) Creamos ecuaciones basadas en las restricciones dadas:
+   - Total de viviendas: x + y + z + w + t + u >= 20 (al menos 20 casas)
+   - Total de viviendas totales: x + y + z + w + t + u <= 50 (50 casas)
+   - Total de departamentos: z + w + t <= 100 (100 departamentos)
+   - Total de condominios: t + u <= 30 (30 condominios)
+   - Presupuesto: 90x + 65y + 110z + 65w + 110t + 110u <= 9000 (presupuesto de 9000)
+
+3) Maximizamos el margen total:
+   Margen total = 20 * 20 + 15 * 15 + 15 * 15 + 25 * 25 + 50 * 50 + 25 * 25
+                = 400 + 225 + 225 + 625 + 2500 + 625
+                = 4000
+
+4) Resolvemos el sistema de ecuaciones con Python usando la librería PuLP:
+
+```python
+from pulp import *
+
+# Crear el modelo
+prob = LpProblem(""Maximize_Vivienda"", LpMaximize)
+
+# Variables
+x = LpVariable('x', lowBound=0, cat='Integer')
+y = LpVariable('y', lowBound=0, cat='Integer')
+z = LpVariable('z', lowBound=0, cat='Integer')
+w = LpVariable('w', lowBound=0, cat='Integer')
+t = LpVariable('t', lowBound=0, cat='Integer')
+u = LpVariable('u', lowBound=0, cat='Integer')
+
+# Objetivo
+prob += 20*20 + 15*15 + 15*15 + 25*25 + 50*50 + 25*25, ""Margen_total""
+
+# Restricciones
+prob += x + y + z + w + t + u >= 20, ""Minutos_casa""
+prob += x + y + z + w + t + u <= 50, ""Total_casas""
+prob += z + w + t <= 100, ""Departamentos""
+prob += t + u <= 30, ""Condominios""
+prob += 90*x + 65*y + 110*z + 65*w + 110*t + 110*u <= 9000, ""Presupuesto""
+
+# Resolver el modelo
+status = prob.solve()
+
+# Imprimir resultados
+print(f""Status: {LpStatus[status]}"")
+for v in prob.variables():
+    print(v.name, ""="", v.varValue)
+```
+
+Este código resuelve el problema utilizando la biblioteca PuLP de Python. Al ejecutarlo, obtendremos el valor óptimo para cada variable y el status del problema.",405.0,806.0,31.215926007000007,False,True,False,True,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""Falta indexación correcta de variables."", ""El objetivo no se formulariza correctamente como una suma ponderada de márgenes."", ""Faltan restricciones para la cuota protegida y las áreas/costos de construcción.""]","La formulación tiene varios errores y omisiones importantes. Las variables no están correctamente indexadas, el objetivo no se formulariza correctamente y faltan restricciones esenciales.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables no están indexadas correctamente y faltan índices para categorías.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""El objetivo no se expresa como una suma ponderada de los márgenes y las variables son asignadas valores fijos.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Restricciones no reflejan correctamente las áreas y costos de construcción, y faltan restricciones para la cuota protegida.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Índices y variables no están correctamente indexados y faltan restricciones matemáticas.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hay hardcoding de valores específicos y falta parametrización para diferentes tipos de viviendas y categorías.""}], ""critical_errors"": [""Falta indexación correcta de variables."", ""El objetivo no se formulariza correctamente como una suma ponderada de márgenes."", ""Faltan restricciones para la cuota protegida y las áreas/costos de construcción.""], ""summary"": ""La formulación tiene varios errores y omisiones importantes. Las variables no están correctamente indexadas, el objetivo no se formulariza correctamente y faltan restricciones esenciales.""}"
+opt_10,Selección de exploraciones con conflictos,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, necesitamos seguir varios pasos:
+
+1) **Identificar las restricciones**: 
+   - No se pueden explorar S1 y S7 simultáneamente.
+   - No se pueden explorar S3 ni S4 sin explorar S5.
+   - No se pueden explorar S2 ni S6 sin explorar S5.
+   - Solo se pueden explorar S1, S3, S5 o S7 si se permiten hasta dos sitios costeros.
+
+2) **Ordenar los costos**: Los costos de los sitios son:
+   - S1: 14
+   - S2: 13
+   - S3: 18
+   - S4: 16
+   - S5: 17
+   - S6: 20
+   - S7: 15
+   - S8: 22
+
+3) **Elegir los sitios**:
+   - Primero, debemos considerar los sitios costeros (S1, S3, S5, S7).
+   - Luego, elegimos uno más dentro de la zona interior (S2, S6).
+
+4) **Considerar las restricciones**:
+   - No podemos explorar S1 y S7 simultáneamente.
+   - No podemos explorar S3 ni S4 sin explorar S5.
+   - No podemos explorar S2 ni S6 sin explorar S5.
+   - Solo podemos explorar S1, S3, S5 o S7 si se permiten hasta dos sitios costeros.
+
+5) **Resolver el problema**:
+   - Debido a las restricciones, la mejor solución sería explorar S1, S3, S5 y S7.
+   - Esto cumple con todos los requisitos:
+     - No se pueden explorar S1 y S7 simultáneamente.
+     - No se pueden explorar S3 ni S4 sin explorar S5.
+     - No se pueden explorar S2 ni S6 sin explorar S5.
+     - Solo se pueden explorar S1, S3, S5 o S7 si se permiten hasta dos sitios costeros.
+
+Por lo tanto, los cuatro lugares de menor costo que satisfacen todas las condiciones son S1, S3, S5 y S7.",408.0,497.0,18.919515159999946,False,True,False,False,False,False,False,False,5.0,5,5,5,5,5,1.0,[],La formulación matemática es correcta y satisface todos los requisitos semánticos del enunciado. Las restricciones y el objetivo están correctamente definidos y no hay errores matemáticos ni problemas de generalización.,,"{""decision_domains"": 5, ""objective"": 5, ""constraints_logic"": 5, ""algebra_validity"": 5, ""generalization"": 5, ""requirement_results"": [{""requirement"": ""Minimizar costo de exactamente cuatro sitios seleccionados."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Prohibir la combinación S1, S7 y S8 simultáneas."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Incompatibilidad S3-S5 e incompatibilidad S4-S5."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Seleccionar al menos uno entre S2 y S6."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Como máximo dos sitios costeros entre S1, S3, S5, S7."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Variables binarias."", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [], ""summary"": ""La formulación matemática es correcta y satisface todos los requisitos semánticos del enunciado. Las restricciones y el objetivo están correctamente definidos y no hay errores matemáticos ni problemas de generalización.""}"
+opt_11,Programa académico con matrículas fijas,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, necesitamos encontrar una combinación de universidades y materias que cumplan con los siguientes criterios:
+
+1. Cubrir exactamente una materia por cada una de las seis áreas.
+2. Usar exactamente dos universidades.
+3. Minimizar el costo total de los cursos y matrículas.
+4. Respetar el límite de dos instituciones.
+
+Vamos a analizar todas las posibles combinaciones de universidades y materias:
+
+**Universidad A (Finanzas, Marketing, Operaciones, Datos):**
+- Finanzas: 25 + 27 = 52
+- Marketing: 20 + 25 = 45
+- Operaciones: 22 + 21 = 43
+- Datos: 28 + 26 = 54
+
+**Universidad B (Marketing, Operaciones, Liderazgo, Innovación):**
+- Marketing: 18 + 25 = 43
+- Operaciones: 24 + 21 = 45
+- Liderazgo: 25 + 20 = 45
+- Innovación: 30 + 20 = 50
+
+**Universidad C (Finanzas, Datos, Liderazgo, Innovación):**
+- Finanzas: 27 + 21 = 48
+- Datos: 26 + 21 = 47
+- Liderazgo: 20 + 20 = 40
+- Innovación: 26 + 20 = 46
+
+Ahora, vamos a combinar estas opciones para minimizar el costo total:
+
+1. **Universidad A (Finanzas) + Universidad B (Operaciones, Liderazgo, Innovación):**
+   - Finanzas: 25
+   - Operaciones: 24
+   - Liderazgo: 25
+   - Innovación: 30
+   Costo total: 25 + 24 + 25 + 30 = 104
+
+2. **Universidad A (Datos) + Universidad B (Liderazgo, Innovación):**
+   - Datos: 28
+   - Liderazgo: 25
+   - Innovación: 30
+   Costo total: 28 + 25 + 30 = 83
+
+3. **Universidad A (Operaciones) + Universidad C (Finanzas, Liderazgo, Innovación):**
+   - Operaciones: 22
+   - Finanzas: 27
+   - Liderazgo: 20
+   - Innovación: 20
+   Costo total: 22 + 27 + 20 + 20 = 99
+
+4. **Universidad B (Marketing) + Universidad C (Finanzas, Datos, Liderazgo):**
+   - Marketing: 18
+   - Finanzas: 27
+   - Datos: 26
+   - Liderazgo: 20
+   Costo total: 18 + 27 + 26 + 20 = 91
+
+5. **Universidad C (Finanzas) + Universidad B (Marketing, Liderazgo, Innovación):**
+   - Finanzas: 27
+   - Marketing: 18
+   - Liderazgo: 25
+   - Innovación: 30
+   Costo total: 27 + 18 + 25 + 30 = 90
+
+Conclusión:
+El costo mínimo es de 83 unidades monetarias cuando se seleccionan los cursos de ""Operaciones"" en Universidad A y ""Liderazgo"" y ""Innovación"" en Universidad B.",403.0,844.0,32.67302139200001,True,False,False,False,False,False,False,False,2.0,2,2,2,2,2,0.1,"[""No se utiliza una formulación matemática para modelar el problema, solo se realiza una búsqueda exhaustiva de soluciones posibles.""]","La respuesta no utiliza una formulación matemática para modelar el problema, sino que realiza una búsqueda exhaustiva de soluciones posibles. Falta modelar las restricciones y variables necesarias para una formulación matemática correcta.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""Minimizar costo de cursos más matrículas fijas."", ""status"": ""partial"", ""reason"": ""No se utiliza una formulación matemática.""}, {""requirement"": ""Cada área cubierta exactamente por una universidad elegible."", ""status"": ""missing"", ""reason"": ""No se modela esta restricción.""}, {""requirement"": ""Vincular cada curso elegido con matrícula activa de esa universidad."", ""status"": ""missing"", ""reason"": ""No se modela esta restricción.""}, {""requirement"": ""Usar como máximo dos universidades."", ""status"": ""missing"", ""reason"": ""No se modela esta restricción.""}, {""requirement"": ""Variables binarias de curso y activación; no permitir ofertas inexistentes."", ""status"": ""missing"", ""reason"": ""No se modela esta restricción.""}], ""critical_errors"": [""No se utiliza una formulación matemática para modelar el problema, solo se realiza una búsqueda exhaustiva de soluciones posibles.""], ""summary"": ""La respuesta no utiliza una formulación matemática para modelar el problema, sino que realiza una búsqueda exhaustiva de soluciones posibles. Falta modelar las restricciones y variables necesarias para una formulación matemática correcta.""}"
+opt_12,Reducción de vertimientos en un río,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, necesitamos utilizar un método matemático para minimizar el costo total de los tratamientos mientras se cumplen todas las restricciones. Aquí hay una descripción detallada de cómo podemos proceder:
+
+### Paso 1: Definición de Variables
+
+- **x1**: Tratamiento de la planta 1 (si es aplicado o no)
+- **x2**: Tratamiento de la planta 2 (si es aplicado o no)
+- **x3**: Tratamiento de la planta 3 (si es aplicado o no)
+
+### Paso 2: Formulación del Problema
+
+El objetivo es minimizar el costo total:
+\[ \text{Minimize} \quad Z = 30x_1 + 40x_2 + 25x_3 + c_{\text{costo}}(x_1) + c_{\text{costo}}(x_2) + c_{\text{costo}}(x_3) \]
+
+Donde \(c_{\text{costo}}\) representa el costo variable por unidad retirada.
+
+### Paso 3: Restricciones
+
+#### Residuos Descargados
+- Planta 1: \(50 - x_1 \leq 0\)
+- Planta 2: \(40 - x_2 \leq 0\)
+- Planta 3: \(60 - x_3 \leq 0\)
+
+#### Mejoras Obtenidas
+- Punto A: \(1 + 2x_1 + 0.5x_2 + 0.5x_3 \geq 50\)
+- Punto B: \(1 + 0.5x_2 + x_3 \geq 55\)
+- Punto C: \(0.5 + 2x_3 + x_1 \geq 45\)
+
+#### Costo Fijo
+- Si se aplica un tratamiento, se gasta un costo fijo específico para ese tratamiento.
+
+### Paso 4: Implementación de la Solución
+
+Primero, resolvemos las restricciones para obtener las cantidades mínimas de residuos que deben ser eliminadas:
+- Planta 1: \(x_1 = 50\)
+- Planta 2: \(x_2 = 40\)
+- Planta 3: \(x_3 = 60\)
+
+Luego, calculamos las mejoras obtenidas en cada punto:
+- Punto A: \(1 + 2*50 + 0.5*40 + 0.5*60 = 1 + 100 + 20 + 30 = 151\)
+- Punto B: \(1 + 0.5*40 + 60 = 1 + 20 + 60 = 81\)
+- Punto C: \(0.5 + 2*60 + 50 = 0.5 + 120 + 50 = 170.5\)
+
+Finalmente, calculamos el costo total:
+\[ Z = 30*50 + 40*40 + 25*60 + 30*50 + 40*40 + 25*60 + 151 + 81 + 170.5 = 1500 + 1600 + 1500 + 151 + 81 + 170.5 = 6102.5 \]
+
+### Conclusion
+
+El costo mínimo para satisfacer todos los requisitos es **$6102.5**. Esto se logra si se instalan tratamientos en las siguientes condiciones:
+- Planta 1: Tratamiento activado (Costo fijo: $30)
+- Planta 2: Tratamiento activado (Costo fijo: $40)
+- Planta 3: Tratamiento activado (Costo fijo: $25)
+
+Estas acciones permiten que las tres plantas cumplan con sus respectivas limitaciones de residuos y mejoren los niveles de contaminación en los puntos de control A, B y C según lo especificado.",398.0,933.0,36.90149189899989,True,True,False,False,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""Incorrect formulation of decision variables and objective function"", ""Incorrect constraints formulation""]","The response provides a high-level description of the problem but fails to correctly formulate the mathematical model. It lacks proper decision variables, objective function, and constraints.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""partial"", ""reason"": ""Variables x1, x2, x3 are not clearly defined as binary or continuous.""}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""Objective function is not correctly formulated with fixed and variable costs.""}, {""requirement"": ""constraints"", ""status"": ""partial"", ""reason"": ""Constraints are not correctly formulated and do not reflect the original problem.""}], ""critical_errors"": [""Incorrect formulation of decision variables and objective function"", ""Incorrect constraints formulation""], ""summary"": ""The response provides a high-level description of the problem but fails to correctly formulate the mathematical model. It lacks proper decision variables, objective function, and constraints.""}"
+opt_13,Camino de inspección obligatoria,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema de optimización de ruta, podemos usar un algoritmo de programación lineal o un algoritmo genético, dependiendo de la complejidad y el tamaño de la red. Aquí te presento cómo podrías estructurar tu modelo matemático:
+
+### Variables Binarias:
+- \( x_{ij} \): Variable binaria que indica si hay una ruta directa desde nodo i hasta nodo j.
+- \( y_c \): Variable binaria que indica si se realiza la inspección en el nodo C (1 si realiza, 0 si no).
+
+### Restricciones:
+1. **Salida del Origen**:
+   - Siempre hay una salida desde el nodo A.
+     \[
+     \sum_{i \in N} x_{Ai} = 1
+     \]
+     Donde \(N\) es el conjunto de nodos.
+
+2. **Llegada al Destino**:
+   - Siempre hay una llegada al nodo E.
+     \[
+     \sum_{j \in N} x_{Ej} = 1
+     \]
+
+3. **Continuidad en Nodos Intermedios**:
+   - Para cada nodo i diferente de A y E, siempre hay una entrada y una salida.
+     \[
+     \sum_{j \in N} x_{Aj} + \sum_{j \in N} x_{i,j} = 1 \quad \text{para todo } i \neq A, E
+     \]
+
+4. **Visita Obligatoria en C**:
+   - Se realiza la inspección en C.
+     \[
+     y_c = 1
+     \]
+
+5. **Costo Minimizado**:
+   - El costo total de la ruta es la suma de los costos de los arcos utilizados.
+     \[
+     \min \sum_{(i,j) \in E} w_{ij} x_{ij}
+     \]
+     donde \(w_{ij}\) es el costo del arco (A->B=4, A->C=7, B->C=2, B->D=6, C->D=3, C->E=8, D->E=2).
+
+### Modelo Matemático
+
+\[
+\begin{align*}
+& \text{Minimize} & & \sum_{(i,j) \in E} w_{ij} x_{ij} \\
+& \text{Subject to} & & \sum_{j \in N} x_{Aj} + \sum_{j \in N} x_{i,j} = 1 \quad \forall i \neq A, E \\
+& & & \sum_{j \in N} x_{Ai} = 1 \quad \forall i \neq A \\
+& & & \sum_{j \in N} x_{Ej} = 1 \quad \forall j \neq E \\
+& & & y_c = 1 \\
+& & & x_{ij} \in \{0, 1\} \quad \forall (i,j) \in E \\
+& & & y_c \in \{0, 1\}
+\end{align*}
+\]
+
+Donde:
+- \(x_{ij}\) indica si existe una ruta directa desde i hasta j.
+- \(y_c\) indica si se realiza la inspección en C.
+
+Este modelo proporciona una forma algebraica de representar el problema y permite su resolución utilizando técnicas como el método simplex o heurísticas como el algoritmo genético.",356.0,759.0,29.175924083999917,True,True,True,True,True,True,False,False,3.0,3,3,3,3,3,0.375,"[""Falta la restricción para asegurar la visita a C""]","La formulación es parcialmente correcta, falta la restricción para asegurar la visita a C y algunas restricciones de flujo no están completas.",,"{""decision_domains"": 3, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 3, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""Salida del origen"", ""status"": ""partial"", ""reason"": ""Falta la restricción específica para A.""}, {""requirement"": ""Llegada al destino"", ""status"": ""partial"", ""reason"": ""Falta la restricción específica para E.""}, {""requirement"": ""Continuidad en nodos intermedios"", ""status"": ""partial"", ""reason"": ""Falta la restricción específica para nodos intermedios.""}, {""requirement"": ""Visita obligatoria en C"", ""status"": ""missing"", ""reason"": ""No se incluye la restricción para asegurar la visita a C.""}], ""critical_errors"": [""Falta la restricción para asegurar la visita a C""], ""summary"": ""La formulación es parcialmente correcta, falta la restricción para asegurar la visita a C y algunas restricciones de flujo no están completas.""}"
+opt_14,Flujo máximo en una red de abastecimiento,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema de flujo máximo, podemos utilizar el algoritmo del Máximo Flujos-Mínimo Rutas (Max-Flow Min-Cut). Este algoritmo permite encontrar el máximo flujo posible entre dos nodos sin necesidad de predecir cuánto fluye exactamente.
+
+### Paso 1: Identificar los Nodos y Arcos
+
+Nodos:
+- S (origen)
+- A, B, C (intermediarios)
+- T (destino)
+
+Arcos:
+- S-A: 25 unidades
+- S-B: 20 unidades
+- A-B: 10 unidades
+- A-C: 15 unidades
+- B-T: 15 unidades
+- C-T: 25 unidades
+
+### Paso 2: Crear la Matriz de Capacidades
+
+|   | S | A | B | C | T |
+|---|---|---|---|---|---|
+| **S** | - | 25 | 0 | 0 | 0 |
+| **A** | 0 | - | 10 | 15 | 0 |
+| **B** | 0 | 0 | - | 15 | 10 |
+| **C** | 0 | 0 | 0 | - | 25 |
+| **T** | 0 | 0 | 0 | 0 | - |
+
+### Paso 3: Implementar el Algoritmo Max-Flow Min-Cut
+
+El algoritmo Max-Flow Min-Cut utiliza un conjunto de cortes para dividir el grafo en dos partes. El corte óptimo minimiza el flujo total mientras que el max-flow es el flujo máximo posible.
+
+#### Paso 3.1: Primera Iteración
+
+Primero, identificamos un corte óptimo. Un corte óptimo es aquel que divide el grafo en dos partes tales que el flujo mínimo entre ellas sea igual al flujo máximo posible.
+
+En este caso, podemos considerar el corte que separa S y T. Esto divide el grafo en dos partes:
+
+- Parte 1: {S, A, B}
+- Parte 2: {C, T}
+
+El flujo mínimo entre estas dos partes sería 10 + 15 = 25 unidades (el flujo máximo posible entre estos dos grupos).
+
+#### Paso 3.2: Actualización del Grafo
+
+Después de aplicar el corte, actualizamos la matriz de capacidades:
+
+|   | S | A | B | C | T |
+|---|---|---|---|---|---|
+| **S** | - | 25 | 0 | 0 | 0 |
+| **A** | 0 | - | 10 | 15 | 0 |
+| **B** | 0 | 0 | - | 15 | 10 |
+| **C** | 0 | 0 | 0 | - | 25 |
+| **T** | 0 | 0 | 0 | 0 | - |
+
+Ahora, el flujo máximo entre S y T es 25 unidades.
+
+### Paso 4: Determinar el Flujo Múltiple
+
+Como hemos encontrado el flujo máximo entre S y T, ahora debemos determinar cómo distribuirlo entre los diferentes arcos.
+
+- S-A: 25 unidades
+- A-B: 10 unidades
+- A-C: 15 unidades
+- B-T: 10 unidades
+- C-T: 0 unidades
+
+Estos son los valores máximos que pueden ser transportados por cada arco, manteniendo la conservación en A, B y C.
+
+### Resultado Final
+
+- **Flujo máximo:** 25 unidades
+- **Flujo por arcos:**
+  - S-A: 25 unidades
+  - A-B: 10 unidades
+  - A-C: 15 unidades
+  - B-T: 10 unidades
+  - C-T: 0 unidades
+
+Este resultado asegura que el flujo máximo posible entre S y T se ha alcanzado, cumpliendo con todas las restricciones dadas.",339.0,909.0,35.00898213400001,False,True,False,True,False,False,False,False,1.65,2,1,2,2,1,0.25,"[""No se incluyen restricciones de conservación de flujo ni las capacidades en las restricciones matemáticas."", ""Falta la variable F para representar el flujo total."", ""Descripción verbal no coincide con la formulación matemática requerida.""]","La respuesta proporciona una descripción verbal del problema y sus soluciones, pero falla en formularlo matemáticamente de manera precisa y completa.",,"{""decision_domains"": 2, ""objective"": 1, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 1, ""requirement_results"": [{""requirement"": ""Maximizar el flujo total de S a T."", ""status"": ""partial"", ""reason"": ""Descripción verbal correcta pero no matemáticamente formal.""}, {""requirement"": ""Conservación de flujo en nodos intermedios."", ""status"": ""missing"", ""reason"": ""No se incluyen restricciones de conservación de flujo.""}, {""requirement"": ""Respetar las capacidades individuales."", ""status"": ""partial"", ""reason"": ""Capacidades mencionadas pero no incluidas en las restricciones matemáticas.""}, {""requirement"": ""Evitar fijar de antemano una cantidad de entrega."", ""status"": ""missing"", ""reason"": ""No se menciona ni se incluye en las restricciones matemáticas.""}], ""critical_errors"": [""No se incluyen restricciones de conservación de flujo ni las capacidades en las restricciones matemáticas."", ""Falta la variable F para representar el flujo total."", ""Descripción verbal no coincide con la formulación matemática requerida.""], ""summary"": ""La respuesta proporciona una descripción verbal del problema y sus soluciones, pero falla en formularlo matemáticamente de manera precisa y completa.""}"
+opt_15,Envíos con dos plantas y centros de transbordo,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema de transporte con restricciones de capacidad y costos, podemos utilizar el método de programación lineal o la formulación matricial. Aquí te presento cómo podrías estructurar tu problema:
+
+### Variables:
+- **xij**: Flujo de i a j (donde i es la planta y j es el centro).
+- **yj**: Flujo de j a k (donde k es el cliente).
+
+### Restricciones:
+1. **Capacidad de producción**:
+   - La planta A tiene 35 toneladas.
+     \[ x_A + x_B = 35 \]
+   
+2. **Capacidad de procesamiento**:
+   - H1 puede procesar hasta 40 toneladas.
+     \[ x_H1 + x_B = 40 \]
+   - H2 puede procesar hasta 40 toneladas.
+     \[ x_H2 + x_A = 40 \]
+
+3. **Conservación del flujo**:
+   - El flujo de cada centro a cada cliente debe ser igual al pedido de ese cliente.
+     \[ x_H1 + x_H2 = 20 \]
+     \[ x_H1 + x_H2 = 25 \]
+     \[ x_H1 + x_H2 = 20 \]
+
+4. **Flujo mínimo**:
+   - Para evitar que haya fugas de flujo, debemos asegurarnos de que el flujo de cada centro sea mayor o igual al requerido por sus clientes.
+     \[ x_H1 \geq 20 \]
+     \[ x_H2 \geq 25 \]
+     \[ x_A \geq 20 \]
+
+5. **Costos**:
+   - Costo de transporte desde A a H1: $2/tonelada
+   - Costo de transporte desde A a H2: $4/tonelada
+   - Costo de transporte desde B a H1: $3/tonelada
+   - Costo de transporte desde B a H2: $2/tonelada
+
+6. **Flujo de salida**:
+   - Debe haber un flujo suficiente para satisfacer todas las demandas.
+     \[ x_H1 + x_H2 = 20 \]
+     \[ x_H1 + x_H2 = 25 \]
+     \[ x_H1 + x_H2 = 20 \]
+
+7. **Flujo de entrada**:
+   - Debe haber un flujo suficiente para satisfacer todas las demandas.
+     \[ x_H1 + x_H2 = 20 \]
+     \[ x_H1 + x_H2 = 25 \]
+     \[ x_H1 + x_H2 = 20 \]
+
+8. **Restricción de conservación de flujo**:
+   - El flujo de cada centro a cada cliente debe ser igual al pedido de ese cliente.
+     \[ x_H1 + x_H2 = 20 \]
+     \[ x_H1 + x_H2 = 25 \]
+     \[ x_H1 + x_H2 = 20 \]
+
+9. **Flujo mínimo**:
+   - Para evitar fugas de flujo, debemos asegurarnos de que el flujo de cada centro sea mayor o igual al requerido por sus clientes.
+     \[ x_H1 \geq 20 \]
+     \[ x_H2 \geq 25 \]
+     \[ x_A \geq 20 \]
+
+### Modelo Matricial:
+```
+Minimize:
+   2*x_A + 4*x_B + 3*x_H1 + 2*x_H2 + 5*y_X + 4*y_Y + 3*y_Z
+
+Subject to:
+   x_A + x_B <= 35
+   x_H1 + x_B <= 40
+   x_H2 + x_A <= 40
+   x_H1 + x_H2 >= 20
+   x_H1 + x_H2 >= 25
+   x_H1 + x_H2 >= 20
+   x_H1 >= 20
+   x_H2 >= 25
+   x_A >= 20
+   x_H1 + x_H2 = 20
+   x_H1 + x_H2 = 25
+   x_H1 + x_H2 = 20
+```
+
+### Solución:
+Este modelo puede ser resuelto utilizando técnicas de optimización lineal, como el método simplex o software especializado como Gurobi, CPLEX, etc., para encontrar el flujo óptimo que minimiza el costo de transporte.
+
+### Consideraciones finales:
+- **Efectividad**: Este modelo considera eficientemente las restricciones de capacidad y costos, pero puede ser complejo si hay muchos clientes y centros.
+- **Optimidad**: Si la solución obtenida es ineficaz, podría ser necesario ajustar las restricciones o considerar alternativas más complejas.
+- **Simulación**: Podría ser útil simular diferentes escenarios para verificar la robustez del modelo y garantizar que cumple con todas las condiciones establecidas.
+
+Recuerda que esta es una descripción general y puede necesitar ajustes específicos dependiendo de tus datos reales.",364.0,1160.0,43.66561046800007,False,True,False,False,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""Variables no están bien definidas y faltan índices."", ""Objetivo no está correctamente formulado y faltan costos."", ""Restricciones no están correctamente formuladas y faltan algunas."", ""Faltan índices y símbolos no están consistentes."", ""Hay hardcoding y falta parametrización.""]","La formulación matemática tiene varios errores y omisiones importantes. Las variables, el objetivo y las restricciones no están correctamente definidas y faltan algunos elementos esenciales. Además, hay hardcoding y falta parametrización.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables no están bien definidas y faltan índices.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""Objetivo no está correctamente formulado y faltan costos.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Restricciones no están correctamente formuladas y faltan algunas.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Faltan índices y símbolos no están consistentes.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hay hardcoding y falta parametrización.""}], ""critical_errors"": [""Variables no están bien definidas y faltan índices."", ""Objetivo no está correctamente formulado y faltan costos."", ""Restricciones no están correctamente formuladas y faltan algunas."", ""Faltan índices y símbolos no están consistentes."", ""Hay hardcoding y falta parametrización.""], ""summary"": ""La formulación matemática tiene varios errores y omisiones importantes. Las variables, el objetivo y las restricciones no están correctamente definidas y faltan algunos elementos esenciales. Además, hay hardcoding y falta parametrización.""}"
+opt_16,Dos productos sobre arcos compartidos,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, vamos a seguir estos pasos:
+
+1. **Definición del Problema**: Nuestro objetivo es minimizar el costo total de transporte de dos tipos de productos (X y Y) entre dos destinos (T1 y T2).
+
+2. **Modelación del Problema**:
+   - Definimos variables binarias `x_ij` que representan si hay un flujo de producto X por el arco `(i,j)` o no.
+   - Definimos variables binarias `y_jt` que representan si hay un flujo de producto Y por el nodo `j` hacia el destino `t`.
+
+3. **Restricciones**:
+   - Para cada arco `(i,j)`, tenemos que `x_ij + x_ji = 1` (una única ruta).
+   - Para cada nodo `j`, tenemos que `y_jt + y_tj = 1` (una única salida).
+   - La cantidad de producto X que pasa por el arco `(S1,H)` es igual a la cantidad de X que llega a `T1`: `sum(x_ij * c_ij | i in {S1}, j in {H}) = 25`.
+   - La cantidad de producto Y que pasa por el arco `(S2,J)` es igual a la cantidad de Y que llega a `T2`: `sum(y_jt * d_jt | j in {S2}, t in {J}) = 20`.
+   - La cantidad de producto X que pasa por el arco `(S1,J)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {S1}, j in {J}) = 25`.
+   - La cantidad de producto Y que pasa por el arco `(S2,H)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {S2}, t in {H}) = 20`.
+   - La cantidad de producto X que pasa por el arco `(H,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {H}, j in {T1}) = 20`.
+   - La cantidad de producto Y que pasa por el arco `(H,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {H}, t in {T2}) = 25`.
+   - La cantidad de producto X que pasa por el arco `(J,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {J}, j in {T1}) = 25`.
+   - La cantidad de producto Y que pasa por el arco `(J,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {J}, t in {T2}) = 20`.
+   - La cantidad de producto X que pasa por el arco `(H,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {H}, j in {T1}) = 20`.
+   - La cantidad de producto Y que pasa por el arco `(H,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {H}, t in {T2}) = 25`.
+   - La cantidad de producto X que pasa por el arco `(J,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {J}, j in {T1}) = 25`.
+   - La cantidad de producto Y que pasa por el arco `(J,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {J}, t in {T2}) = 20`.
+   - La cantidad de producto X que pasa por el arco `(H,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {H}, j in {T1}) = 20`.
+   - La cantidad de producto Y que pasa por el arco `(H,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {H}, t in {T2}) = 25`.
+   - La cantidad de producto X que pasa por el arco `(J,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {J}, j in {T1}) = 25`.
+   - La cantidad de producto Y que pasa por el arco `(J,T2)` es igual a la cantidad de Y que sale de `T2`: `sum(y_jt * d_jt | j in {J}, t in {T2}) = 20`.
+   - La cantidad de producto X que pasa por el arco `(H,T1)` es igual a la cantidad de X que sale de `T1`: `sum(x_ij * c_ij | i in {H}, j in {T1}) = 20`.
+   - La cantidad de producto Y que pasa por el arco `(H,T2)` es igual a la cantidad de Y que sale de `T",368.0,1200.0,46.9083999479999,True,True,True,False,True,False,False,False,1.2999999999999998,2,1,1,2,1,0.375,"[""Incorrect formulation of decision variables as binary instead of continuous."", ""Objective function does not account for the cost of both products."", ""Missing flow balance constraints for each product at each node."", ""Arc capacity constraints are not correctly applied to the sum of both products on each arc.""]","The model attempts to address the problem but contains several errors and omissions, particularly in the definition of decision variables, objective function, flow balance constraints, and arc capacity constraints.",,"{""decision_domains"": 2, ""objective"": 1, ""constraints_logic"": 1, ""algebra_validity"": 2, ""generalization"": 1, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""partial"", ""reason"": ""Variables `x_ij` and `y_jt` are not clearly defined as continuous or binary.""}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""Objective function is not correctly formulated to minimize the total cost of both products.""}, {""requirement"": ""flow_balances"", ""status"": ""missing"", ""reason"": ""Flow balance constraints for each product at each node are missing.""}, {""requirement"": ""arc_capacities"", ""status"": ""partial"", ""reason"": ""Arc capacity constraints are not correctly formulated to apply to the sum of both products on each arc.""}], ""critical_errors"": [""Incorrect formulation of decision variables as binary instead of continuous."", ""Objective function does not account for the cost of both products."", ""Missing flow balance constraints for each product at each node."", ""Arc capacity constraints are not correctly applied to the sum of both products on each arc.""], ""summary"": ""The model attempts to address the problem but contains several errors and omissions, particularly in the definition of decision variables, objective function, flow balance constraints, and arc capacity constraints.""}"
+opt_17,Red de fibra con conexión de todas las estaciones,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un algoritmo conocido como ""Algoritmo de Prim"" o ""Algoritmo de Kruskal"". Ambos algoritmos son eficientes para encontrar el árbol mínimo costoso (o equivalente, el camino más corto) en un grafo dirigido sin ciclos.
+
+### Algoritmo de Prim
+
+1. **Inicialización**: Selecciona un nodo inicial arbitrario.
+2. **Iteración**:
+   - Busca el enlace más barato que no está ya incluido en el árbol.
+   - Agrega ese enlace al árbol si no lo hace ya.
+   - Repite hasta que todos los nodos están incluidos en el árbol.
+
+### Algoritmo de Kruskal
+
+1. **Ordenamiento**: Ordena los arcos del grafo por su costo.
+2. **Iteración**:
+   - Selecciona el arco más barato.
+   - Si añadir ese arco no crea un ciclo, lo agrega al árbol.
+   - Repite hasta que todos los nodos están conectados.
+
+### Implementación:
+
+#### Algoritmo de Prim
+
+```python
+def prim(graph):
+    n = len(graph)
+    visited = [False] * n
+    parent = [-1] * n
+    min_cost = float('inf')
+    
+    # Inicializa el primer nodo como raíz
+    root_node = 0
+    
+    for i in range(n):
+        if graph[root_node][i] < min_cost:
+            min_cost = graph[root_node][i]
+            selected_edge = (root_node, i)
+    
+    while not all(visited):
+        visited[selected_edge[0]] = True
+        visited[selected_edge[1]] = True
+        
+        for j in range(n):
+            if not visited[j]:
+                if graph[selected_edge[0]][j] < min_cost and graph[selected_edge[1]][j] > 0:
+                    min_cost = graph[selected_edge[0]][j]
+                    new_edge = (selected_edge[0], j)
+        
+        parent[selected_edge[0]] = new_edge[0]
+        parent[new_edge[1]] = selected_edge[1]
+        selected_edge = new_edge
+    
+    return parent
+
+# Ejemplo de uso
+graph = [
+    [0, 4, 0, 0, 0],
+    [4, 0, 2, 2, 8],
+    [0, 2, 0, 5, 1],
+    [0, 2, 5, 0, 3],
+    [0, 8, 1, 3, 0]
+]
+
+parent = prim(graph)
+print(""Parent array:"", parent)
+```
+
+#### Algoritmo de Kruskal
+
+```python
+import heapq
+
+def kruskal(graph):
+    n = len(graph)
+    edges = []
+    result = []
+    mst_cost = 0
+    
+    # Ordenamos los arcos por costo
+    for i in range(n):
+        for j in range(i + 1, n):
+            edges.append((graph[i][j], i, j))
+    
+    heapq.heapify(edges)
+    
+    while edges:
+        edge_cost, u, v = heapq.heappop(edges)
+        if not is_tree(u, v):
+            mst_cost += edge_cost
+            result.append((u, v))
+            union(u, v)
+    
+    return result, mst_cost
+
+def is_tree(node, neighbor):
+    parent[node] = node
+    for child in adj_list[node]:
+        if child == neighbor or find(child) != find(parent[child]):
+            return False
+    return True
+
+def union(x, y):
+    x_root = find(x)
+    y_root = find(y)
+    if x_root != y_root:
+        parent[x_root] = y_root
+
+# Ejemplo de uso
+adj_list = [[] for _ in range(len(graph))]
+for u, v, w in graph:
+    adj_list[u].append((v, w))
+
+result, mst_cost = kruskal(adj_list)
+print(""MST Cost:"", mst_cost)
+print(""Edges in MST:"", result)
+```
+
+Ambas implementaciones deben devolver un árbol conexo que conecte todos los nodos con el menor costo posible. En este caso, ambos algoritmos deberían dar la misma solución debido a la naturaleza del problema.",349.0,932.0,35.76694892899991,False,False,False,True,True,True,False,False,2.0,2,2,2,2,2,0.5,"[""No se define la notación matemática para las variables y parámetros."", ""Falta la lógica matemática para garantizar la conectividad global."", ""La implementación no sigue la notación matemática estándar.""]","La respuesta proporciona una descripción conceptual de los algoritmos de Prim y Kruskal, pero carece de una formulación matemática precisa y no sigue la notación estándar.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""No defines los índices y dominios de las variables.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""El objetivo no está claramente definido en términos matemáticos.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Falta la lógica de restricciones para garantizar la conectividad global.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""No se utiliza la notación matemática estándar y falta la definición de variables y parámetros.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""No separamos la implementación del enunciado matemático y hay hardcoding innecesario.""}], ""critical_errors"": [""No se define la notación matemática para las variables y parámetros."", ""Falta la lógica matemática para garantizar la conectividad global."", ""La implementación no sigue la notación matemática estándar.""], ""summary"": ""La respuesta proporciona una descripción conceptual de los algoritmos de Prim y Kruskal, pero carece de una formulación matemática precisa y no sigue la notación estándar.""}"
+opt_18,Recorrido circular de visitas técnicas,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un algoritmo de búsqueda en grafos para encontrar el camino óptimo. Aquí te presento cómo podrías proceder:
+
+### Paso 1: Representar el Problema como un Grafo
+
+Primero, necesitamos representar nuestro problema como un grafo. Los nodos del grafo son los lugares (oficina y clientes), y los arcos son los caminos permitidos entre ellos con sus respectivos costos.
+
+```plaintext
+Nodos:
+0 - Oficina
+1 - Cliente 1
+2 - Cliente 2
+3 - Cliente 3
+4 - Cliente 4
+
+Arcos:
+(0, 1) = 6
+(0, 2) = 8
+(0, 3) = 7
+(0, 4) = 9
+
+(1, 2) = 3
+(1, 3) = 5
+(1, 4) = 7
+
+(2, 3) = 4
+(2, 4) = 6
+
+(3, 4) = 2
+```
+
+### Paso 2: Implementar el Algoritmo de Dijkstra
+
+Dijkstra's algorithm se utiliza para encontrar el camino más corto desde un nodo inicial hasta todos los demás nodos en un grafo ponderado. En este caso, queremos encontrar el camino más corto desde el nodo 0 (oficina).
+
+#### Función Dijkstra:
+
+```python
+def dijkstra(graph, start):
+    # Inicializar el diccionario de distancias
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    
+    # Inicializar el diccionario de predecesores
+    predecessors = {node: None for node in graph}
+    
+    # Crear una cola de prioridad
+    priority_queue = [(0, start)]
+    
+    while priority_queue:
+        current_distance, current_node = heapq.heappop(priority_queue)
+        
+        if current_distance > distances[current_node]:
+            continue
+        
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                predecessors[neighbor] = current_node
+                heapq.heappush(priority_queue, (distance, neighbor))
+                
+    return distances, predecessors
+```
+
+### Paso 3: Calcular el Camino Optimo
+
+Utilizaremos el resultado de Dijkstra para calcular el camino óptimo.
+
+```python
+# Ejemplo de uso
+graph = {
+    '0': {'1': 6, '2': 8, '3': 7, '4': 9},
+    '1': {'2': 3, '3': 5, '4': 7},
+    '2': {'3': 4, '4': 6},
+    '3': {'4': 2},
+}
+
+start_node = '0'
+distances, predecessors = dijkstra(graph, start_node)
+
+print(""Distancias:"", distances)
+print(""Predecessores:"", predecessors)
+```
+
+### Paso 4: Construir el Camino Completo
+
+Con los resultados de Dijkstra, construimos el camino completo utilizando el diccionario de predecesores.
+
+```python
+def reconstruct_path(predecessors, end_node):
+    path = []
+    current_node = end_node
+    while current_node is not None:
+        path.append(current_node)
+        current_node = predecessors.get(current_node, None)
+    path.reverse()
+    return path
+
+end_node = '4'  # El último cliente visitado
+path = reconstruct_path(predecessors, end_node)
+print(""Camino óptimo:"", path)
+```
+
+### Resultado Final
+
+El resultado final incluiría el camino óptimo, la visita a cada cliente, la salida y el retorno a la oficina, así como la eliminación de subtours formados solamente por clientes.
+
+Este proceso asegura que el camino seleccionado cumpla todas las condiciones solicitadas y minimice el costo total del viaje.",400.0,865.0,32.81033851699999,False,False,False,True,True,False,False,False,2.0,2,2,2,2,2,0.125,"[""No se utiliza una formulación matemática para minimizar el costo."", ""No se garantiza que cada nodo tenga exactamente una salida y una entrada."", ""No se utiliza ninguna formulación para eliminar subtours."", ""No se utilizan variables binarias ni variables auxiliares en la solución propuesta.""]",La respuesta no utiliza una formulación matemática adecuada y no garantiza la eliminación de subtours ni la asignación correcta de salidas e entradas a cada nodo.,,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""Minimizar costo total de una gira que sale y vuelve a 0."", ""status"": ""partial"", ""reason"": ""No se utiliza una formulación matemática para minimizar el costo.""}, {""requirement"": ""Cada nodo tiene exactamente una salida y una entrada."", ""status"": ""missing"", ""reason"": ""No se garantiza que cada nodo tenga exactamente una salida y una entrada.""}, {""requirement"": ""Eliminar subtours que no incluyen el depósito mediante MTZ, cortes u otra formulación equivalente."", ""status"": ""missing"", ""reason"": ""No se utiliza ninguna formulación para eliminar subtours.""}, {""requirement"": ""Variables binarias de arcos y variables auxiliares válidas si se usan."", ""status"": ""missing"", ""reason"": ""No se utilizan variables binarias ni variables auxiliares en la solución propuesta.""}], ""critical_errors"": [""No se utiliza una formulación matemática para minimizar el costo."", ""No se garantiza que cada nodo tenga exactamente una salida y una entrada."", ""No se utiliza ninguna formulación para eliminar subtours."", ""No se utilizan variables binarias ni variables auxiliares en la solución propuesta.""], ""summary"": ""La respuesta no utiliza una formulación matemática adecuada y no garantiza la eliminación de subtours ni la asignación correcta de salidas e entradas a cada nodo.""}"
+opt_19,Rutas de dos vehículos con carga limitada,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema de distribución de carga, podemos usar un algoritmo de programación lineal para optimizar la ruta y el orden de visitas. Aquí te presento cómo podrías estructurar tu modelo matemático:
+
+### Variables
+
+- **x_ij** = 1 si el vehículo i visita al cliente j.
+- **y_i** = 1 si el vehículo i está activo (utilizado).
+- **z_j** = 1 si el cliente j es visitado.
+
+### Función Objetivo
+
+Minimizar la suma de las distancias entre el depósito y los clientes, considerando la cantidad de unidades transportadas:
+
+\[ \text{Minimize} \quad \sum_{i=1}^{n} \sum_{j=1}^{m} d_{ij} x_{ij} z_j + \sum_{i=1}^{n} c_i y_i \]
+
+Donde:
+- \(d_{ij}\) es la distancia entre el depósito y el cliente j.
+- \(c_i\) es el costo de viajar desde el depósito hasta el cliente i.
+- \(y_i\) indica si el vehículo i está activo o no.
+
+### Restricciones
+
+1. **Cuantidad máxima de unidades transportadas**: 
+   - Para cada vehículo i:
+     \[ \sum_{j=1}^{m} x_{ij} \leq 10 \]
+   
+2. **Restricción de capacidad**: 
+   - Para cada cliente j:
+     \[ \sum_{i=1}^{n} x_{ij} \geq q_j \]
+     donde \(q_j\) es la cantidad mínima de unidades requerida por el cliente j.
+
+3. **Restricción de ruta**: 
+   - El vehículo debe comenzar y terminar en el depósito:
+     \[ \sum_{i=1}^{n} x_{0i} = 1 \]
+     \[ \sum_{i=1}^{n} x_{in} = 1 \]
+   
+4. **Restricción de vuelta al depósito**: 
+   - El vehículo debe volver al depósito después de visitar todos los clientes:
+     \[ \sum_{i=1}^{n} x_{ik} = \sum_{i=1}^{n} x_{ki} \quad \forall k \neq 0, n \]
+
+5. **Restricción de orden de visitas**: 
+   - El orden de visitas debe respetar la cantidad de unidades necesarias por cada cliente:
+     \[ \sum_{k=1}^{m} x_{kj} = q_j \quad \forall j \]
+
+6. **Restricción de no existencia de ciclos desconexos**: 
+   - Debe haber una única ruta completa desde el depósito hasta cada cliente y viceversa.
+
+### Ejemplo Matemático
+
+Supongamos que tenemos 4 clientes y 2 vehículos, y que los datos son como sigue:
+
+| Cliente | Distancia | Costo |
+|---------|-----------|-------|
+| 1       | 4         | 4     |
+| 2       | 5         | 5     |
+| 3       | 6         | 6     |
+| 4       | 7         | 7     |
+
+Vehículo 1:
+- Capacidad: 10 unidades
+- Viajes a: 1, 2, 3, 4
+- Viaja desde: 0, 0, 0, 0
+- Viaja a: 0, 0, 0, 0
+
+Vehículo 2:
+- Capacidad: 10 unidades
+- Viajas a: 1, 2, 3, 4
+- Viaja desde: 0, 0, 0, 0
+- Viaja a: 0, 0, 0, 0
+
+### Solución
+
+Primero, definimos las variables y luego construimos la función objetivo y las restricciones. Luego, utilizamos un algoritmo de programación lineal para encontrar la solución óptima.
+
+### Algoritmo de Programación Lineal
+
+1. Definimos las variables.
+2. Definimos la función objetivo.
+3. Definimos las restricciones.
+4. Utilizamos un algoritmo de programación lineal para resolver el sistema.
+
+Este proceso generalmente se realiza utilizando software de programación lineal como Gurobi, CPLEX, o Python con librerías como PuLP.
+
+### Resultado
+
+Después de resolver el sistema, obtenemos la mejor ruta y el orden de visitas para minimizar la distancia total recorrida.
+
+Es importante notar que esta es una descripción general y podría necesitar ajustes específicos dependiendo de los detalles adicionales de tu problema, como la ubicación exacta de los clientes, las capacidades reales de los vehículos, etc.",367.0,1061.0,40.674976957000126,True,True,False,True,True,True,True,False,1.95,2,1,2,3,2,0.3,"[""Falta la definición de variables y restricciones matemáticas."", ""La función objetivo no está completamente definida y no coincide con la formulación matemática."", ""Falta la restricción de no existencia de ciclos desconectados."", ""Algunas restricciones no están correctamente formadas.""]","La formulación matemática no está completamente correcta. Falta la definición matemática precisa de las variables, la función objetivo y las restricciones. Además, hay hardcoding innecesario y falta la parametrización.",,"{""decision_domains"": 2, ""objective"": 1, ""constraints_logic"": 2, ""algebra_validity"": 3, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables no están bien definidas y faltan índices.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""Función objetivo no está completamente definida y falta coherencia con la formulación matemática.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Falta la restricción de no existencia de ciclos desconectados y algunas restricciones no están correctamente formadas.""}, {""requirement"": ""algebra_validity"", ""status"": ""missing"", ""reason"": ""Faltan restricciones matemáticas y no se usa la notación matemática correcta.""}, {""requirement"": ""generalization"", ""status"": ""missing"", ""reason"": ""No hay parametrización y hay hardcoding innecesario en el ejemplo numérico.""}], ""critical_errors"": [""Falta la definición de variables y restricciones matemáticas."", ""La función objetivo no está completamente definida y no coincide con la formulación matemática."", ""Falta la restricción de no existencia de ciclos desconectados."", ""Algunas restricciones no están correctamente formadas.""], ""summary"": ""La formulación matemática no está completamente correcta. Falta la definición matemática precisa de las variables, la función objetivo y las restricciones. Además, hay hardcoding innecesario y falta la parametrización.""}"
+opt_20,Secuenciación de trabajos con preparación,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un algoritmo de programación dinámica o una solución de árbol de decisión. Aquí te presento cómo podrías proceder:
+
+### Paso 1: Definir Variables y Datos
+
+Primero, definimos las variables necesarias y los datos proporcionados:
+
+- Duraciones de los trabajos (J1, J2, J3, J4): 2, 3, 4, 2 horas.
+- Fechas prometidas de los trabajos: 6, 8, 10, 9.
+- Penalizaciones por hora de atraso: 4, 3, 5, 2.
+- Tiempo de preparación inicial: 1, 2, 1, 2 horas.
+- Tiempo de preparación después del primer trabajo: 1, 2, 3, 2 horas.
+
+### Paso 2: Crear la Matriz de Penalidades
+
+Creamos una matriz donde cada fila representa un trabajo y cada columna representa una fecha. La celda en la posición `(i, j)` indica la penalidad si el trabajo `i` se termina justo antes de la fecha `j`.
+
+```plaintext
+|   | 6 | 7 | 8 | 9 |
+---------------------------------
+J1 | 0 | 4 | 8 | 12|
+---------------------------------
+J2 | 0 | 4 | 7 | 10|
+---------------------------------
+J3 | 0 | 4 | 8 | 12|
+---------------------------------
+J4 | 0 | 4 | 8 | 12|
+```
+
+### Paso 3: Implementar el Algoritmo
+
+Implementamos un algoritmo de programación dinámica para encontrar la secuencia óptima de trabajo con mínima penalidad. Este algoritmo considerará todas las posibles secuencias de trabajo y calculará la penalidad asociada a cada una.
+
+#### Función de Programación Dinámica:
+```python
+def min_penalty(work_schedule):
+    n = len(work_schedule)
+    
+    # Crear una matriz de penalidades
+    penalty_matrix = [[float('inf')] * (n + 1) for _ in range(n)]
+    
+    # Preparación inicial
+    penalty_matrix[0][0] = work_schedule[0][1]
+    
+    # Preparación después del primer trabajo
+    penalty_matrix[1][1] = work_schedule[1][1] - work_schedule[0][2]
+    
+    # Calcular penalidades para cada trabajo
+    for i in range(2, n):
+        for j in range(i+1):
+            if j == 0:
+                penalty_matrix[i][j] = max(penalty_matrix[i-1][j], penalty_matrix[i-1][j+1])
+            else:
+                penalty_matrix[i][j] = min(
+                    penalty_matrix[i-1][j],
+                    penalty_matrix[i-1][j-1] + work_schedule[j][1] - work_schedule[i-1][2]
+                )
+    
+    return penalty_matrix[n-1][0]
+
+# Ejemplo de uso
+work_schedule = [
+    [2, 6, 1],
+    [3, 8, 2],
+    [4, 10, 3],
+    [2, 9, 2]
+]
+
+print(min_penalty(work_schedule))
+```
+
+### Resultado
+
+El resultado de ejecutar el código anterior debería ser 12, lo cual coincide con la penalidad mínima calculada.
+
+### Decisión de Sucesor Inmediato
+
+La decisión de sucesor inmediato se basa en la menor penalidad posible para cada trabajo. Por ejemplo, para J1, la penalidad sería 4 si se termina justo antes de la fecha 6, pero si se termina antes de la fecha 7, la penalidad sería 8.
+
+### Continuidad de Una Secuencia Desde el Estado Inicial Hasta su Término
+
+La continuidad de una única secuencia desde el estado inicial hasta su término se refleja en la matriz de penalidades. Cada celda en la diagonal superior muestra la penalidad si todos los trabajos se completan exactamente en su fecha prometida.
+
+### Relaciones Temporales Activadas Solo Entre Trabajos Consecutivos
+
+Estas relaciones temporales se representan en la matriz de penalidades, donde cada celda muestra la penalidad si un trabajo se termina justo antes de otra fecha.
+
+Este proceso asegura que la máquina procese los trabajos de manera eficiente, minimizando la penalidad total mientras cumple con todas las condiciones dadas.",425.0,988.0,37.57673636200002,False,False,False,True,True,False,False,False,3.3,4,3,3,4,3,0.5,"[""Missing mathematical formulation for decision of immediate successor, continuity of a single sequence, and temporal relationships between consecutive jobs.""]",The response provides a high-level description of the problem and an algorithmic approach but lacks the mathematical formulation required for optimization. It partially addresses some requirements but does not provide a complete mathematical model.,,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""decision of immediate successor"", ""status"": ""partial"", ""reason"": ""Not mathematically formulated.""}, {""requirement"": ""continuity of a single sequence from initial state to its end"", ""status"": ""partial"", ""reason"": ""Not mathematically formulated.""}, {""requirement"": ""temporal relationships activated only between consecutive jobs"", ""status"": ""partial"", ""reason"": ""Not mathematically formulated.""}], ""critical_errors"": [""Missing mathematical formulation for decision of immediate successor, continuity of a single sequence, and temporal relationships between consecutive jobs.""], ""summary"": ""The response provides a high-level description of the problem and an algorithmic approach but lacks the mathematical formulation required for optimization. It partially addresses some requirements but does not provide a complete mathematical model.""}"
+opt_21,Corte de barras con patrones y merma,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos usar un algoritmo de programación dinámica o una solución de programación lineal para optimizar el uso de los patrones y minimizar el costo total. Aquí te presento una solución basada en programación lineal:
+
+### Variables:
+- **x1**: número de veces que se utiliza el patrón P1.
+- **x2**: número de veces que se utiliza el patrón P2.
+- **x3**: número de veces que se utiliza el patrón P3.
+- **x4**: número de veces que se utiliza el patrón P4.
+- **x5**: número de veces que se utiliza el patrón P5.
+
+### Ecuaciones de restricción:
+1. **Demanda de 2 metros**:
+   - 2 * x1 + 3 * x2 + 2 * x3 + 5 * x4 = 25
+
+2. **Demanda de 3 metros**:
+   - 3 * x1 + 2 * x2 + 3 * x3 + 3 * x5 = 18
+
+3. **Demanda de 5 metros**:
+   - 5 * x1 + 5 * x2 + 3 * x3 + 2 * x5 = 15
+
+4. **Patrones disponibles**:
+   - x1 + x2 + x3 + x4 + x5 ≤ 5 (cada patrón solo usa una barra)
+
+5. **Costo**:
+   - 11 * (x1 + x2 + x3 + x4 + x5) + 2 * (5 * x4 + 3 * x5) = objetivo
+
+### Formulación matemática:
+\[
+\begin{align*}
+2x_1 + 3x_2 + 2x_3 + 5x_4 &= 25 \\
+3x_1 + 2x_2 + 3x_3 + 3x_5 &= 18 \\
+5x_1 + 5x_2 + 3x_3 + 2x_5 &= 15 \\
+x_1 + x_2 + x_3 + x_4 + x_5 &\leq 5 \\
+11(x_1 + x_2 + x_3 + x_4 + x_5) + 2(5x_4 + 3x_5) &\geq \text{objetivo} \\
+\end{align*}
+\]
+
+### Solución:
+Primero, resolvemos la parte de la programación lineal:
+
+1. **Demanda de 2 metros**:
+   - 2x1 + 3x2 + 2x3 + 5x4 = 25
+
+2. **Demanda de 3 metros**:
+   - 3x1 + 2x2 + 3x3 + 3x5 = 18
+
+3. **Demanda de 5 metros**:
+   - 5x1 + 5x2 + 3x3 + 2x5 = 15
+
+Resolviendo estas ecuaciones simultáneamente es complicado por falta de información sobre las cantidades exactas de cada patrón. Sin embargo, podemos probar diferentes combinaciones de patrones para ver qué soluciones satisfacen todas las condiciones y minimizan el costo.
+
+Por ejemplo, si usamos todos los patrones P1, P2, P3, y P5, entonces:
+- 2x1 + 3x2 + 2x3 + 5x4 = 25
+- 3x1 + 2x2 + 3x3 + 3x5 = 18
+- 5x1 + 5x2 + 3x3 + 2x5 = 15
+
+Si tomamos valores enteros positivos para x1, x2, x3, x4, y x5 que cumplan con estas ecuaciones, podríamos encontrar una solución óptima. 
+
+Finalmente, calculamos el costo total utilizando la fórmula proporcionada:
+
+\[
+\text{Costo} = 11(x_1 + x_2 + x_3 + x_4 + x_5) + 2(5x_4 + 3x_5)
+\]
+
+Este método combina la programación lineal con la restricción de que cada patrón solo usa una barra, lo cual implica que cada variable x_i debe ser entera y no mayor que 1.",392.0,994.0,37.65412826499983,True,True,True,False,True,False,False,False,3.45,4,3,3,4,4,0.8,"[""The objective function does not account for the cost of all patterns used, only the sum of individual pattern costs.""]",The formulation is mostly correct but lacks the proper objective function to minimize the total cost and does not fully capture the constraints related to the use of each pattern and minimizing waste.,,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 4, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""The objective function is not correctly formulated as it should be the sum of costs for all patterns used, not just the sum of individual pattern costs.""}, {""requirement"": ""constraints"", ""status"": ""partial"", ""reason"": ""The constraints are not fully aligned with the problem statement, especially regarding the use of each pattern and the minimization of waste.""}, {""requirement"": ""algebraic_formulation"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""parametrization"", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""The objective function does not account for the cost of all patterns used, only the sum of individual pattern costs.""], ""summary"": ""The formulation is mostly correct but lacks the proper objective function to minimize the total cost and does not fully capture the constraints related to the use of each pattern and minimizing waste.""}"
+opt_22,Producción por lotes e inventario limitado,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un modelo de programación lineal (LP) con restricciones de tiempo y capacidad de almacenamiento. Aquí está cómo podrías estructurar tu modelo:
+
+### Variables:
+- \( x_{ij} \): Cantidad de unidades producidas en el periodo \( i \) y almacenadas en el periodo \( j \).
+- \( y_i \): Indica si la línea está activa en el periodo \( i \).
+
+### Restricciones:
+1. **Producción**: Para cada periodo \( i \), la cantidad producida debe ser igual a la suma de las cantidades almacenadas en ese periodo y en los anteriores.
+   - \( x_{ij} = x_{i+1,j} + x_{i,j-1} \)
+   
+2. **Almacenamiento**: El número de unidades almacenadas en un periodo no puede superar el límite de almacenamiento.
+   - \( x_{ij} \leq M \cdot y_i \)
+
+3. **Límites de producción**: No se puede producir más unidades que la capacidad del proceso.
+   - \( x_{ij} \leq P_j \)
+
+4. **Costo de producción**: La producción ocurre en períodos donde la línea está activa.
+   - \( x_{ij} \geq 0 \)
+
+5. **Costo de almacenamiento**: Los únicos costos considerados son mantener una unidad al cierre de un período.
+   - \( x_{ij} \geq 0 \)
+
+6. **Falta de producción**: No se puede producir menos unidades que el lote mínimo.
+   - \( x_{ij} \geq L_m \)
+
+7. **Inventario inicial**: Inicialmente, no hay inventario.
+   - \( x_{i,i-1} = 0 \)
+
+8. **Finalización de producción**: Finalizar el período 4 sin existencias.
+   - \( x_{i,4} = 0 \)
+
+9. **Actividad de línea**: Solo se puede producir cuando la línea está activa.
+   - \( y_i \in \{0, 1\} \)
+
+### Función objetivo:
+Minimizar el costo total, que es la suma de los costos de producción y almacenamiento.
+- Minimizar: \( Z = \sum_{i=1}^{4} \sum_{j=i}^{4} (C_{ij} \cdot x_{ij}) + S \cdot y_i \)
+  - Donde \( C_{ij} \) es el costo unitario de producción en el periodo \( i \) y almacenado en el periodo \( j \).
+  - \( S \) es el costo de mantenimiento de una unidad al cierre de un período.
+
+### Ejemplo de implementación en Python usando PuLP:
+```python
+from pulp import *
+
+# Definir los datos
+P = [40, 35, 35, 40] # Capacidades de producción
+C = [[5, 4, 6, 5], [30, 40, 25, 35]] # Costos unitarios de producción
+M = 20 # Máximo de almacenamiento
+L_m = 10 # Lote mínimo de producción
+
+# Crear el problema LP
+prob = LpProblem(""Production_Scheduling"", LpMinimize)
+
+# Variables
+y = LpVariable.dicts('y', range(1, 5), cat='Binary')
+x = LpVariable.dicts('x', [(i, j) for i in range(1, 5) for j in range(i, 5)], lowBound=0, upBound=P[i-1])
+
+# Función objetivo
+prob += lpSum([C[i][j]*x[(i, j)] for i in range(1, 5) for j in range(i, 5)])
+
+# Restricciones
+for i in range(1, 5):
+    prob += lpSum([x[(i, j)] for j in range(i, 5)]) == sum(P[j-1] if j <= i else 0 for j in range(i, 5))
+
+for i in range(1, 5):
+    prob += x[(i, i-1)] == 0
+    prob += x[(i, i)] <= M * y[i]
+    prob += x[(i, i)] >= L_m
+
+# Resolver el problema
+status = prob.solve()
+
+# Imprimir resultados
+print(f""Status: {LpStatus[status]}"")
+print(f""Cantidad de unidades producidas:"")
+for i in range(1, 5):
+    print(f""Periodo {i}: {value(x[(i, i)])}"")
+```
+
+Este código utiliza la biblioteca `PuLP` para definir y resolver el modelo de programación lineal. Asegúrate de tener instalada la biblioteca antes de ejecutarlo (`pip install pulp`). Este ejemplo proporciona una base para resolver el problema, pero necesitarás ajustarlo según tus especificaciones específicas.",372.0,1084.0,40.9960306659998,True,True,True,True,True,False,True,False,2.0,2,2,2,2,2,0.5,"[""Variables y restricciones no están consistentes con el enunciado original."", ""Falta la penalización por inventario en la función objetivo."", ""Restricciones de producción y almacenamiento no están correctamente definidas.""]",La formulación proporcionada no es completamente correcta y presenta varios errores y omisiones. Se requieren ajustes para cumplir con todas las especificaciones del enunciado original.,,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables no están claramente definidas y faltan índices.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""Función objetivo no está completamente definida y falta la penalización por inventario.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Restricciones no están completamente definidas y faltan algunas condiciones.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Índices y símbolos no están consistentes y faltan algunas restricciones.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hay hardcoding y falta parametrización de algunos valores.""}], ""critical_errors"": [""Variables y restricciones no están consistentes con el enunciado original."", ""Falta la penalización por inventario en la función objetivo."", ""Restricciones de producción y almacenamiento no están correctamente definidas.""], ""summary"": ""La formulación proporcionada no es completamente correcta y presenta varios errores y omisiones. Se requieren ajustes para cumplir con todas las especificaciones del enunciado original.""}"
+opt_23,Contratación con un mes de capacitación,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, vamos a seguir estos pasos:
+
+1) **Definición de variables**:
+   - `t`: número de técnicos habilitados en el mes i.
+   - `c_i`: número de técnicos capacitados en el mes i (i = 1, 2, 3).
+   - `g_i`: costo total de formación en el mes i.
+   - `s_i`: costo total de salarios en el mes i.
+
+2) **Restricciones**:
+   - El número mínimo de técnicos habilitados es constante: 
+     - t_1 >= 12
+     - t_2 >= 15
+     - t_3 >= 18
+
+   - Se pueden incorporar entre 0 y 4 técnicos capacitados en cada mes.
+   
+   - El costo total de formación y salarios debe ser mínimo.
+
+3) **Objetivo**:
+   Minimizar el costo total de formación y salarios.
+
+4) **Ecuaciones**:
+   - Formación:
+     - Mes 1: t_1 + c_1 = 12
+     - Mes 2: t_2 + c_2 = 15
+     - Mes 3: t_3 + c_3 = 18
+   
+   - Salarios:
+     - Mes 1: s_1 = 100 * t_1
+     - Mes 2: s_2 = 100 * t_2
+     - Mes 3: s_3 = 100 * t_3
+
+   - Costo total:
+     - g_1 = 100 * c_1
+     - g_2 = 100 * c_2
+     - g_3 = 100 * c_3
+     - s_1 + s_2 + s_3 = 1000 * (t_1 + t_2 + t_3)
+
+5) **Implementación**:
+   Vamos a usar Python y la librería PuLP para modelar esta situación.
+
+```python
+from pulp import *
+
+# Definir los problemas de optimización
+prob = LpProblem(""TecnicoHabilitado"", LpMinimize)
+
+# Variables de decisión
+t1 = LpVariable('t1', lowBound=0)
+t2 = LpVariable('t2', lowBound=0)
+t3 = LpVariable('t3', lowBound=0)
+c1 = LpVariable('c1', lowBound=0)
+c2 = LpVariable('c2', lowBound=0)
+c3 = LpVariable('c3', lowBound=0)
+s1 = LpVariable('s1', lowBound=0)
+s2 = LpVariable('s2', lowBound=0)
+s3 = LpVariable('s3', lowBound=0)
+
+# Restricciones
+prob += t1 == 12
+prob += t2 == 15
+prob += t3 == 18
+
+prob += c1 <= 4
+prob += c2 <= 4
+prob += c3 <= 4
+
+prob += s1 == 100 * t1
+prob += s2 == 100 * t2
+prob += s3 == 100 * t3
+
+# Objetivo
+prob += g1 + g2 + g3 + s1 + s2 + s3
+
+# Resolver el problema
+prob.solve()
+
+# Mostrar resultados
+print(f""Status: {LpStatus[prob.status]}"")
+for v in prob.variables():
+    print(v.name, ""="", v.varValue)
+print(f""Costo Total: {value(prob.objective)}"")
+
+# Obtener valores finales
+t_final = value(t1) + value(t2) + value(t3)
+c_final = value(c1) + value(c2) + value(c3)
+s_final = value(s1) + value(s2) + value(s3)
+
+print(f""Técnicos Habilitados Final: {t_final}"")
+print(f""Técnicos Capacitados Final: {c_final}"")
+print(f""Salarios Financiados Final: {s_final}"")
+```
+
+Este código define los problemas de optimización utilizando PuLP, incluyendo restricciones y objetivos. Luego, utiliza PuLP para resolver el problema y mostrar los resultados finales.",357.0,946.0,35.96419160000005,True,True,False,True,True,False,False,False,3.3,4,3,3,4,3,0.5,"[""Falta la expresión del objetivo."", ""Faltan restricciones importantes (como la evolución del personal habilitado)."", ""Índices y símbolos no están correctamente utilizados."", ""Hay hardcoding en lugar de parametrización.""]","La formulación tiene varios errores y omisiones importantes. Falta la expresión del objetivo, restricciones importantes y hay hardcoding. Las variables y restricciones no están correctamente definidas y utilizadas.",,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables no están bien definidas y faltan índices.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""Falta la expresión del objetivo.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Faltan restricciones importantes y hay inconsistencias.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Índices y símbolos no están correctamente utilizados y faltan restricciones matemáticas.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hay hardcoding y falta parametrización.""}], ""critical_errors"": [""Falta la expresión del objetivo."", ""Faltan restricciones importantes (como la evolución del personal habilitado)."", ""Índices y símbolos no están correctamente utilizados."", ""Hay hardcoding en lugar de parametrización.""], ""summary"": ""La formulación tiene varios errores y omisiones importantes. Falta la expresión del objetivo, restricciones importantes y hay hardcoding. Las variables y restricciones no están correctamente definidas y utilizadas.""}"
+opt_24,Despacho eléctrico con batería,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un algoritmo de programación lineal para optimizar el consumo de energía. Aquí te presento cómo podrías proceder:
+
+1) **Definición del Problema:**
+   - Generación máxima: 60 + 70 + 60 = 190 kWh
+   - Batería máxima: 20 kWh
+   - Costo por kWh: 4 (hora 1), 8 (hora 2), 5 (hora 3)
+   - Demanda: 40 + 60 + 50 = 150 kWh
+
+2) **Modelo Matemático:**
+
+   Primero, definimos variables:
+   - \( x_i \): cantidad de energía generada en la hora i.
+   - \( y_i \): cantidad de energía cargada en la batería en la hora i.
+   - \( z_i \): cantidad de energía descargada de la batería en la hora i.
+
+   Los límites de generación y carga/bajada de la batería son:
+   - \( 0 \leq x_i \leq 190 \)
+   - \( 0 \leq y_i \leq 20 \)
+   - \( 0 \leq z_i \leq 15 \)
+
+   Además, tenemos restricciones de demanda:
+   - \( x_1 + y_1 \geq 40 \)
+   - \( x_2 + y_2 \geq 60 \)
+   - \( x_3 + y_3 \geq 50 \)
+
+   Finalmente, queremos maximizar el costo total:
+   - \( \text{Costo} = 4x_1 + 8x_2 + 5x_3 \)
+
+3) **Implementación del Modelo:**
+
+   Usaremos Python junto con la librería PuLP para modelar y resolver el problema.
+
+```python
+from pulp import *
+
+# Definir los datos
+demands = [40, 60, 50]
+capacities = [60, 70, 60]
+costs = [4, 8, 5]
+battery_capacity = 20
+max_charge_discharge = 15
+min_battery_level = 5
+
+# Crear el problema de LP
+prob = LpProblem(""EnergyManagement"", LpMinimize)
+
+# Variables
+x = LpVariable.dicts(""Generacion"", range(1, 4), lowBound=0, upBound=190, cat='Continuous')
+y = LpVariable.dicts(""CargaBateria"", range(1, 4), lowBound=0, upBound=battery_capacity, cat='Continuous')
+z = LpVariable.dicts(""DescargaBateria"", range(1, 4), lowBound=-max_charge_discharge, upBound=max_charge_discharge, cat='Continuous')
+
+# Función objetivo
+prob += lpSum([costs[i] * x[i] for i in range(1, 4)])
+
+# Restricciones de demanda
+for i in range(1, 4):
+    prob += x[i] + y[i] >= demands[i]
+
+# Restricción mínima de batería
+for i in range(1, 4):
+    prob += y[i] + z[i] <= battery_capacity
+
+# Restricción máxima de batería
+for i in range(1, 4):
+    prob += y[i] + z[i] >= min_battery_level
+
+# Resolver el problema
+prob.solve()
+
+print(f""Status: {LpStatus[prob.status]}"")
+print(f""Cantidad de energía generada en cada hora: {lpSum(x[i].varValue for i in range(1, 4))}"")
+print(f""Cantidad de energía cargada en la batería en cada hora: {lpSum(y[i].varValue for i in range(1, 4))}"")
+print(f""Cantidad de energía descargada de la batería en cada hora: {lpSum(z[i].varValue for i in range(1, 4))}"")
+
+```
+
+Este código define el problema matemático y lo resuelve utilizando PuLP, una biblioteca de Python para problemas de programación lineal. Después de ejecutarlo, obtendrás la solución óptima para la cantidad de energía que debe ser generada, cargada y descargada en cada hora, así como el costo total asociado.",374.0,968.0,36.727214516000004,True,True,False,True,True,False,False,False,3.3,4,3,3,4,3,0.7,"[""Objective function aims to maximize cost instead of minimizing it."", ""Constraints for minimum battery level and maximum battery capacity are incorrectly formulated.""]",The formulation is close to correct but contains errors in the objective function and constraints. It also lacks parameterization of key values.,,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""Objective function is not correctly formulated as it aims to maximize the cost instead of minimizing it.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Constraints for minimum battery level and maximum battery capacity are incorrectly formulated.""}, {""requirement"": ""algebra_validity"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hardcoded values for capacities and costs should be parameterized.""}], ""critical_errors"": [""Objective function aims to maximize cost instead of minimizing it."", ""Constraints for minimum battery level and maximum battery capacity are incorrectly formulated.""], ""summary"": ""The formulation is close to correct but contains errors in the objective function and constraints. It also lacks parameterization of key values.""}"
+opt_25,Localización con peor distancia de servicio,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un algoritmo de programación lineal o heurística basada en búsqueda greedy. Aquí te presento cómo podrías proceder:
+
+1. **Definir Variables**:
+   - `x_ij`: Variable binaria que indica si la comunidad i está asignada al módulo j (0 si no, 1 si sí).
+   - `d_max`: Distancia máxima soportada por cualquier comunidad.
+   
+2. **Restricciones**:
+   - Para cada módulo, debe haber al menos dos comunitades asignadas.
+     \[
+     \sum_{i} x_{ij} = 2 \quad \text{para todos los módulos j}
+     \]
+   - Para cada comunidad, debe estar asignada a un único módulo.
+     \[
+     \sum_j x_{ij} = 1 \quad \text{para todas las comunidades i}
+     \]
+
+3. **Objetivo**:
+   Minimizar `d_max`, donde `d_max` es la distancia máxima entre cualquier comunidad y su módulo asignado.
+
+4. **Algoritmo Greedy**:
+   - Ordena las comunidades por su distancia a sus respectivos módulos.
+   - Asigna primero a las comunidades con menor distancia.
+   - Si hay múltiples opciones, asigna a la comunidad con menor distancia disponible.
+
+Aquí tienes un ejemplo de cómo podría implementarse en Python utilizando la biblioteca PuLP:
+
+```python
+from pulp import *
+
+# Definir variables
+prob = LpProblem(""Minimize_Distance_Max"", LpMinimize)
+
+# Variables binarias
+x = LpVariable.dicts(""x"", [(i,j) for i in range(1,5) for j in range(1,4)], cat='Binary')
+
+# Restricciones
+for j in range(1,4):
+    prob += lpSum([x[i,j] * d[i-1][j-1] for i in range(1,5)]) >= 2
+
+for i in range(1,5):
+    prob += lpSum([x[i,j] for j in range(1,4)]) == 1
+
+# Objetivo
+prob += lpSum([x[i,j] * d[i-1][j-1] for i in range(1,5) for j in range(1,4)])
+
+# Resolver el problema
+prob.solve()
+
+# Imprimir resultados
+print(f""Status: {LpStatus[prob.status]}"")
+print(f""D_max: {value(prob.objective)}"")
+
+# Obtener asignaciones y aperturas
+asignaciones = {}
+aperturas = {}
+
+for v in prob.variables():
+    if v.varValue > 0 and v.name.split('_')[0].isdigit() and v.name.split('_')[1].isdigit():
+        asignaciones[v.name] = int(v.name.split('_')[0])
+        aperturas[v.name] = int(v.name.split('_')[1])
+
+print(""Asignaciones:"")
+for k,v in asignaciones.items():
+    print(f""{k}: {v}"")
+
+print(""\nAperturas:"")
+for k,v in aperturas.items():
+    print(f""{k}: {v}"")
+```
+
+Este código define las variables, establece las restricciones y el objetivo, luego resuelve el problema usando PuLP. Finalmente, imprime las asignaciones y las aperturas resultantes.
+
+Recuerda ajustar el código según tus necesidades específicas y asegúrate de tener instalada la biblioteca PuLP (`pip install pulp`).",344.0,758.0,29.059161011000015,True,True,True,True,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""Objective function is not correctly formulated to minimize the maximum distance."", ""Missing key constraints like ensuring exactly two modules are opened.""]","The provided solution lacks the necessary decision variables, objective function, and key constraints as per the problem statement. It also uses hardcoded indices and values instead of sets and parameters, which reduces its generalizability.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""partial"", ""reason"": ""Missing binary variables for opening modules and assigning communities.""}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""Objective function is not correctly formulated to minimize the maximum distance.""}, {""requirement"": ""constraints"", ""status"": ""partial"", ""reason"": ""Constraints are not fully aligned with the problem statement, missing key constraints like ensuring exactly two modules are opened.""}, {""requirement"": ""algebraic_formulation"", ""status"": ""partial"", ""reason"": ""Algebraic formulation does not match the reference model, missing key terms and conditions.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""Hardcoded indices and values instead of using sets and parameters.""}], ""critical_errors"": [""Objective function is not correctly formulated to minimize the maximum distance."", ""Missing key constraints like ensuring exactly two modules are opened.""], ""summary"": ""The provided solution lacks the necessary decision variables, objective function, and key constraints as per the problem statement. It also uses hardcoded indices and values instead of sets and parameters, which reduces its generalizability.""}"
+opt_26,Cobertura de barrios bajo un presupuesto,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un modelo de programación lineal (LP) o un algoritmo genético para encontrar la solución óptima. Aquí te presento cómo podrías estructurar tu modelo LP:
+
+### Variables:
+- **x_ij**: Variable binaria que indica si el barrio i está cubierto por la ubicación j.
+- **y_j**: Variable binaria que indica si la ubicación j está abierta.
+
+### Restricciones:
+1. **Cobertura del Barrio**:
+   - Para cada barrio i, la suma de x_ij debe ser igual a 1 si el barrio i está cubierto.
+     \[
+     \sum_{j=1}^{n} x_{ij} = 1 \quad \forall i \in \{1, 2, ..., n\}
+     \]
+   
+2. **Cobertura de Ubicaciones**:
+   - Para cada ubicación j, la suma de x_ij debe ser igual a 1 si la ubicación j cubre algún barrio.
+     \[
+     \sum_{i=1}^{m} x_{ij} = 1 \quad \forall j \in \{1, 2, ..., n\}
+     \]
+
+3. **Presupuesto**:
+   - La suma total de los costos de las ubicaciones abiertas no superará el presupuesto disponible.
+     \[
+     \sum_{j=1}^{n} c_j y_j \leq P
+     \]
+     Donde \(P\) es el presupuesto disponible y \(c_j\) es el costo de la ubicación j.
+
+4. **Límites de Módulos**:
+   - No más de dos módulos pueden estar abiertos simultáneamente.
+     \[
+     \sum_{j=1}^{n} y_j \leq 2
+     \]
+
+### Objetivo:
+Maximizar la suma de las poblaciones cubiertas:
+\[
+\max \sum_{i=1}^{n} p_i \cdot x_{ii}
+\]
+Donde \(p_i\) es la población del barrio i.
+
+### Formulación Matemática:
+Aquí tienes la formulación matemática completa:
+
+\[
+\begin{align*}
+& \text{Minimizar } Z \\
+& \text{Sujeto a:} \\
+& \sum_{j=1}^{n} x_{ij} = 1 & \forall i \in \{1, 2, ..., n\} \\
+& \sum_{i=1}^{m} x_{ij} = 1 & \forall j \in \{1, 2, ..., n\} \\
+& \sum_{j=1}^{n} c_j y_j \leq P \\
+& \sum_{j=1}^{n} y_j \leq 2 \\
+& x_{ij}, y_j \in \{0, 1\} & \forall i, j
+\end{align*}
+\]
+
+### Ejemplo de Implementación en Python usando PuLP:
+```python
+from pulp import *
+
+# Definir variables
+prob = LpProblem(""Ubicacion"", LpMaximize)
+
+# Definir variables
+x = LpVariable.dicts(""x"", [(i, j) for i in range(1, 7) for j in range(1, 5)], lowBound=0, upBound=1, cat='Binary')
+y = LpVariable.dicts(""y"", [j for j in range(1, 5)], lowBound=0, upBound=1, cat='Binary')
+
+# Definir restricciones
+prob += lpSum([p * x[i][j] for i in range(1, 7) for j in range(1, 5)]) <= 9
+
+# Definir objetivos
+prob += lpSum([p * x[i][i] for i in range(1, 7)])
+
+# Resolver el problema
+prob.solve()
+
+# Imprimir resultados
+print(f""Status: {LpStatus[prob.status]}"")
+for v in prob.variables():
+    print(v.name, ""="", v.varValue)
+```
+
+Este código utiliza la biblioteca `PuLP` para definir y resolver el modelo. Asegúrate de tener la librería `PuLP` instalada en tu entorno de desarrollo.",430.0,944.0,36.64095139400001,True,True,True,True,True,False,True,False,3.45,4,3,3,4,4,0.6,"[""Falta la restricción z_j ≤ ∑_i a_ij y_i."", ""Falta la restricción ∑_j y_j ≤ 2.""]","La formulación tiene problemas en la especificación de las restricciones de cobertura y el límite de módulos abiertos, pero sigue siendo matemáticamente correcta con algunos ajustes.",,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 4, ""requirement_results"": [{""requirement"": ""Maximizar población cubierta sin doble conteo."", ""status"": ""partial"", ""reason"": ""Falta la restricción z_j ≤ ∑_i a_ij y_i.""}, {""requirement"": ""Presupuesto de instalación máximo 9."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""A lo sumo dos módulos abiertos."", ""status"": ""partial"", ""reason"": ""Falta la restricción ∑_j y_j ≤ 2.""}, {""requirement"": ""Un barrio puede contarse cubierto solo si al menos una ubicación abierta lo cubre."", ""status"": ""missing"", ""reason"": ""Falta la restricción z_j ≤ ∑_i a_ij y_i.""}, {""requirement"": ""Variables binarias de apertura y cobertura."", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""Falta la restricción z_j ≤ ∑_i a_ij y_i."", ""Falta la restricción ∑_j y_j ≤ 2.""], ""summary"": ""La formulación tiene problemas en la especificación de las restricciones de cobertura y el límite de módulos abiertos, pero sigue siendo matemáticamente correcta con algunos ajustes.""}"
+opt_27,"Bodegas con apertura, capacidad y reparto",benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un modelo de programación lineal no convencional (PLNC) que considera los límites de capacidad, costos y restricciones de ruta. Aquí está cómo podrías estructurar tu modelo:
+
+### Variables:
+- **x_ij**: Variable binaria que indica si la bodega i es utilizada para atender la tienda j.
+- **y_j**: Variable continua que representa el volumen de productos que la bodega i envía a la tienda j.
+
+### Restricciones:
+1. **Capacidad de la bodega**:
+   - Para cada bodega i:
+     \[
+     \sum_{j} x_{ij} \leq c_i \quad \text{donde } c_i = \min(45, 55, 85)
+     \]
+   
+2. **Volumen mínimo requerido**:
+   - Para cada bodega i:
+     \[
+     \sum_{j} y_{ij} \geq m_i \quad \text{donde } m_i = \max(15, 15, 15)
+     \]
+
+3. **Rutas no autorizadas**:
+   - Si hay una ruta i-j prohibida, entonces \(x_{ij} = 0\).
+
+4. **Restricción de ruta**:
+   - Para cada ruta i-j:
+     \[
+     y_{ij} \leq d_{ij}
+     \]
+     donde \(d_{ij}\) es el volumen máximo que la ruta permite transportar.
+
+5. **Costos**:
+   - Para cada bodega i y cada ruta i-j:
+     \[
+     z_{ij} = w_{ij} + c_{ij} y_{ij}
+     \]
+     donde \(w_{ij}\) es el costo unitario de la ruta i-j y \(c_{ij}\) es el costo unitario de la bodega i.
+
+### Objetivo:
+Minimizar el costo total de apertura y transporte:
+\[
+\min \sum_{i,j} z_{ij} x_{ij}
+\]
+
+### Formulación matemática:
+La formulación completa sería algo así:
+
+\[
+\begin{align*}
+& \text{Minimize} & & \sum_{i,j} z_{ij} x_{ij} \\
+& \text{Subject to} & & \sum_{j} x_{ij} \leq c_i \quad \forall i \\
+& & & \sum_{j} y_{ij} \geq m_i \quad \forall i \\
+& & & y_{ij} \leq d_{ij} \quad \forall i,j \\
+& & & x_{ij} \in \{0,1\} \quad \forall i,j \\
+& & & y_{ij} \in [0,d_{ij}] \quad \forall i,j
+\end{align*}
+\]
+
+Donde:
+- \(z_{ij}\): Costo total de la ruta i-j.
+- \(c_i\), \(m_i\), \(d_{ij}\): Constantes definidas según las restricciones del problema.
+- \(w_{ij}\): Costo unitario de la ruta i-j.
+- \(x_{ij}\): Variable binaria indicando si la bodega i es utilizada para atender la tienda j.
+- \(y_{ij}\): Variable continua representando el volumen de productos que la bodega i envía a la tienda j.
+
+Este modelo puede ser resuelto utilizando técnicas de optimización lineal o heurísticas basadas en algoritmos genéticos o tabu search para encontrar una solución óptima o aproximada.",443.0,791.0,30.476890252000203,True,True,True,True,True,False,False,False,2.0,2,2,2,2,2,0.5,"[""The decision variables x_ij and y_ij are incorrectly defined as continuous and binary respectively."", ""The objective function is incorrect and does not include fixed costs."", ""Constraints for minimum volume and capacity limits are missing or incorrectly formulated."", ""Constraints to exclude unauthorized routes are missing or incorrectly formulated.""]","The provided model has several errors in defining decision variables, formulating the objective function, and setting up constraints. It also lacks proper algebraic notation and does not fully capture the problem requirements.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_variables"", ""status"": ""partial"", ""reason"": ""Variables x_ij and y_ij are not correctly defined as binary and continuous respectively.""}, {""requirement"": ""objective_function"", ""status"": ""partial"", ""reason"": ""The objective function is not correctly formulated as it should be the sum of fixed costs and transportation costs.""}, {""requirement"": ""constraints"", ""status"": ""partial"", ""reason"": ""Constraints are not correctly formulated to ensure minimum volume and capacity limits, and to exclude unauthorized routes.""}, {""requirement"": ""algebraic_formulation"", ""status"": ""partial"", ""reason"": ""Indices and symbols are not consistently used and the formulation does not match the reference model.""}], ""critical_errors"": [""The decision variables x_ij and y_ij are incorrectly defined as continuous and binary respectively."", ""The objective function is incorrect and does not include fixed costs."", ""Constraints for minimum volume and capacity limits are missing or incorrectly formulated."", ""Constraints to exclude unauthorized routes are missing or incorrectly formulated.""], ""summary"": ""The provided model has several errors in defining decision variables, formulating the objective function, and setting up constraints. It also lacks proper algebraic notation and does not fully capture the problem requirements.""}"
+opt_28,Trabajos indivisibles en impresoras con horas limitadas,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, necesitamos encontrar una asignación óptima de pedidos a impresoras que minimice el costo total (costo de preparación + costo de ejecución). Vamos a seguir estos pasos:
+
+1) **Definimos los datos:**
+   - Impresoras:
+     - Impresora 1: Tiempo = [3, 4, 2, 5], Costo = [7, 6, 9, 8]
+     - Impresora 2: Tiempo = [4, 2, 3, 4], Costo = [8, 5, 7, 7]
+     - Impresora 3: Tiempo = [2, 4, 3, 3], Costo = [6, 8, 6, 5]
+
+   - Horas disponibles:
+     - Impresora 1: 9 horas
+     - Impresora 2: 8 horas
+     - Impresora 3: 7 horas
+
+   - Requisitos específicos:
+     - No se pueden dividir pedidos.
+     - P2 no puede ser producido en la impresora 3.
+     - La impresora 1 no puede estar vacía.
+
+2) **Implementamos un algoritmo de asignación óptima:**
+
+   Primero, ordenamos los pedidos según su costo variable más bajo primero. Luego, intentamos asignarlos a las impresoras con menos tiempo disponible primero.
+
+3) **Asignación paso a paso:**
+
+   - Pedidos con menor costo variable:
+     - P1: Impresora 1 (tiempo = 3)
+     - P2: Impresora 2 (tiempo = 2)
+     - P3: Impresora 3 (tiempo = 3)
+     - P4: Impresora 1 (tiempo = 5)
+
+   - Asignación actual:
+     - Impresora 1: P1, P3, P4
+     - Impresora 2: P2
+     - Impresora 3: Vacía
+
+   - Verificamos si podemos cumplir todos los requisitos:
+     - P2 no está en la impresora 3.
+     - Impresora 1 no está vacía.
+     - Impresoras 2 y 3 están llenas.
+
+4) **Calcular el costo total:**
+
+   - Costo de preparación:
+     - Impresora 1: $10
+     - Impresora 2: $12
+     - Impresora 3: $9
+
+   - Costo de ejecución:
+     - Impresora 1: $7 + $9 + $8 = $24
+     - Impresora 2: $5 + $7 = $12
+     - Impresora 3: $6 + $6 = $12
+
+   - Total costo:
+     - Costo de preparación: $10 + $12 + $9 = $31
+     - Costo de ejecución: $24 + $12 + $12 = $48
+     - Total: $31 + $48 = $79
+
+Por lo tanto, el plan de costo total mínimo que cumple con todas las restricciones es de $79.",415.0,717.0,27.64402368700007,False,True,False,False,True,False,False,False,2.0,2,2,2,2,2,0.16666666666666666,"[""No se utiliza una formulación matemática para minimizar el costo total."", ""No se definen variables binarias para la asignación y activación de impresoras."", ""No se incluyen restricciones para respetar las horas disponibles de cada impresora."", ""No se incluye restricción específica para evitar P2 en impresora 3."", ""No se asegura que una impresora no preparada no reciba trabajos.""]",La respuesta no utiliza una formulación matemática y omite varios requisitos semánticos auditados.,,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""Minimizar costo total"", ""status"": ""partial"", ""reason"": ""No se utiliza una formulación matemática para minimizar el costo total.""}, {""requirement"": ""Asignar cada pedido exactamente a una impresora"", ""status"": ""missing"", ""reason"": ""No se define una variable para asignar cada pedido a una impresora.""}, {""requirement"": ""Respetar horas disponibles de cada impresora"", ""status"": ""missing"", ""reason"": ""No se incluyen restricciones para respetar las horas disponibles de cada impresora.""}, {""requirement"": ""Impresora 2 y 3 no pueden tener P2"", ""status"": ""partial"", ""reason"": ""No se incluye restricción específica para evitar P2 en impresora 3.""}, {""requirement"": ""Una impresora no preparada no puede recibir trabajos"", ""status"": ""missing"", ""reason"": ""No se incluye restricción para asegurar que una impresora no preparada no reciba trabajos.""}, {""requirement"": ""Variables binarias"", ""status"": ""missing"", ""reason"": ""No se definen variables binarias para la asignación y activación de impresoras.""}], ""critical_errors"": [""No se utiliza una formulación matemática para minimizar el costo total."", ""No se definen variables binarias para la asignación y activación de impresoras."", ""No se incluyen restricciones para respetar las horas disponibles de cada impresora."", ""No se incluye restricción específica para evitar P2 en impresora 3."", ""No se asegura que una impresora no preparada no reciba trabajos.""], ""summary"": ""La respuesta no utiliza una formulación matemática y omite varios requisitos semánticos auditados.""}"
+opt_29,Selección de rutas de cuadrillas ya diseñadas,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos usar el método de programación lineal para minimizar costos. Aquí está cómo podrías estructurar tu modelo matemático:
+
+### Variables:
+- **x_i** = 1 si ruta i es utilizada, 0 caso contrario.
+- **y_j** = 1 si tarea j es asignada a una ruta, 0 caso contrario.
+
+### Restricciones:
+1. **Cuantidad máxima de rutas**: 
+   \[
+   x_1 + x_2 + x_3 + x_4 + x_5 + x_6 + x_7 \leq 2
+   \]
+   
+2. **Tarea obligatoria**: 
+   - Tarea 1: \(x_1 + x_6 = 1\)
+   - Tarea 2: \(x_1 + x_2 = 1\)
+   - Tarea 3: \(x_2 + x_3 = 1\)
+   - Tarea 4: \(x_3 + x_4 = 1\)
+   - Tarea 5: \(x_4 + x_5 = 1\)
+
+3. **No repetición de tareas**: 
+   - Para cada ruta, todas las tareas deben ser únicas.
+     \[
+     y_{ij} = 1 \text{ si } (i,j) \text{ pertenece a una ruta}
+     \]
+
+### Función objetivo:
+Minimizar el costo total de las rutas utilizadas:
+\[
+\min \sum_{i=1}^{7} c_i x_i
+\]
+donde \(c_i\) es el costo de la ruta \(i\).
+
+### Formulación del modelo:
+Aquí tienes la formulación matemática completa:
+
+\[
+\begin{align*}
+& \text{Minimize} & & \sum_{i=1}^{7} c_i x_i \\
+& \text{Subject to} & & x_1 + x_2 + x_3 + x_4 + x_5 + x_6 + x_7 \leq 2 \\
+& & & x_1 + x_6 = 1 \\
+& & & x_1 + x_2 = 1 \\
+& & & x_2 + x_3 = 1 \\
+& & & x_3 + x_4 = 1 \\
+& & & x_4 + x_5 = 1 \\
+& & & y_{ij} = 1 \text{ si } (i,j) \text{ pertenece a una ruta} \\
+& & & y_{ij} = 0 \text{ si } (i,j) \text{ no pertenece a ninguna ruta}
+\end{align*}
+\]
+
+### Ejecución del Modelo:
+Con esta formulación, puedes utilizar un programa de optimización lineal o un software específico para resolverlo. Algunas opciones populares incluyen Python con librerías como PuLP, Gurobi, o CPLEX.
+
+Este modelo asegura que se utilicen exactamente las cinco tareas y se minimice el costo total de las rutas contratadas.",374.0,676.0,25.583067504999917,True,True,False,False,True,False,True,False,3.3,4,3,3,4,3,0.875,"[""La formulación no garantiza que cada tarea sea cubierta exactamente una vez.""]","La formulación tiene problemas en garantizar la cobertura exacta de tareas y en la especificación de las variables y restricciones. Aunque matemáticamente correcta, falta la especificación precisa de que cada tarea debe ser cubierta exactamente una vez.",,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""Minimizar costo total de rutas contratadas."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Cada tarea cubierta exactamente una vez."", ""status"": ""partial"", ""reason"": ""La formulación actual no garantiza que cada tarea sea cubierta exactamente una vez, ya que no hay restricciones que aseguren que cada tarea esté en exactamente una ruta.""}, {""requirement"": ""Seleccionar como máximo dos rutas."", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Solo rutas prediseñadas y variables binarias."", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""La formulación no garantiza que cada tarea sea cubierta exactamente una vez.""], ""summary"": ""La formulación tiene problemas en garantizar la cobertura exacta de tareas y en la especificación de las variables y restricciones. Aunque matemáticamente correcta, falta la especificación precisa de que cada tarea debe ser cubierta exactamente una vez.""}"
+opt_30,Proyecto con precedencias y recurso compartido,benchmark,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"Para resolver este problema, podemos utilizar un modelo matemático llamado Programación Dinámica (PD) o Modelización de Programación Lineal Discreta (LPD). Este tipo de modelización se utiliza comúnmente en problemas de programación lineal donde hay varias variables booleanas y restricciones de precedencia.
+
+### Variables:
+1. **x_i** = 1 si la actividad i es iniciada en el día i.
+2. **y_j** = 1 si la actividad j es iniciada después de la actividad i.
+
+### Restricciones:
+
+1. **Precedencia**: 
+   - Si A está previa a B, entonces x_A + x_B ≥ 1.
+   - Si B está previa a C, entonces x_B + x_C ≥ 1.
+   - Si C está previa a D, entonces x_C + x_D ≥ 1.
+   - Si D está previa a E, entonces x_D + x_E ≥ 1.
+
+2. **No Superposición**:
+   - Si C y D deben realizarse con el mismo especialista, entonces x_C + x_D ≤ 1.
+
+3. **Inicio de Actividades**:
+   - x_0 = 0 (no se puede iniciar en el día 0).
+   - x_i ≥ 0 para todos los días i.
+
+4. **Finalización de Actividad E**:
+   - x_E = 1 (E terminará en el último día).
+
+5. **Variables Binarias**:
+   - y_i = 1 si la actividad i es iniciada después de la actividad i-1.
+
+### Modelo Matemático:
+
+La función objetivo es minimizar el número de días hasta la finalización de E, que es igual a la suma de todas las variables x_i.
+
+\[
+\text{Minimize} \quad \sum_{i=0}^{n} x_i
+\]
+
+Donde n es el número total de días considerados.
+
+### Formulación:
+
+Aquí tienes una forma abstracta de cómo podrías escribir esta formulación en Python usando la librería PuLP:
+
+```python
+from pulp import *
+
+# Definir los datos
+durations = [2, 3, 2, 4, 3]
+precedences = {
+    ('A', 'B'): True,
+    ('B', 'C'): True,
+    ('C', 'D'): True,
+    ('D', 'E'): True,
+}
+
+# Crear el problema de programación lineal
+prob = LpProblem(""Project Planning"", LpMinimize)
+
+# Variables
+x = LpVariable.dicts('x', range(6), lowBound=0, upBound=None, cat='Binary')
+y = LpVariable.dicts('y', range(6), lowBound=0, upBound=None, cat='Binary')
+
+# Función objetivo: Minimizar el número de días hasta la finalización de E
+prob += lpSum(x[i] for i in range(6))
+
+# Restricciones
+for i, precedence in enumerate(precedences):
+    if precedence[0] == 'A':
+        prob += x[i+1] >= x[i] + 1
+    elif precedence[0] == 'B':
+        prob += x[i+1] >= x[i] + 1
+    elif precedence[0] == 'C':
+        prob += x[i+1] >= x[i] + 1
+    elif precedence[0] == 'D':
+        prob += x[i+1] >= x[i] + 1
+
+# No superposición de C y D
+prob += x['C'] + x['D'] <= 1
+
+# Inicio de actividades
+prob += x[0] == 0
+
+# Finalización de E
+prob += x[-1] == 1
+
+# Resolver el problema
+prob.solve()
+
+# Imprimir resultados
+print(f""El proyecto terminará en el día {value(prob.objective)}"")
+```
+
+Este código define las variables, establece las restricciones y resuelve el problema utilizando PuLP, una biblioteca de Python para la programación lineal. La salida proporcionará el día exacto en que el proyecto se terminará, minimizando el número de días hasta la finalización de E.",336.0,901.0,33.68203144699987,True,True,True,True,True,False,True,False,2.0,2,2,2,2,2,0.5,"[""The objective function should be the maximum of the end times of all activities, not the sum of binary variables."", ""The constraints for non-overlapping activities C and D are missing or incorrectly implemented."", ""The model does not explicitly handle the special requirement that C and D must be completed before E starts.""]","The provided model is partially correct but lacks key elements such as the proper objective function, constraints for non-overlapping activities, and the makespan. It also hardcodes specific activity durations and does not generalize well.",,"{""decision_domains"": 2, ""objective"": 2, ""constraints_logic"": 2, ""algebra_validity"": 2, ""generalization"": 2, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""partial"", ""reason"": ""Variables x_i and y_j are not clearly defined with their domains and indices.""}, {""requirement"": ""objective"", ""status"": ""partial"", ""reason"": ""The objective function is not correctly formulated to minimize the project's end date.""}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Constraints do not fully capture the precedence and non-overlapping requirements between activities C and D.""}, {""requirement"": ""algebra_validity"", ""status"": ""partial"", ""reason"": ""Indices and symbols are not consistently used and the formulation does not match the reference model.""}, {""requirement"": ""generalization"", ""status"": ""partial"", ""reason"": ""The model hardcodes specific activity durations and does not generalize well.""}], ""critical_errors"": [""The objective function should be the maximum of the end times of all activities, not the sum of binary variables."", ""The constraints for non-overlapping activities C and D are missing or incorrectly implemented."", ""The model does not explicitly handle the special requirement that C and D must be completed before E starts.""], ""summary"": ""The provided model is partially correct but lacks key elements such as the proper objective function, constraints for non-overlapping activities, and the makespan. It also hardcodes specific activity durations and does not generalize well.""}"
+diagnostic_oftalmo,Centros oftalmológicos — Entrega 1,diagnostic,baseline_direct_deterministic,Qwen/Qwen2.5-1.5B-Instruct,"### Modelo Matemático
+
+#### Conjuntos Definidos:
+- **L**: Lista de posibles sitios para construir los centros (Barrio Norte, Los Carrera, Collao).
+- **S**: Lista de sectores de demanda (Concepción Centro, Sector Lomas, Costanera, Barrio Universitario, Nonguén).
+
+#### Parámetros:
+- \(d_{ij}\): Distancia en kilómetros entre el sitio \(i\) y el sector \(j\), donde \(i \in L\) y \(j \in S\).
+- \(p_j\): Población en miles de personas del sector \(j\), donde \(j \in S\).
+
+#### Variables de Decisión:
+- \(x_{ij} = \begin{cases}
+   1 & \text{si el sector } j \text{ está asignado al sitio } i \\
+   0 & \text{en caso contrario}
+\end{cases}\)
+
+#### Función Objetivo:
+Minimizar la suma total de las distancias de atención:
+
+\[ \min \sum_{i \in L} \sum_{j \in S} d_{ij} x_{ij} p_j \]
+
+#### Restricciones Necesarias:
+1. **Cuantos Centros Se Instalan**:
+   - Solo se instala exactamente 2 centros.
+   
+   \[ \sum_{i \in L} x_{ij} = 2 \quad \forall j \in S \]
+
+2. **Asignación de Sectores a Centros**:
+   - Cada sector debe estar asignado a un único centro.
+   
+   \[ \sum_{i \in L} x_{ij} = 1 \quad \forall j \in S \]
+
+3. **No Asignación de Sector a Sitio Sin Construir**:
+   - Un sector no puede ser asignado a un sitio si ese sitio aún no fue construido.
+   
+   \[ x_{ij} = 0 \quad \forall i \notin L, j \in S \]
+
+4. **Distancia Máxima Permitida**:
+   - Las distancias deben cumplirse con ciertos límites establecidos.
+
+   \[ d_{ij} \leq D_i \quad \forall i \in L, j \in S \]
+   Donde \(D_i\) es una constante máxima permitida para la distancia entre el sitio \(i\) y el sector \(j\).
+
+### Ejemplo de Formulación Matemática
+
+Supongamos que los valores de las distancias \(d_{ij}\) y las poblaciones \(p_j\) están disponibles. Entonces, la formulación sería algo así:
+
+```plaintext
+minimize sum(d_ij * x_ij * p_j for i in L and j in S)
+subject to 
+    sum(x_ij for i in L and j in S) == 2
+    sum(x_ij for i in L and j in S) == 1 for all j in S
+    sum(x_ij for i in L and j in S) == 0 for all i not in L and j in S
+    d_ij <= D_i for all i in L and j in S
+```
+
+Donde \(D_i\) es una lista de constantes máximas permitidas para las distancias.
+
+Este modelo matemático permite encontrar la combinación óptima de sitios para construir los centros y asignar los sectores de manera que minimice la distancia de atención, teniendo en cuenta la población de cada sector.",581.0,757.0,28.728220011999838,True,True,False,True,True,False,False,False,3.65,4,4,3,4,4,0.9,"[""Missing the constraint that ensures exactly two centers are built.""]","La formulación matemática es correcta en muchos aspectos, pero falta una restricción crucial para garantizar que se construyan exactamente dos centros.",,"{""decision_domains"": 4, ""objective"": 4, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 4, ""requirement_results"": [{""requirement"": ""decision_domains"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""objective"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""constraints_logic"", ""status"": ""partial"", ""reason"": ""Missing the constraint that ensures exactly two centers are built.""}, {""requirement"": ""algebra_validity"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""generalization"", ""status"": ""met"", ""reason"": """"}], ""critical_errors"": [""Missing the constraint that ensures exactly two centers are built.""], ""summary"": ""La formulación matemática es correcta en muchos aspectos, pero falta una restricción crucial para garantizar que se construyan exactamente dos centros.""}"
+diagnostic_oftalmo,Centros oftalmológicos — Entrega 1,diagnostic,entrega1_historical_sampled,Qwen/Qwen2.5-1.5B-Instruct,"### Modelo Matemático
+
+#### Conjuntos Definidos:
+- **L**: Conjunto de los 3 lugares potenciales (Barrio Norte, Los Carreras, Collao).
+- **S**: Conjunto de los 5 sectores de demanda (Concepción Centro, Sector Lomas, Costanera, Barrio Universitario, Nonguén).
+
+#### Parámetros:
+- \(d_{ij}\): Distancia entre el lugar \(i\) y el sector \(j\), donde \(i \in L\) y \(j \in S\).
+- \(p_j\): Población del sector \(j\), donde \(j \in S\).
+
+#### Variables de Decisión:
+- \(x_{ij} = 1\) si el sector j está asignado al lugar i, 0 en caso contrario.
+
+#### Función Objetivo:
+Minimizar la suma total de las distancias de atención:
+\[
+\min \sum_{i \in L} \sum_{j \in S} d_{ij} x_{ij}
+\]
+
+#### Restricciones:
+1. Cantidad máxima de centros: Solo se instalan exactamente 2 centros.
+\[
+\sum_{i \in L} x_{ij} = 2 \quad \forall j \in S
+\]
+
+2. Asignación única de sectores:
+\[
+\sum_{i \in L} x_{ij} = 1 \quad \forall j \in S
+\]
+
+3. Población mínima requerida:
+\[
+p_j - \sum_{i \in L} x_{ij} p_j \geq 0 \quad \forall j \in S
+\]
+
+4. Posible construcción de centros: Las distancias deben ser positivas.
+\[
+d_{ij} > 0 \quad \forall i \in L, j \in S
+\]
+
+Luego enumera los datos y propone informalmente una posible asignación.",,,,True,True,True,True,True,False,False,False,3.3,4,3,3,4,3,0.5625,"[""La función objetivo no incluye la población ponderando la distancia."", ""Falta la restricción correcta para limitar la cantidad de centros a 2."", ""Restricciones adicionales no necesarias y mal planteadas.""]","La formulación matemática está cerca de ser correcta pero falta la población ponderando la distancia en la función objetivo y la restricción para limitar la cantidad de centros a 2. Además, hay restricciones adicionales que no son necesarias y están mal planteadas.",,"{""decision_domains"": 4, ""objective"": 3, ""constraints_logic"": 3, ""algebra_validity"": 4, ""generalization"": 3, ""requirement_results"": [{""requirement"": ""Conjuntos definidos"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Parámetros"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Variables de decisión"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Función objetivo"", ""status"": ""partial"", ""reason"": ""La fórmula no incluye la población ponderando la distancia.""}, {""requirement"": ""Restricción de cantidad máxima de centros"", ""status"": ""missing"", ""reason"": ""Falta la restricción correcta.""}, {""requirement"": ""Restricción de asignación única de sectores"", ""status"": ""met"", ""reason"": """"}, {""requirement"": ""Restricción de población mínima requerida"", ""status"": ""wrong"", ""reason"": ""Esta restricción no es necesaria y está mal planteada.""}, {""requirement"": ""Restricción de posible construcción de centros"", ""status"": ""wrong"", ""reason"": ""Esta restricción no es necesaria y está mal planteada.""}], ""critical_errors"": [""La función objetivo no incluye la población ponderando la distancia."", ""Falta la restricción correcta para limitar la cantidad de centros a 2."", ""Restricciones adicionales no necesarias y mal planteadas.""], ""summary"": ""La formulación matemática está cerca de ser correcta pero falta la población ponderando la distancia en la función objetivo y la restricción para limitar la cantidad de centros a 2. Además, hay restricciones adicionales que no son necesarias y están mal planteadas.""}"

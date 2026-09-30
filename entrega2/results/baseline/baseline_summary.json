@@ -1,0 +1,34 @@
+{
+  "n": 30,
+  "mean_fom5_v2": 0.5884,
+  "median": 0.0,
+  "std_sample": 1.159973442026539,
+  "mean_coverage": 0.16444444444444445,
+  "dimensions": {
+    "decision_domains": 0.6666666666666666,
+    "objective": 0.8666666666666667,
+    "constraints_logic": 0.5430555555555555,
+    "algebra_validity": 0.5,
+    "generalization": 0.3333333333333333
+  },
+  "zero_scores": 21,
+  "source": "codex_missing_assets/resultados_fom5_local.csv",
+  "filter": {
+    "split": "benchmark",
+    "variant": "baseline_direct_deterministic"
+  },
+  "source_sha256": "477cc78a9a41b9266b5416ef141c1fecee770e58eb470bfd8c83523527a757da",
+  "status": "recovered_frozen_results_not_new_inference",
+  "diagnostic": [
+    {
+      "variant": "baseline_direct_deterministic",
+      "score_fom5_v2": 0.65,
+      "coverage": 0.25
+    },
+    {
+      "variant": "entrega1_historical_sampled",
+      "score_fom5_v2": 0.369,
+      "coverage": 0.08333333333333333
+    }
+  ]
+}
