@@ -98,7 +98,7 @@ El diagnóstico mostró errores estructurales persistentes en las pruebas de pro
 
 ### Comparación con otras estrategias probadas
 
-Antes de QLoRA se exploraron intervenciones basadas en el prompt. Estas pruebas se hicieron sobre el **caso de la Entrega 1**, con una rúbrica de localización distinta de FOM-5 v2 y **una corrida por variante**. Los puntajes de esta tabla son exploratorios; el 1,65 del prompting directo y el 0,650 de la sección 6 corresponden a evaluaciones diferentes.
+Antes de QLoRA se exploraron intervenciones basadas en el prompt sobre el **caso de localización de la Entrega 1**, con **una corrida por variante**. La [rúbrica de modelación utilizada en esa exploración](../Deliverable%201/Rubrica_Modelacion_OptimizacionV2.pdf) puntúa de 0 a 5 la fidelidad lógica al negocio (30 %), la fuerza y eficiencia de la formulación (20 %), la coherencia de los dominios (20 %), la generalización (15 %) y la explicabilidad (15 %). Los puntajes de la tabla son exploratorios y corresponden a esa rúbrica; el 1,65 del prompting directo y el 0,650 de la sección 6 se calcularon con criterios diferentes.
 
 | Estrategia | Tipo de intervención | Puntaje (0–5) | Qué pasó |
 |---|---|---:|---|
@@ -142,7 +142,7 @@ En palabras:
 
 ## 6. Resultados en el benchmark
 
-**Rúbrica FOM-5 v2.** Cinco componentes, cada uno de 0 a 5: decisiones y dominios (15 %), objetivo (20 %), restricciones (35 %), validez algebraica (15 %) y generalización (15 %). El total es `F = 0.15D + 0.20O + 0.35R + 0.15A + 0.15G`. Si la respuesta omite o equivoca requisitos, los componentes correspondientes quedan limitados, y una respuesta sin formulación reconocible no puede pasar de 1,5.
+El **benchmark final** reúne 30 problemas de optimización. Sus respuestas se evalúan con **FOM-5 v2**, la rúbrica usada para los resultados de esta sección. Tiene cinco componentes, cada uno de 0 a 5: decisiones y dominios (15 %), objetivo (20 %), restricciones (35 %), validez algebraica (15 %) y generalización (15 %). El total es `F = 0.15D + 0.20O + 0.35R + 0.15A + 0.15G`. Si la respuesta omite o equivoca requisitos, los componentes correspondientes quedan limitados, y una respuesta sin formulación reconocible no puede pasar de 1,5.
 
 | 30 problemas oficiales | Baseline | QLoRA |
 |---|---:|---:|

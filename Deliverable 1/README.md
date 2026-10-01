@@ -4,5 +4,6 @@ Esta entrega estudió la formulación matemática de la localización de dos cen
 
 - [Informe de Entrega 1](Grupo1_GenAI.pdf)
 - [Notebook de Entrega 1](Deliverable_1.ipynb)
+- [Rúbrica de modelación para el caso de localización](Rubrica_Modelacion_OptimizacionV2.pdf)
 
 El diagnóstico mostró omisiones y contradicciones en la respuesta inicial del modelo. La [Entrega 2](../Deliverable%202/README.md) evalúa el ajuste QLoRA para mejorar la formulación, con un benchmark separado de 30 problemas.
