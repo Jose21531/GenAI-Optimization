@@ -1,14 +1,26 @@
 # GenAI-Optimization
 
-Formulación matemática LP/MILP desde enunciados en español con Qwen2.5-1.5B-Instruct. El caso de localización de centros oftalmológicos ilustra la relevancia: omitir la población cambia el objetivo y omitir la apertura de centros permite asignaciones inviables. El proyecto produce borradores paramétricos para revisión matemática.
+**Formulación automática de modelos de optimización a partir de enunciados en lenguaje natural, con un modelo de lenguaje pequeño.**
 
-| Entrega | Contenido |
-|---|---|
-| [Deliverable 1](Deliverable%201/) | [Diagnóstico y ejemplo original](Deliverable%201/README.md). |
-| [Deliverable 2](Deliverable%202/) | [Ajuste QLoRA, benchmark de 30 casos y demostración](Deliverable%202/README.md). |
+Proyecto semestral de Inteligencia Artificial Generativa (580694), Universidad de Concepción · Grupo 1: Rayen Muñoz, Isidora Rivera, Sebastián Soto y José Luis Erices.
 
-**[Abrir Deliverable 2 en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe PDF](Deliverable%202/informe.pdf)
+## De qué trata
 
-Para reproducir el video, selecciona una GPU T4, ejecuta las secciones **1–3** y luego la **4**. Esa celda muestra el enunciado, genera baseline y QLoRA sobre el mismo caso de Entrega 1 y presenta ambas respuestas junto con la formulación de referencia. Las secciones 5–7 reproducen la evaluación extensa y el ajuste completo.
+Muchos problemas de planificación (dónde abrir instalaciones, cómo asignar recursos, cuánto producir, qué rutas usar) se modelan con programación lineal y lineal entera. **Formularlos** exige traducir el enunciado a conjuntos, parámetros, variables, función objetivo y restricciones coherentes entre sí. Un índice mal puesto o una restricción olvidada puede cambiar las decisiones admisibles.
 
-En los **30 casos oficiales**, el promedio FOM-5 v2 fue **0.5884/5** para el baseline y **0.8024/5** para QLoRA: 14 mejoraron, 8 empataron y 8 empeoraron. Los dos CSV con respuestas y juicios por caso están en [Deliverable 2/output](Deliverable%202/output/).
+Este proyecto estudia si un modelo de lenguaje **pequeño y abierto**, ejecutable en una GPU T4 de Google Colab, puede producir un **borrador de formulación paramétrica y verificable**. La revisión matemática sigue siendo parte del procedimiento.
+
+- **Entrada:** el enunciado de un problema de optimización lineal o lineal entera, en español y de nivel universitario.
+- **Salida:** conjuntos, parámetros, variables con sus dominios, función objetivo y restricciones, escritos con índices coherentes.
+- **Modelo:** Qwen2.5-1.5B-Instruct (1.500 millones de parámetros).
+
+## Entregas
+
+| Entrega | Qué contiene | Informe | Código |
+|---|---|---|---|
+| [Deliverable 1](Deliverable%201/) | Definición de la tarea, comparación de tres modelos candidatos y diagnóstico de por qué fallan con prompting directo. | [PDF](Deliverable%201/Grupo1_GenAI.pdf) | [Notebook](Deliverable%201/Deliverable_1.ipynb) |
+| [Deliverable 2](Deliverable%202/) | Intervención con fine-tuning QLoRA, comparación contra el baseline en 30 problemas, caso de falla y demostración. | [PDF](Deliverable%202/informe.pdf) · [LaTeX](Deliverable%202/informe.tex) | [Notebook](Deliverable%202/Deliverable_2.ipynb) · [Abrir en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb) |
+
+## Resultado actual en una línea
+
+En 30 problemas de distintos tipos (producción, redes, localización, rutas, secuenciación…), el ajuste con QLoRA cambió el puntaje medio de **0,5884 a 0,8024 sobre 5** y redujo los casos con puntaje cero de 21 a 12. El intervalo bootstrap del cambio incluye cero y 8 casos empeoraron. El detalle, los límites y la forma de reproducirlo están en el [README de la Entrega 2](Deliverable%202/README.md).
