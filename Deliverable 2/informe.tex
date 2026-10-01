@@ -2,103 +2,136 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
-\usepackage[margin=12mm]{geometry}
-\usepackage{lmodern,microtype,amsmath,booktabs,tabularx,multicol,tikz,xcolor,hyperref}
+\usepackage[left=15mm,right=15mm,top=11mm,bottom=11mm]{geometry}
+\usepackage{lmodern,microtype,amsmath,booktabs,tabularx,tikz,xcolor,hyperref}
 \usetikzlibrary{arrows.meta,positioning}
-\definecolor{navy}{HTML}{183B56}
-\definecolor{teal}{HTML}{087F8C}
-\definecolor{soft}{HTML}{EDF4F7}
-\definecolor{brick}{HTML}{B65B49}
-\definecolor{graybar}{HTML}{9AA9B3}
-\hypersetup{colorlinks=true,urlcolor=teal,linkcolor=navy}
+\definecolor{azul}{HTML}{173B5E}
+\definecolor{oro}{HTML}{C58A2A}
+\definecolor{turquesa}{HTML}{087C84}
+\definecolor{tinta}{HTML}{253645}
+\definecolor{gris}{HTML}{EDF2F5}
+\definecolor{rojo}{HTML}{B55A4D}
+\hypersetup{colorlinks=true,urlcolor=turquesa,linkcolor=azul}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{3pt}
-\setlength{\columnsep}{6mm}
-\raggedcolumns
-\newcommand{\sect}[1]{\vspace{3pt}{\color{navy}\bfseries\large #1}\par\vspace{1pt}}
+\setlength{\parskip}{2.4pt}
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\belowdisplayskip}{5pt}
+\setlength{\abovedisplayshortskip}{4pt}
+\setlength{\belowdisplayshortskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\color{tinta}
+\newcommand{\seccion}[2]{\vspace{3pt}{\color{azul}\bfseries\large #1\enspace #2}\par\vspace{1pt}{\color{oro}\rule{12mm}{1.2pt}}\par\vspace{1pt}}
 \begin{document}
-{\color{navy}\LARGE\bfseries Formulación LP/MILP desde español con QLoRA}\par
-{\small Entrega 2 · Inteligencia Artificial Generativa (580694) · Universidad de Concepción}\par
-{\small Rayen Muñoz · Isidora Rivera · Sebastián Soto · José Luis Erices}\par
-\vspace{2pt}
-\colorbox{soft}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{\small\textbf{Relevancia.} Al localizar centros oftalmológicos, omitir el peso poblacional cambia el criterio de servicio; omitir el vínculo de apertura permite asignar demanda a centros cerrados. Estudiamos si un modelo pequeño en T4 puede producir borradores paramétricos verificables para revisión experta.}}
-\vspace{2pt}
+{\sffamily\fontsize{8.5}{10}\selectfont\bfseries\color{azul}
+UNIVERSIDAD DE CONCEPCIÓN \enspace/\enspace FACULTAD DE INGENIERÍA \enspace/\enspace DEPARTAMENTO DE INGENIERÍA INDUSTRIAL}\par
+\vspace{3pt}
+{\color{oro}\rule{\textwidth}{1.4pt}}\par
+\vspace{4pt}
+{\color{azul}\fontsize{17}{19}\selectfont\bfseries Formulación automática de modelos de optimización}\par
+{\color{azul}\large Adaptación QLoRA y evaluación frente a la línea base}\par
+\vspace{4pt}
+{\small\textbf{Entrega 2 | Inteligencia Artificial Generativa (580694)}}\par
+{\small Rayen Muñoz, Isidora Rivera, Sebastián Soto y José Luis Erices}\par
+\vspace{4pt}
+\noindent\colorbox{gris}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{\small
+\textbf{\color{azul}Por qué importa.} Omitir la población al localizar centros cambia a quién prioriza el objetivo; omitir el vínculo de apertura permite atender sectores desde centros cerrados. El sistema produce borradores paramétricos para revisión experta.}}
+\vspace{3pt}
+
+{\color{azul}\bfseries\large Pipeline del experimento}\par
+\vspace{-1pt}
 \begin{center}
-\begin{tikzpicture}[font=\scriptsize,>=Stealth,
- box/.style={draw=navy,rounded corners=2pt,align=center,minimum height=9mm,text width=31mm,fill=white},
- train/.style={box,fill=soft},
- flow/.style={-Stealth,line width=.7pt}]
-\node[train] (pairs) {1050 pares sintéticos\\enunciado + formulación};
-\node[train,right=6mm of pairs] (learn) {QLoRA: base 4 bits\\+ adapter entrenable};
-\node[box,below=7mm of pairs] (test) {30 enunciados oficiales\\como entrada del generador};
-\node[box,below=7mm of learn] (generate) {Mismo Qwen: base\\y base + adapter};
-\node[box,right=6mm of generate] (answers) {Dos respuestas\\por cada ID};
-\node[box,right=6mm of answers,fill=soft] (judge) {FOM-5 v2 + referencia\\cambio pareado};
-\draw[flow] (pairs)--(learn);
-\draw[flow] (learn)--(generate);
-\draw[flow] (test)--(generate);
-\draw[flow] (generate)--(answers);
-\draw[flow] (answers)--(judge);
-\node[below=1mm of judge,font=\tiny,text=navy] {Referencia solo tras generar};
+\begin{tikzpicture}[>=Stealth,font=\fontsize{8.1}{9.2}\selectfont,
+caja/.style={draw=azul,rounded corners=2pt,align=center,minimum width=37mm,minimum height=10mm,fill=white,inner sep=2pt},
+dest/.style={caja,fill=gris},
+flecha/.style={-Stealth,draw=azul,line width=.75pt}]
+\node[dest] (datos) at (1.9,0) {\textbf{1050 pares}\\enunciado + formulación};
+\node[dest] (ajuste) at (6.1,0) {\textbf{QLoRA}\\Qwen 1.5B en 4 bits};
+\node[dest] (adapter) at (10.3,0) {\textbf{Adaptador}\\pesos aprendidos};
+\node[caja] (casos) at (1.9,-1.35) {\textbf{30 casos}\\solo enunciado};
+\node[caja] (modelo) at (6.1,-1.35) {\textbf{Mismo Qwen}\\base / base + adaptador};
+\node[caja] (salidas) at (10.3,-1.35) {\textbf{60 respuestas}\\30 por condición};
+\node[dest] (juez) at (14.5,-1.35) {\textbf{FOM-5 v2}\\referencia + requisitos};
+\draw[flecha] (datos)--(ajuste);
+\draw[flecha] (ajuste)--(adapter);
+\draw[flecha] (casos)--(modelo);
+\draw[flecha] (modelo)--(salidas);
+\draw[flecha] (salidas)--(juez);
+\draw[flecha] (adapter.south) -- ++(0,-.21) -| (modelo.north);
+\node[font=\fontsize{7}{8}\selectfont,text=azul] at (14.5,-2.1) {La referencia entra solo al evaluar};
 \end{tikzpicture}
 \end{center}
-\vspace{-5pt}
-\begin{multicols}{2}
-\sect{Continuidad y modelo}
-La salida exigida en la Entrega 1 es una formulación \emph{paramétrica} equivalente al enunciado: conjuntos, parámetros, variables con dominios, objetivo y restricciones, sin resolver el óptimo. En la localización de centros oftalmológicos, Qwen omitió las aperturas $y_i$ y la ponderación poblacional $p_j$, y contradijo la asignación única. Se requieren, entre otras condiciones,
+\vspace{-8pt}
+
+\begin{minipage}[t]{.48\textwidth}
+\small
+\seccion{1}{Continuidad y elección}
+La tarea de la Entrega 1 sigue intacta: traducir enunciados LP/MILP a conjuntos, parámetros, variables, objetivo y restricciones \emph{equivalentes}, sin resolver el óptimo. En el caso oftalmológico, el modelo original falló en apertura, asignación y ponderación poblacional.
 \[
-\min\sum_{i,j}p_jd_{ij}x_{ij},\quad
-\sum_i y_i=2,\quad\sum_i x_{ij}=1,\quad x_{ij}\le y_i.
+\begin{aligned}
+\min\sum_{i,j}p_jd_{ij}x_{ij},\qquad &\sum_i y_i=2,\\[-2pt]
+\sum_i x_{ij}=1\;(\forall j),\qquad &x_{ij}\le y_i\;(\forall i,j).
+\end{aligned}
 \]
+Se eligió \textbf{Qwen2.5-1.5B-Instruct}, revisión \texttt{989aa7980e4c}, frente a Gemma-2-2B-IT (2B) y Phi-3-mini (3.8B): el menor de los tres, ejecutable en T4. Todos cometieron errores de modelación en la Entrega 1.
 
-Elegimos \textbf{Qwen/Qwen2.5-1.5B-Instruct}, revisión de pesos \texttt{989aa7980e4c}, por su tamaño (1.5B) y viabilidad en T4 frente a Gemma-2-2B-IT (2B) y Phi-3-mini (3.8B), también probados en la Entrega 1. Los benchmarks generales orientaron la elección; el resultado de esta tarea se mide abajo. One-shot, representación intermedia IR/JSON/DSL, blueprint y autorrevisión se exploraron antes; persistieron errores de estructura o repetición. Estas pruebas guiaron el diseño del ajuste.
+En una corrida por variante del caso, la rúbrica previa de localización dio 1,65/5 al prompt directo, 1,35/5 al razonamiento paso a paso y 1,00/5 a la descomposición. Se exploraron también verificación con código, selección de respuestas, one-shot y representación intermedia; persistieron fallas estructurales. Estos puntajes usan \textbf{otra rúbrica}.
 
-\sect{Intervención y datos}
-\textbf{QLoRA} (adaptación de bajo rango sobre una base cuantizada) congela los pesos de Qwen en 4 bits NF4 y entrena matrices pequeñas de atención y MLP. LoRA $r=16$, $\alpha=32$; pérdida solo en la respuesta. El entrenamiento final usó 1050 entradas user-only, una época, semilla 42, LR $2\cdot10^{-4}$ y acumulación 8: \textbf{131 pasos, 982 s, 9.04 GiB} reservados en Colab T4.
+\seccion{2}{Intervención y datos}
+\textbf{QLoRA} entrena matrices de bajo rango sobre una base congelada y cuantizada en 4 bits (NF4). Una época usó 1050 pares sintéticos: 50 familias con 21 variantes cada una (315 LP, 735 MILP), LoRA \(r=16\), \(\alpha=32\), semilla 42 y pérdida solo sobre la respuesta. En Colab T4: \textbf{982 s, 131 pasos y 9,04 GiB} reservados.
 
-Los datos son 50 familias $\times$ 21 variantes (315 LP, 735 MILP), con \textbf{50 formulaciones canónicas}. Verificamos IDs únicos, cero truncamientos bajo 1024 tokens y máscara assistant en 1050/1050. Dos pilotos 160/40 guiaron el formato; por cuota de GPU se omitió el desarrollo 840/210 previsto. El resultado final es exploratorio. Los hashes \textbf{SHA-256} identifican los bytes exactos de datos y adapter descargados para comprobar su integridad.
+\seccion{3}{Contraste del caso oftalmológico}
+En la ejecución demostrativa, la salida pasó de \textbf{1140 a 232 tokens} (49,3 a 15,6 s). La respuesta ajustada siguió las secciones pedidas, declaró \(y_i\) y \(x_{ij}\), e incorporó cardinalidad, asignación única y vínculo \(x_{ij}\le y_i\). La respuesta base inventó una «solución óptima» y careció de \(y_i\).
 
-\columnbreak
-\sect{Benchmark FOM-5 v2}
-En los \textbf{mismos 30 problemas}, ambos generadores recibieron solo el enunciado, con decodificación determinista y tope de 1200 tokens. Se conservaron las 30 respuestas base y se generaron 30 QLoRA. Después, Qwen3-14B NF4 aplicó la rúbrica \textbf{FOM-5 v2} (0--5); actúa solo como juez, con referencia y requisitos reservados para esta fase. Calibración: 5/5.
+\noindent\colorbox{gris}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small
+\textbf{\color{azul}Mejora parcial.} QLoRA todavía omitió \(p_j\) del objetivo: \(\min\sum d_{ij}x_{ij}\) no minimiza distancia ponderada por población. En las respuestas archivadas de este caso, FOM-5 v2 pasó de \textbf{0,650 a 3,850/5}; el caso se reporta fuera de la media de 30.}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\textwidth}
+\small
+\seccion{4}{Benchmark y resultados}
+La comparación usa los \textbf{mismos 30 enunciados}, generación determinista y tope de 1200 tokens. Se conservaron 30 respuestas base y se generaron 30 QLoRA. Qwen3-14B NF4 juzgó ambas; referencia y requisitos entraron solo en la evaluación.
 
-La rúbrica combina decisiones/dominios $D$ (15\%), objetivo $O$ (20\%), restricciones $R$ (35\%), validez algebraica $A$ (15\%) y generalización $G$ (15\%):
+\textbf{FOM-5 v2} puntúa de 0 a 5 decisiones y dominios \(D\) (15\,\%), objetivo \(O\) (20\,\%), restricciones \(R\) (35\,\%), validez algebraica \(A\) (15\,\%) y generalización \(G\) (15\,\%):
 \[
-F=0.15D+0.20O+0.35R+0.15A+0.15G.
+F=0{,}15D+0{,}20O+0{,}35R+0{,}15A+0{,}15G.
 \]
-Cada dimensión va de 0 a 5; los requisitos omitidos o erróneos limitan los componentes correspondientes. Sin formulación reconocible, $F\le1.5$.
+Los requisitos ausentes o erróneos limitan las dimensiones pertinentes. La misma rúbrica evaluó ambas condiciones.
 
-\begin{center}\small
+\begin{center}
 \begin{tabularx}{\linewidth}{@{}Xrr@{}}
 \toprule
-\textbf{30 casos oficiales} & \textbf{Base} & \textbf{QLoRA}\\
+\textbf{30 problemas} & \textbf{Base} & \textbf{QLoRA}\\
 \midrule
-FOM-5 v2 medio (0--5) & 0.5884 & 0.8024\\
-Casos con 0/5 & 21 & 12\\
+FOM-5 v2 medio (0--5) & 0,5884 & \textbf{0,8024}\\
+Casos con 0/5 & 21 & \textbf{12}\\
 \bottomrule
 \end{tabularx}
 \end{center}
-\vspace{-4pt}
+\vspace{-3pt}
 \begin{center}
-\begin{tikzpicture}[x=.23cm,y=.5cm,font=\scriptsize]
-\fill[teal] (0,0) rectangle (14,.7);
-\fill[graybar] (14,0) rectangle (22,.7);
-\fill[brick] (22,0) rectangle (30,.7);
-\node[anchor=north] at (7,-.04) {14 mejoran};
-\node[anchor=north] at (18,-.04) {8 iguales};
-\node[anchor=north] at (26,-.04) {8 empeoran};
+\begin{tikzpicture}[x=.28cm,y=.48cm,font=\fontsize{7.8}{8.5}\selectfont]
+\fill[turquesa] (0,0) rectangle (14,.8);
+\fill[gray!55] (14,0) rectangle (22,.8);
+\fill[rojo] (22,0) rectangle (30,.8);
+\node[anchor=north] at (7,-.05) {14 mejoran};
+\node[anchor=north] at (18,-.05) {8 iguales};
+\node[anchor=north] at (26,-.05) {8 empeoran};
 \end{tikzpicture}
 \end{center}
-\vspace{-4pt}
-Cambio medio pareado: \textbf{+0.2140/5}; IC bootstrap 95\% $[-0.2136,+0.7007]$ sobre 10\,000 remuestreos de los 30 cambios. Como incluye cero, la evidencia no establece una mejora robusta. El caso de Entrega 1 se informa aparte: base determinista \textbf{0.650} $\rightarrow$ QLoRA \textbf{3.850}; persiste la omisión de $p_j$ en el objetivo.
+\vspace{-2pt}
+El cambio medio pareado fue \textbf{+0,2140/5}. El intervalo bootstrap del 95\,\% sobre 10\,000 remuestreos de las 30 diferencias es \([{-}0,2136;\,+0,7007]\). Incluye cero: \textbf{la mejora no es concluyente} para este conjunto.
 
-\sect{Falla y alcance}
-En \texttt{opt\_02}, el puntaje bajó de \textbf{1.300 a 0.000}: las horas extra $h\in[0,20]$ debían ampliar solo trabajo y costar $10h$; QLoRA inventó $y_k$ y omitió la entrega mínima $x_C\ge10$. El aprendizaje de plantillas puede sustituir condiciones concretas. Las familias comparten estructuras; tres casos oficiales tuvieron exposición histórica previa. Una sola semilla y un juez automático limitan la conclusión.
+\seccion{5}{Falla y alcance}
+En \texttt{opt\_02}, producción con horas extra, QLoRA bajó de \textbf{1,30 a 0,00/5}. Las horas \(h\in[0,20]\) debían ampliar solo trabajo y costar \(10h\); el modelo inventó \(y_k\), mezcló índices y omitió \(x_C\ge10\). Una plantilla aprendida sustituyó reglas del enunciado.
 
-\sect{Reproducción}
-\href{https://github.com/Jose21531/GenAI-Optimization}{Repositorio}: README, notebook Colab, adapter público, datos, respuestas y juicios por ID, evaluador y fuente \LaTeX. El notebook también puede repetir la generación y el juicio de los 30; el video muestra las dos rutas sobre el caso de Entrega 1. \href{https://github.com/Jose21531/GenAI-Optimization/tree/main/Deliverable\%202}{Acceso a Entrega 2}.
+La concisión y el mejor formato \textbf{no garantizan corrección matemática}. Cada familia comparte una formulación canónica; tres casos tuvieron exposición histórica previa. Una semilla y un juez automático limitan la inferencia. El paso siguiente es verificar cobertura de requisitos, dominios e índices antes de aceptar un borrador.
 
-{\scriptsize\color{navy}Fuentes: Entrega 1 y archivos del proyecto; \href{https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct}{modelo Qwen2.5}; \href{https://arxiv.org/abs/2305.14314}{QLoRA, Dettmers et al. (2023)}.}
-\end{multicols}
+\seccion{6}{Ejecución y materiales}
+El notebook ejecuta ambas rutas sobre el mismo caso; los CSV guardan respuestas y juicios por ID. \textbf{\href{https://github.com/Jose21531/GenAI-Optimization}{Repositorio y código}} \quad \textbf{\href{https://drive.google.com/drive/folders/1NwKmSSmr4_v8Gd-W1X92eswox6rcSRxV}{Video de ejecución}}.
+\end{minipage}
+
+\vspace{3pt}
+{\color{oro}\rule{\textwidth}{.8pt}}\par
+{\fontsize{7.5}{8.5}\selectfont\color{azul}
+Fuentes y trazabilidad: Entrega 1, rúbrica previa de localización y salidas del repositorio; Qwen2.5-1.5B-Instruct; QLoRA (Dettmers et al., 2023).}
 \end{document}

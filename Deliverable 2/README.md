@@ -1,6 +1,6 @@
 # Deliverable 2 · Fine-tuning con QLoRA para formular problemas de optimización
 
-**[Abrir el notebook en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe de una página (PDF)](informe.pdf) · [Fuente LaTeX](informe.tex) · [Revisar los 30 casos](casos_benchmark.md)
+**[Abrir el notebook en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb)** · [Informe de una página (PDF)](informe.pdf) · [Fuente LaTeX](informe.tex) · [Video de ejecución](https://drive.google.com/drive/folders/1NwKmSSmr4_v8Gd-W1X92eswox6rcSRxV) · [Revisar los 30 casos](casos_benchmark.md)
 
 ## Contenido
 
