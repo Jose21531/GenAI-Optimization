@@ -1,12 +1,10 @@
 # Casos del benchmark: enunciado, respuestas y puntaje
 
-Este archivo permite revisar, problema por problema, qué recibió el modelo, qué respondió con y sin QLoRA y cómo lo evaluó el juez FOM-5 v2. Se genera a partir de [`data/benchmark_30.jsonl`](data/benchmark_30.jsonl) y de los CSV de [`output/`](output/), sin editar las respuestas.
+Este archivo permite revisar, problema por problema, qué recibió el modelo, qué respondió con y sin QLoRA y cómo lo evaluó el juez FOM-5 v2. Se genera a partir de [`data/benchmark_30.jsonl`](data/benchmark_30.jsonl) y de los CSV de [`output/`](output/). Los CSV conservan las respuestas originales; esta vista normaliza espacios finales y delimitadores de código para mantener legible el Markdown.
 
 - **Baseline:** Qwen2.5-1.5B-Instruct con prompting directo (adapter apagado).
 - **QLoRA:** el mismo modelo con el adapter entrenado.
 - **Puntaje:** FOM-5 v2, de 0 a 5. Ambos generadores recibieron solo el enunciado; la referencia y los requisitos se usaron únicamente en la evaluación.
-- Las respuestas completas están en los CSV; aquí se normalizan espacios finales y delimitadores de código para mantener legible el Markdown.
-
 **Resumen de los 30 casos:** media 0.59 → 0.80 · 14 mejoran, 8 quedan igual, 8 empeoran. El caso de la Entrega 1 aparece al final, fuera de la media.
 
 ## Índice
