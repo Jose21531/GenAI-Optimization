@@ -4,6 +4,34 @@ Registro de cambios en los módulos de Sebastián: Analista, Formulador, sus pro
 
 Las decisiones que afectan a todo el equipo (versiones de prompt, configuración elegida tras el piloto) se registran además en [decisiones.md](decisiones.md).
 
+## Pendientes vigentes para otros roles
+
+Esta lista se mantiene al día. Reemplaza las notas sueltas de las entradas antiguas, que se conservan como registro.
+
+**A · José Luis**
+1. **Revisar `model.py`** en la rama `feat/model` y abrir su PR. Lo escribió B porque José Luis estaba ocupado. Ya corrió con el modelo real en la prueba temprana.
+2. **Config: adapter por llamada.** Analista: apagado. Formulador: plan (`adapter_plan`) apagado y candidate (`adapter_candidate`) encendido. Con el adapter encendido, el Analista copia la plantilla y falla.
+3. **Config: prompt por variante.**
+
+   | Variante | Analista | Formulador |
+   |---|---|---|
+   | `full`, `no_audit`, `no_review` | `analista_v3` | `formulador_v2` |
+   | `no_evidence` | `analista_v3_noevidence` | `formulador_v2` |
+   | `no_plan` | `analista_v3` | `formulador_v1_noplan` |
+
+4. **Aclaración:** cuando el Formulador devuelve `clarify`, llamar a `analizar(..., question=..., previous_spec=<el ProblemSpec anterior>)`. Sin `previous_spec` se lanza `ValueError`.
+5. **Revisión:** pasar a `formular` las `Issue` del Verificador en `observations` y el texto anterior en `previous_draft`.
+6. **Reintento por fallo de formato:** con decodificación determinista, el mismo prompt da la misma salida. El reintento tiene que agregar una observación sobre el error. `AgentFormatError` trae `raw` y `prompt_version` para la traza.
+7. **`max_new_tokens` del Analista:** 1200 todavía no alcanza en dev01. Hay que decidir en el piloto si se sube. Descarta la propuesta de ~700 de la fase 1.
+8. **Trazas:** `model.QwenLLM.last_stats` entrega `tokens_in`, `tokens_out`, `latency_ms` y `reached_limit` de cada llamada, y `AgentStep.calls` y `AgentStep.warnings` traen los prompts, las salidas crudas y los avisos.
+9. **Windows (README):** PyTorch con CUDA falla si el entorno virtual está en una ruta larga (`WinError 206`). En Colab no pasa.
+
+**C · Rayén**
+1. `formulador.separar_secciones` está disponible para `audit_model`.
+2. Las referencias de los dev_cases están en `dev_cases/reference/dev_reference.jsonl`, con el mismo formato del benchmark. Los agentes no las leen.
+3. Un candidate incompleto llega con `parse_ok=False` y `parse_errors`; no lanza error.
+4. El Formulador nunca eligió aclarar en las pruebas. La revisión del Verificador es la única corrección que funciona de verdad.
+
 ---
 
 ## 2026-10-25 · Rutas de relectura, aclaración y revisión con el modelo real; `analista_v3`
