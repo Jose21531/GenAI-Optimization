@@ -6,6 +6,41 @@ Las decisiones que afectan a todo el equipo (versiones de prompt, configuración
 
 ---
 
+## 2026-10-25 · Prueba temprana con el modelo real, prompts v2 y `model.py`
+
+**Qué se probó.** Analista y Formulador con Qwen2.5-1.5B-Instruct en fp16 y el adapter de la Entrega 2, sobre los 8 dev_cases. Corrió en una RTX 3050 local de 4 GB, con las mismas versiones de transformers y peft que la Entrega 2. No hubo Verificador ni orquestador: esto **no reemplaza el piloto**. Las salidas crudas quedaron fuera del repositorio.
+
+**Resultados**
+
+| Medida (8 casos) | v1 | v2 |
+|---|---:|---:|
+| El Analista entrega un `ProblemSpec` válido | 5 | 7 |
+| Salidas del Analista cortadas en 1200 tokens | 3 | 1 |
+| Casos con un distractor dentro del `ProblemSpec` | 1 | 0 |
+| Casos con candidate y `parse_ok=True` | 5 | 7 |
+
+- Con el adapter encendido, el Analista no sirve: copia la plantilla de `reread` y luego falla (dev02, dev06). **Analista y plan van con el adapter apagado.**
+- El candidate, generado con adapter, siempre respetó los 5 encabezados. Su calidad matemática es parecida a la de la Entrega 2: hay errores de modelación, como un producto entre variables en dev07 y restricciones lógicas mal escritas en dev04. Eso lo debe medir el juez en el piloto.
+
+**Errores corregidos en el código**
+- `extraer_json`: con una salida truncada, devolvía un objeto interno y el error salía como "falta action". Ahora informa "JSON incompleto".
+- `extraer_json`: repara strings partidos en dos líneas sin coma (`"a"` `"b"`), como apareció en dev01.
+- `formulador._parse_plan`: el modelo base entra en bucle y repite la misma ecuación con IDs crecientes. Ahora se descartan las repeticiones, se conservan con aviso las ecuaciones nuevas con un ID fuera del `ProblemSpec` (pueden cubrir lo que el Analista omitió) y el plan se limita al doble de los requisitos.
+
+**Agregado**
+- `prompts/analista_v2.md`, `analista_v2_noevidence.md` y `formulador_v2.md`. Los v1 se conservan. Los valores por defecto de `analizar` y `formular` ahora apuntan a v2. Los cambios y la evidencia están en `decisiones.md`.
+- Tests: 49 en total, entre ellos los casos de bucle y de string partido observados en la prueba.
+- `model.py` (módulo de A), adelantado porque José Luis estaba ocupado. Está en una **rama aparte, `feat/model`**, con sus tests, para que él lo revise en su propio PR. Reproduce las celdas 8 y 12 de la Entrega 2, verifica el SHA-256 del adapter y registra tokens y latencia de cada llamada.
+
+**Para A**
+- En Windows, PyTorch con CUDA falla si el entorno virtual está en una ruta larga (`WinError 206`). En Colab no ocurre.
+- Hay que decidir si el Analista necesita un `max_new_tokens` mayor que 1200 (dev01).
+- Con decodificación determinista, reintentar con el mismo prompt da la misma salida. El reintento por fallo de formato tiene que agregar al prompt una observación sobre el error.
+
+**Siguiente:** revisión de `model.py` por José Luis, orquestador y piloto completo cuando estén el Verificador y `audit_model`.
+
+---
+
 ## 2026-10-25 · Fase 2: Formulador y casos de desarrollo
 
 **Agregado**

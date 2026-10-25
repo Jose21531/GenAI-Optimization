@@ -24,7 +24,7 @@ from agents.analista import (
 )
 from schemas import DraftModel, DraftSections, FormulatorOutput, Issue, PlanItem, ProblemSpec
 
-DEFAULT_PROMPT = PROMPTS_DIR / "formulador_v1.md"
+DEFAULT_PROMPT = PROMPTS_DIR / "formulador_v2.md"
 
 # Encabezados de la Entrega 2, en orden; se toleran acentos omitidos y marcas
 # de Markdown alrededor del encabezado.
@@ -113,14 +113,33 @@ def _format_observation(item: Union[str, Issue]) -> str:
 
 
 def _parse_plan(raw: str, spec: ProblemSpec, warnings: list[str]) -> list[PlanItem]:
-    known = set(spec.requirement_ids())
-    plan = []
+    """Líneas Uk -> ecuación sin repeticiones.
+
+    Un modelo pequeño puede entrar en bucle y repetir la misma ecuación con IDs
+    nuevos; esas repeticiones se descartan. Una ecuación distinta con un ID que
+    no está en el ProblemSpec se conserva con aviso: puede cubrir un requisito
+    que el Analista omitió, y el Verificador decide.
+    """
+    known = spec.requirement_ids()
+    limit = 2 * len(known)
+    plan, seen, repeated, extra = [], set(), 0, []
     for rid, equation in _PLAN_LINE.findall(raw):
-        if rid in known:
-            plan.append(PlanItem(requirement_id=rid, equation=equation))
-        else:
-            warnings.append(f"plan descartado: {rid} no existe en el ProblemSpec")
-    missing = sorted(known - {item.requirement_id for item in plan}, key=lambda r: int(r[1:]))
+        key = re.sub(r"\s+", "", equation)
+        if key in seen:
+            repeated += 1
+            continue
+        if len(plan) >= limit:
+            warnings.append(f"plan truncado en {limit} líneas (el doble de los requisitos)")
+            break
+        seen.add(key)
+        plan.append(PlanItem(requirement_id=rid, equation=equation))
+        if rid not in known:
+            extra.append(rid)
+    if repeated:
+        warnings.append(f"plan: {repeated} línea(s) con ecuación repetida descartada(s)")
+    if extra:
+        warnings.append("plan con IDs fuera del ProblemSpec: " + ", ".join(dict.fromkeys(extra)))
+    missing = [rid for rid in known if rid not in {item.requirement_id for item in plan}]
     if plan and missing:
         warnings.append("requisitos sin línea de plan: " + ", ".join(missing))
     return plan

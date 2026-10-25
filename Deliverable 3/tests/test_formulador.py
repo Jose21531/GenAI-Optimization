@@ -67,8 +67,9 @@ class FormularTests(unittest.TestCase):
         out = step.output
         self.assertEqual(out.action, "formulate")
         self.assertEqual([(p.requirement_id, p.equation) for p in out.plan],
-                         [("U1", "\\max \\sum_{c\\in C} g_c x_c"), ("U2", "\\sum_{c\\in C} x_c \\le L")])
-        self.assertIn("plan descartado: U9 no existe en el ProblemSpec", step.warnings)
+                         [("U1", "\\max \\sum_{c\\in C} g_c x_c"), ("U2", "\\sum_{c\\in C} x_c \\le L"),
+                          ("U9", "inventada")])
+        self.assertIn("plan con IDs fuera del ProblemSpec: U9", step.warnings)
         self.assertIn("requisitos sin línea de plan: U3", step.warnings)
         self.assertEqual(out.draft.raw_text, CANDIDATE)
         self.assertEqual(out.draft.candidate_id, "dev00-1")
@@ -80,13 +81,24 @@ class FormularTests(unittest.TestCase):
         llm, step = run([DECISION, CANDIDATE])
         self.assertEqual([c.adapter_on for c in step.calls], [False, True])
         self.assertEqual([a for _, a in llm.calls], [False, True])
-        self.assertEqual({c.prompt_version for c in step.calls}, {"formulador_v1"})
+        self.assertEqual({c.prompt_version for c in step.calls}, {"formulador_v2"})
         decision_prompt, candidate_prompt = (c.prompt for c in step.calls)
         self.assertIn("U1 (objetivo): Maximizar la ganancia", decision_prompt)
         self.assertTrue(candidate_prompt.startswith(PROBLEMA))
         self.assertIn("U2 -> \\sum_{c\\in C} x_c \\le L", candidate_prompt)
-        self.assertNotIn("U9", candidate_prompt)
         self.assertTrue(candidate_prompt.rstrip().endswith("sin obtener valores óptimos."))
+
+    def test_plan_en_bucle_se_deduplica_y_acota(self):
+        # Caso observado en la prueba temprana (dev07): la misma ecuación con IDs crecientes.
+        bucle = "DECISION: formular\nU1 -> \\max g x\nU2 -> x \\le L\n" + "".join(
+            f"U{i} -> \\sum_i p_i c_i \\neq 0\n" for i in range(3, 29))
+        _, step = run([bucle, CANDIDATE])
+        self.assertEqual([p.requirement_id for p in step.output.plan], ["U1", "U2", "U3"])
+        self.assertIn("plan: 25 línea(s) con ecuación repetida descartada(s)", step.warnings)
+        distintas = "DECISION: formular\n" + "".join(f"U{i} -> x_{i} \\le L\n" for i in range(1, 12))
+        _, step = run([distintas, CANDIDATE])
+        self.assertEqual(len(step.output.plan), 6)
+        self.assertIn("plan truncado en 6 líneas (el doble de los requisitos)", step.warnings)
 
     def test_aclarar_hace_una_sola_llamada(self):
         raw = "DECISION: aclarar\nPREGUNTA: ¿El límite de 40 hectáreas es por cultivo o total?"
@@ -181,7 +193,8 @@ class CandidateParserTests(unittest.TestCase):
 class PromptFormuladorTests(unittest.TestCase):
     def test_secciones(self):
         base = {"decision", "candidate", "previous", "observations"}
-        self.assertEqual(set(load_prompt(PROMPTS_DIR / "formulador_v1.md")[1]), base | {"plan"})
+        for version in ("formulador_v1.md", "formulador_v2.md"):
+            self.assertEqual(set(load_prompt(PROMPTS_DIR / version)[1]), base | {"plan"})
         self.assertEqual(set(load_prompt(NOPLAN)[1]), base)
 
     def test_formular_solo_abre_prompts(self):

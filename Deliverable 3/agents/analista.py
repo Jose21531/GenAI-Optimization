@@ -29,7 +29,7 @@ from schemas import (
 from tools.extract_data_spans import Span, localizar_cita
 
 PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
-DEFAULT_PROMPT = PROMPTS_DIR / "analista_v1.md"
+DEFAULT_PROMPT = PROMPTS_DIR / "analista_v2.md"
 
 
 class LLM(Protocol):
@@ -123,6 +123,8 @@ def _repair(candidate: str) -> str:
     """Corrige errores frecuentes de modelos pequeños sin reinterpretar contenido."""
     repaired = candidate.replace("“", '"').replace("”", '"')
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
+    # Strings partidos en varias líneas sin coma ("a" "b"), como en Python.
+    repaired = re.sub(r'"\s*\n\s*"', " ", repaired)
     repaired = re.sub(r"\bTrue\b", "true", repaired)
     repaired = re.sub(r"\bFalse\b", "false", repaired)
     repaired = re.sub(r"\bNone\b", "null", repaired)
@@ -133,12 +135,12 @@ def _repair(candidate: str) -> str:
 def extraer_json(raw: str) -> dict:
     """Primer objeto JSON del texto; tolera vallas, prosa y errores menores."""
     text = _FENCE.sub("", raw)
-    incomplete = False
     for match in re.finditer(r"\{", text):
         candidate = _balanced_object(text, match.start())
         if candidate is None:
-            incomplete = True
-            continue
+            # Un objeto sin cerrar contiene a todos los que siguen: tomar uno
+            # interno ocultaría que la salida se truncó.
+            raise ValueError("JSON incompleto")
         for attempt in (candidate, _repair(candidate)):
             try:
                 parsed = json.loads(attempt)
@@ -146,7 +148,7 @@ def extraer_json(raw: str) -> dict:
                 continue
             if isinstance(parsed, dict):
                 return parsed
-    raise ValueError("JSON incompleto" if incomplete else "no se encontró un objeto JSON")
+    raise ValueError("no se encontró un objeto JSON")
 
 
 # ------------------------------------------------------------ normalización

@@ -28,7 +28,8 @@ PROBLEMA = (
     "30 horas por semana; un kilo de pan requiere 0,2 horas de horno y uno de queque, "
     "0,5. Se deben producir al menos 100 kilos de pan. Se desea maximizar la utilidad."
 )
-NOEVIDENCE = PROMPTS_DIR / "analista_v1_noevidence.md"
+NOEVIDENCE = PROMPTS_DIR / "analista_v2_noevidence.md"
+ANALISTA_PROMPTS = sorted(PROMPTS_DIR.glob("analista_v*.md"))
 
 
 def spec_respuesta(**cambios):
@@ -78,9 +79,18 @@ class ExtraerJsonTests(unittest.TestCase):
         raw = '{"a": [1, 2,], "b": True, "c": None, “d”: "\\sum x"}'
         self.assertEqual(extraer_json(raw), {"a": [1, 2], "b": True, "c": None, "d": "\\sum x"})
 
+    def test_string_partido_sin_coma(self):
+        # Cita partida en dos strings sin coma, observada en dev01.
+        partido = '{"evidence": {"text": "aporta 0,10 kg de grasa;"\n  "el aceite, 0,95 kg"}}'
+        self.assertEqual(extraer_json(partido),
+                         {"evidence": {"text": "aporta 0,10 kg de grasa; el aceite, 0,95 kg"}})
+
     def test_truncado_o_ausente(self):
         with self.assertRaisesRegex(ValueError, "incompleto"):
             extraer_json('{"action": "deliver", "spec": {"sets": [')
+        # Truncado después de objetos internos completos: no debe devolver uno de ellos.
+        with self.assertRaisesRegex(ValueError, "incompleto"):
+            extraer_json('```json\n{"action": "deliver", "spec": {"sets": [{"name": "I"}], "data": [')
         with self.assertRaisesRegex(ValueError, "no se encontró"):
             extraer_json("Conjuntos:\nI: productos")
 
@@ -105,7 +115,7 @@ class AnalistaTests(unittest.TestCase):
             step = analizar(llm, "dev01", PROBLEMA, adapter_on=adapter_on)
             self.assertEqual(llm.calls[0][1], adapter_on)
             call = step.calls[0]
-            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v1", adapter_on))
+            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v2", adapter_on))
             self.assertIn(PROBLEMA, call.prompt)
             self.assertEqual(call.raw, deliver())
 
@@ -143,7 +153,7 @@ class AnalistaTests(unittest.TestCase):
         with self.assertRaises(AgentFormatError) as caught:
             analizar(MockLLM([raw]), "dev01", PROBLEMA, adapter_on=True)
         self.assertEqual(caught.exception.raw, raw)
-        self.assertEqual(caught.exception.prompt_version, "analista_v1")
+        self.assertEqual(caught.exception.prompt_version, "analista_v2")
 
     def test_spec_invalido_falla(self):
         with self.assertRaisesRegex(AgentFormatError, "AnalystOutput"):
@@ -185,14 +195,14 @@ class AnalistaTests(unittest.TestCase):
         sin_citas["objective"].pop("evidence")
         llm = MockLLM([json.dumps({"action": "deliver", "spec": sin_citas})])
         step = analizar(llm, "dev01", PROBLEMA, adapter_on=False, prompt_path=NOEVIDENCE)
-        self.assertEqual(step.calls[0].prompt_version, "analista_v1_noevidence")
+        self.assertEqual(step.calls[0].prompt_version, "analista_v2_noevidence")
         self.assertNotIn("evidence", llm.calls[0][0])
         self.assertTrue(all(r.evidence is None for r in step.output.spec.requirements))
 
 
 class PromptTests(unittest.TestCase):
     def test_prompts_cargan_y_aceptan_signos_pesos(self):
-        for path in (PROMPTS_DIR / "analista_v1.md", NOEVIDENCE):
+        for path in ANALISTA_PROMPTS:
             version, sections = load_prompt(path)
             self.assertEqual(version, path.stem)
             self.assertEqual(set(sections), {"user", "spans", "question"})
@@ -202,7 +212,7 @@ class PromptTests(unittest.TestCase):
             self.assertNotIn("# analista", prompt)
 
     def test_prompts_dicen_que_los_spans_son_candidatos(self):
-        for path in (PROMPTS_DIR / "analista_v1.md", NOEVIDENCE):
+        for path in ANALISTA_PROMPTS:
             _, sections = load_prompt(path)
             spans = sections["spans"].template
             self.assertIn("candidatos", spans)
