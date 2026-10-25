@@ -31,7 +31,7 @@ Este archivo define el trabajo de la Entrega 3. Los archivos de gobierno y el í
 | Rol | Persona | Módulos |
 |---|---|---|
 | A · Infraestructura | José Luis Erices | `orchestrator.py`, `schemas.py`, `model.py`, `run.py`, trazas, notebook y README |
-| B · Generación | Por asignar | `agents/analista.py`, `agents/formulador.py`, sus prompts, `tools/extract_data_spans.py` y `dev_cases/` |
-| C · Verificación y evaluación | Por asignar | `agents/verificador.py`, su prompt, `tools/audit_model.py` y `eval/` |
+| B · Generación | Sebastián | `agents/analista.py`, `agents/formulador.py`, sus prompts, `tools/extract_data_spans.py` y `dev_cases/` |
+| C · Verificación y evaluación | Rayén | `agents/verificador.py`, su prompt, `tools/audit_model.py` y `eval/` |
 
 Una IA que trabaja para un integrante edita solo los módulos de ese integrante. Los contratos comunes se revisan con el equipo antes de cambiar `schemas.py`. El trabajo se desarrolla en ramas de cada responsable (`feat/infra`, `feat/generacion`, `feat/verificacion`) y se integra mediante PR revisado por otra persona. Antes de cada commit se revisan el diff y los tests del módulo. Para el desarrollo local se usa `MockLLM`; las corridas reales se realizan en Colab T4.
