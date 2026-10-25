@@ -20,6 +20,7 @@ Este proyecto estudia si un modelo de lenguaje **pequeño y abierto**, ejecutabl
 |---|---|---|---|
 | [Deliverable 1](Deliverable%201/) | Definición de la tarea, comparación de tres modelos candidatos y diagnóstico de por qué fallan con prompting directo. | [PDF](Deliverable%201/Grupo1_GenAI.pdf) | [Notebook](Deliverable%201/Deliverable_1.ipynb) |
 | [Deliverable 2](Deliverable%202/) | Intervención con fine-tuning QLoRA, comparación contra el baseline en 30 problemas, caso de falla y demostración. | [PDF](Deliverable%202/informe.pdf) · [LaTeX](Deliverable%202/informe.tex) · [Video](https://drive.google.com/drive/folders/1NwKmSSmr4_v8Gd-W1X92eswox6rcSRxV) | [Notebook](Deliverable%202/Deliverable_2.ipynb) · [Abrir en Colab](https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable%202/Deliverable_2.ipynb) |
+| [Deliverable 3](Deliverable%203/) | Estructura inicial del sistema de agentes y contratos de intercambio; implementación en desarrollo. | En preparación | [Estructura y decisiones](Deliverable%203/README.md) |
 
 ## Resultado actual en una línea
 

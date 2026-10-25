@@ -1,0 +1,23 @@
+status: development
+model:
+  id: Qwen/Qwen2.5-1.5B-Instruct
+  revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  adapter_sha256: 68583e9dffa6647a5c0b89a74168363264daf246e4337ef1ae0c644243391151
+  adapter_enabled:
+    analista: true
+    formulador: true
+    verificador: true
+generation:
+  do_sample: false
+  max_new_tokens_candidate: 1200
+budgets:
+  clarifications: 1
+  revisions: 1
+  format_retries: 1
+variants:
+  - full
+  - no_evidence
+  - no_plan
+  - no_audit
+  - no_review
+benchmark_inputs: data/benchmark_30_generation_only.jsonl
