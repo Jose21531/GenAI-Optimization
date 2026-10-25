@@ -18,7 +18,7 @@ flowchart LR
     V -->|aceptar o detener| S[Formulación final + traza]
 ```
 
-Los mensajes de control y cobertura se guardan separados de `candidate`. El contrato completo está en [docs/contratos.md](docs/contratos.md); las decisiones y cuestiones pendientes están en [docs/decisiones.md](docs/decisiones.md).
+Los mensajes de control y cobertura se guardan separados de `candidate`. Las clases compartidas están en [schemas.py](schemas.py), su contrato en [docs/contratos.md](docs/contratos.md) y las decisiones en [docs/decisiones.md](docs/decisiones.md). Para validar el contrato localmente con Python 3.9 o superior: `python -m pip install -r "Deliverable 3/requirements.txt"` y `python -m unittest discover -s "Deliverable 3/tests"` desde la raíz del repositorio.
 
 | Ruta | Propósito |
 |---|---|
