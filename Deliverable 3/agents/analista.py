@@ -86,6 +86,11 @@ def load_prompt(path: Path) -> tuple[str, dict[str, Template]]:
     return path.stem, sections
 
 
+def render(template: Template, **values: str) -> str:
+    """Rellena la plantilla; los bloques vacíos no dejan líneas en blanco repetidas."""
+    return re.sub(r"\n{3,}", "\n\n", template.substitute(**values)).strip()
+
+
 # ------------------------------------------------------------------- JSON
 
 _FENCE = re.compile(r"```(?:json)?", re.IGNORECASE)
@@ -304,9 +309,8 @@ def analizar(
                    if spans is not None else "")
     question_block = (sections["question"].substitute(question=question)
                       if question else "")
-    prompt = sections["user"].substitute(
-        problem=problem, spans_block=spans_block, question_block=question_block,
-    )
+    prompt = render(sections["user"], problem=problem, spans_block=spans_block,
+                    question_block=question_block)
     raw = llm.generate(prompt, adapter_on)
     step = AgentStep(output=None, calls=[LLMCall(version, prompt, adapter_on, raw)])
 

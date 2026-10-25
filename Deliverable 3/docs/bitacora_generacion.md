@@ -6,6 +6,45 @@ Las decisiones que afectan a todo el equipo (versiones de prompt, configuración
 
 ---
 
+## 2026-10-25 · Fase 2: Formulador y casos de desarrollo
+
+**Agregado**
+- `agents/formulador.py`: `formular(llm, problem, spec, *, candidate_id, adapter_plan, adapter_candidate, prompt_path, observations, previous_draft) -> AgentStep`. Hace dos llamadas al LLM, cada una con su propio adapter:
+  1. **decision**: responde `DECISION: formular` seguido de líneas `Uk -> ecuación`, o `DECISION: aclarar` con `PREGUNTA: ...`. Si aclara, no hay segunda llamada y devuelve `FormulatorOutput(action="clarify")`.
+  2. **candidate**: la formulación con los cinco encabezados de la Entrega 2. El prompt empieza con el enunciado literal y termina con la frase de cierre de los enunciados de entrenamiento, para acercarse a lo que vio el adapter.
+- Funciones reutilizables:
+  - `separar_secciones(texto)`: llena `DraftSections` y lista los errores (encabezado faltante, repetido, fuera de orden o vacío). Tolera acentos omitidos y marcas de Markdown. **C puede reutilizarla en `audit_model`.**
+  - `limpiar_candidate`: recorta lo anterior a `Conjuntos:` y las vallas de código.
+  - `formatear_spec`: resumen del `ProblemSpec` en texto.
+- `prompts/formulador_v1.md` (secciones `decision`, `candidate`, `plan`, `previous`, `observations`) y `prompts/formulador_v1_noplan.md`, que no tiene sección `plan` y cuya `decision` pide solo la decisión. El código es el mismo para ambas variantes.
+- `dev_cases/inputs.jsonl` (8 casos: `id`, `title`, `problem`), `dev_cases/reference/dev_reference.jsonl` (referencia, requisitos `R1..Rn`, distractores y notas) y `dev_cases/README.md`.
+  - Distractores: `dev01` y `dev08` incluyen números que no entran al modelo, y `dev03` describe una escala de puntaje.
+  - `dev02` (horas extra) es claramente distinto de `opt_02`; está declarado en `decisiones.md`.
+- `tests/test_formulador.py` (15 tests) y `tests/test_dev_cases.py` (5 tests). En total, la suite tiene 47 tests y todos pasan.
+- `docs/decisiones.md`: cuatro filas nuevas, con las versiones iniciales de los prompts, el origen de los dev cases, la relación entre `dev02` y `opt_02` (para declararla en el informe) y los distractores.
+
+**Cambiado**
+- `agents/analista.py`: nueva función `render`, compartida con el Formulador, que rellena la plantilla y colapsa las líneas en blanco que dejan los bloques vacíos.
+- `prompts/analista_v1.md` y `analista_v1_noevidence.md`: se agregaron solo líneas en blanco alrededor de los bloques, sin cambiar el texto. Se mantiene la versión v1, porque todavía no se ha usado en ninguna corrida.
+
+**Comportamiento que deben conocer A y C**
+- `FormulatorOutput.plan` guarda solo líneas con IDs que existen en el `ProblemSpec`. Las demás se descartan con aviso, y los requisitos sin línea de plan también quedan como aviso.
+- Un candidate incompleto **no lanza error**: se entrega con `parse_ok=False` y `parse_errors`, y el orquestador decide si reintenta. Solo un candidate vacío o una decisión ilegible lanzan `AgentFormatError`.
+- Si quedan líneas `Uk ->` dentro del candidate, se registra un `parse_error`; no se borran en silencio.
+- `observations` acepta `Issue` del Verificador o texto libre del orquestador. Cuando no hay aclaraciones disponibles, el orquestador debe pedir que se formule mediante una observación.
+- Con `no_plan`, la variante cambia solo el archivo de prompt. Si el modelo escribe líneas de plan sin que se le pidan, quedan registradas en `plan`, pero no llegan al candidate.
+
+**Pendiente de coordinar**
+- A: `config` necesita un adapter por llamada del Formulador (`adapter_plan`, `adapter_candidate`) y la asignación de cada variante a su archivo de prompt.
+- Piloto en Colab con los 8 dev cases:
+  - Analista con adapter apagado o encendido.
+  - Plan con adapter apagado.
+  - Candidate con o sin el bloque del análisis. El adapter se entrenó viendo solo enunciados, y si rinde mejor sin el bloque, eso sería un `formulador_v2`.
+
+**Siguiente:** integración con el orquestador de A y piloto en Colab.
+
+---
+
 ## 2026-10-25 · Fase 1: Analista y `extract_data_spans`
 
 **Agregado**

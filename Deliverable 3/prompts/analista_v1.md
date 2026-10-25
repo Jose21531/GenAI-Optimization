@@ -48,8 +48,11 @@ Respuesta:
 El año 1998 no aparece en el JSON porque no afecta decisiones, objetivo ni restricciones.
 
 Enunciado: $problem
+
 $question_block
+
 $spans_block
+
 Respuesta:
 
 <!-- seccion: spans -->
