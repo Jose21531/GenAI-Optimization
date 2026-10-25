@@ -7,6 +7,7 @@
 | Acordada | Sin RAG. `audit_model` realiza comprobaciones estructurales por tipo de requisito y no sustituye al juicio matemático. |
 | Acordada | Los prompts y la configuración se prueban solo en ocho casos nuevos y se congelan antes de evaluar los 30 casos oficiales. |
 | Acordada | José Luis Erices asume A (infraestructura), Sebastián asume B (generación) y Rayén asume C (verificación/evaluación). |
+| Acordada | `audit_model` comprueba símbolos, dominios, índices, uso de variables y parámetros, linealidad detectable y cobertura estructural. La notación no analizable se informa como `no_verificado`; la semántica queda a cargo del Verificador. Se conservan los IDs `U` y el `candidate` textual sin anteponer el plan. |
 | Pendiente del piloto | Estado del adapter por agente y necesidad de decodificación restringida para los mensajes JSON breves. Se documentarán la prueba y la configuración elegida. |
 
 Toda versión nueva de prompt debe registrar aquí su cambio, motivo y evidencia de desarrollo. No se sobrescriben versiones anteriores.
