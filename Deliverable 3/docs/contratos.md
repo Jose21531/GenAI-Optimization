@@ -14,11 +14,14 @@ El Formulador comunica primero una decisión de control (`formulate` o `clarify`
 
 El Verificador lee independientemente el enunciado y asigna IDs a las ecuaciones efectivamente presentes en `candidate`. Su `CoverageMap` vincula requisitos `U` con el objetivo, los dominios o las restricciones correspondientes; puede vincular varios requisitos con una ecuación y viceversa. `audit_model` valida que:
 
-1. Todo requisito del `ProblemSpec` tenga al menos un vínculo del tipo correcto.
+1. Todo requisito del `ProblemSpec` tenga al menos un vínculo del tipo correcto a una parte existente del borrador.
 2. Toda restricción identificada tenga al menos un requisito vinculado; una ausencia se marca como posible adición no justificada.
 3. Todos los IDs y fragmentos de ecuación citados existan en los artefactos recibidos.
+4. Los símbolos usados estén declarados; las variables tengan dominio y aridad de índices consistente; las variables y los parámetros declarados se usen.
+5. Cada dato paramétrico del `ProblemSpec` tenga representación declarada; los índices de parámetros correspondan a conjuntos declarados y los índices de ecuaciones estén ligados.
+6. No haya productos entre variables ni otra no linealidad que el análisis sintáctico pueda detectar.
 
-La herramienta puede añadir verificaciones sintácticas conservadoras de símbolos y contradicciones, pero no afirma equivalencia matemática. Un vínculo declarado tampoco demuestra que la ecuación sea correcta. El Verificador debe revisar esa semántica frente al enunciado y señalar requisitos que falten en el propio `ProblemSpec`.
+Cada hallazgo informa evidencia y gravedad (`error` o `aviso`). Si el parser no puede comprobar una expresión, informa `no_verificado`; no supone aprobación. La precisión de cada chequeo se prueba con los ocho casos de desarrollo y los de falsos positivos frecuentes bajan a `aviso`. Estas reglas no afirman equivalencia matemática. La presencia de un parámetro o un vínculo declarado tampoco demuestra que esté en la ecuación correcta. El Verificador revisa esa semántica frente al enunciado y señala requisitos que falten en el propio `ProblemSpec`.
 
 En la ablación `no_evidence`, el campo `evidence` puede quedar vacío; los demás campos e IDs de `ProblemSpec` se mantienen para conservar la interfaz. `no_plan` elimina solo el mensaje interno de planificación; `candidate` conserva el mismo formato. `no_audit` omite la herramienta y deja la decisión al Verificador. `no_review` conserva su diagnóstico, pero impide devolver el borrador al Formulador.
 
