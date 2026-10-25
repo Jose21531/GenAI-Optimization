@@ -29,7 +29,7 @@ from schemas import (
 from tools.extract_data_spans import Span, localizar_cita
 
 PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
-DEFAULT_PROMPT = PROMPTS_DIR / "analista_v2.md"
+DEFAULT_PROMPT = PROMPTS_DIR / "analista_v3.md"
 
 
 class LLM(Protocol):
@@ -291,6 +291,17 @@ def _format_spans(spans: list[Span]) -> str:
     return "\n".join(lines)
 
 
+def compact_spec(spec: ProblemSpec) -> str:
+    """El ProblemSpec como JSON de una línea, sin case_id ni offsets de evidencia."""
+    def strip(obj: Any) -> Any:
+        if isinstance(obj, dict):
+            return {k: strip(v) for k, v in obj.items() if k not in ("case_id", "start", "end")}
+        if isinstance(obj, list):
+            return [strip(v) for v in obj]
+        return obj
+    return json.dumps(strip(spec.model_dump(exclude_none=True)), ensure_ascii=False)
+
+
 def analizar(
     llm: LLM,
     case_id: str,
@@ -300,17 +311,21 @@ def analizar(
     prompt_path: Path = DEFAULT_PROMPT,
     spans: Optional[list[Span]] = None,
     question: Optional[str] = None,
+    previous_spec: Optional[ProblemSpec] = None,
 ) -> AgentStep:
     """Una llamada al modelo. Devuelve AgentStep con un AnalystOutput.
 
     ``spans`` es la observación de extract_data_spans, si el Analista la pidió;
-    ``question`` es la aclaración que solicitó el Formulador.
+    ``question`` es la aclaración que solicitó el Formulador y exige
+    ``previous_spec``, el análisis sobre el que se pregunta.
     """
+    if question and previous_spec is None:
+        raise ValueError("una aclaración requiere previous_spec")
     version, sections = load_prompt(prompt_path)
     spans_block = (sections["spans"].substitute(spans=_format_spans(spans))
                    if spans is not None else "")
-    question_block = (sections["question"].substitute(question=question)
-                      if question else "")
+    question_block = (sections["question"].substitute(
+        question=question, previous_spec=compact_spec(previous_spec)) if question else "")
     prompt = render(sections["user"], problem=problem, spans_block=spans_block,
                     question_block=question_block)
     raw = llm.generate(prompt, adapter_on)

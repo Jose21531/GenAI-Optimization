@@ -6,6 +6,26 @@ Las decisiones que afectan a todo el equipo (versiones de prompt, configuración
 
 ---
 
+## 2026-10-25 · Rutas de relectura, aclaración y revisión con el modelo real; `analista_v3`
+
+En la prueba anterior nunca se recorrieron estas rutas, así que se forzaron en la GPU local a partir de los resultados de v2.
+
+| Ruta | v2 | v3 |
+|---|---|---|
+| Relectura: el Analista recibe los fragmentos (dev02, dev06, dev08) | 0/3 entregas; JSON cortado o `spec` vacío | 2/3 entregas, con más requisitos y sin distractores |
+| Aclaración: el Analista responde (dev07) | Rehízo el análisis y perdió el objetivo | Conserva el objetivo; agrega solo parte de lo pedido |
+| El Formulador pide aclarar ante un análisis sin decisiones (dev05) | No lo pide | No lo pide |
+| Revisión: el Formulador corrige con observaciones (dev04, dev07) | Aplica las correcciones; dev04 agrega restricciones de más | (sin cambios: no depende del Analista) |
+
+**Cambiado**
+- `agents/analista.py`: `analizar(..., question=..., previous_spec=...)`. Una aclaración **exige** el análisis anterior, que se envía como JSON compacto sin `case_id` ni offsets (`compact_spec`). Antes el Analista no lo veía y rehacía el análisis desde cero. **A debe pasar `previous_spec`** cuando el Formulador pide aclarar.
+- Prompts nuevos: `analista_v3.md` y `analista_v3_noevidence.md`, que ahora son los valores por defecto. v1 y v2 se conservan.
+- Tests: 50 en total.
+
+**Conclusión para el piloto:** con este modelo, la aclaración del Formulador casi no se va a activar. La revisión sí funciona, así que la calidad final depende sobre todo de lo que observe el Verificador.
+
+---
+
 ## 2026-10-25 · Prueba temprana con el modelo real, prompts v2 y `model.py`
 
 **Qué se probó.** Analista y Formulador con Qwen2.5-1.5B-Instruct en fp16 y el adapter de la Entrega 2, sobre los 8 dev_cases. Corrió en una RTX 3050 local de 4 GB, con las mismas versiones de transformers y peft que la Entrega 2. No hubo Verificador ni orquestador: esto **no reemplaza el piloto**. Las salidas crudas quedaron fuera del repositorio.

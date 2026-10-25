@@ -28,7 +28,7 @@ PROBLEMA = (
     "30 horas por semana; un kilo de pan requiere 0,2 horas de horno y uno de queque, "
     "0,5. Se deben producir al menos 100 kilos de pan. Se desea maximizar la utilidad."
 )
-NOEVIDENCE = PROMPTS_DIR / "analista_v2_noevidence.md"
+NOEVIDENCE = PROMPTS_DIR / "analista_v3_noevidence.md"
 ANALISTA_PROMPTS = sorted(PROMPTS_DIR.glob("analista_v*.md"))
 
 
@@ -115,7 +115,7 @@ class AnalistaTests(unittest.TestCase):
             step = analizar(llm, "dev01", PROBLEMA, adapter_on=adapter_on)
             self.assertEqual(llm.calls[0][1], adapter_on)
             call = step.calls[0]
-            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v2", adapter_on))
+            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v3", adapter_on))
             self.assertIn(PROBLEMA, call.prompt)
             self.assertEqual(call.raw, deliver())
 
@@ -143,17 +143,27 @@ class AnalistaTests(unittest.TestCase):
 
     def test_question_solo_si_hay_aclaracion(self):
         llm = MockLLM([deliver(), deliver()])
-        analizar(llm, "dev01", PROBLEMA, adapter_on=False)
-        analizar(llm, "dev01", PROBLEMA, adapter_on=False, question="¿El mínimo es por semana?")
+        first = analizar(llm, "dev01", PROBLEMA, adapter_on=False)
+        analizar(llm, "dev01", PROBLEMA, adapter_on=False, question="¿El mínimo es por semana?",
+                 previous_spec=first.output.spec)
         self.assertNotIn("aclaración", llm.calls[0][0])
-        self.assertIn("¿El mínimo es por semana?", llm.calls[1][0])
+        prompt = llm.calls[1][0]
+        self.assertIn("¿El mínimo es por semana?", prompt)
+        # El análisis anterior llega compacto, sin case_id ni offsets.
+        self.assertIn('"text": "Horas de horno"', prompt)
+        self.assertNotIn('"case_id"', prompt)
+        self.assertNotIn('"start"', prompt)
+
+    def test_aclaracion_exige_el_analisis_anterior(self):
+        with self.assertRaisesRegex(ValueError, "previous_spec"):
+            analizar(MockLLM([deliver()]), "dev01", PROBLEMA, adapter_on=False, question="¿?")
 
     def test_salida_con_formato_de_formulacion_falla(self):
         raw = "Conjuntos:\n\\(P\\): productos.\n\nParámetros:\n\\(u_i\\): utilidad."
         with self.assertRaises(AgentFormatError) as caught:
             analizar(MockLLM([raw]), "dev01", PROBLEMA, adapter_on=True)
         self.assertEqual(caught.exception.raw, raw)
-        self.assertEqual(caught.exception.prompt_version, "analista_v2")
+        self.assertEqual(caught.exception.prompt_version, "analista_v3")
 
     def test_spec_invalido_falla(self):
         with self.assertRaisesRegex(AgentFormatError, "AnalystOutput"):
@@ -195,7 +205,7 @@ class AnalistaTests(unittest.TestCase):
         sin_citas["objective"].pop("evidence")
         llm = MockLLM([json.dumps({"action": "deliver", "spec": sin_citas})])
         step = analizar(llm, "dev01", PROBLEMA, adapter_on=False, prompt_path=NOEVIDENCE)
-        self.assertEqual(step.calls[0].prompt_version, "analista_v2_noevidence")
+        self.assertEqual(step.calls[0].prompt_version, "analista_v3_noevidence")
         self.assertNotIn("evidence", llm.calls[0][0])
         self.assertTrue(all(r.evidence is None for r in step.output.spec.requirements))
 
