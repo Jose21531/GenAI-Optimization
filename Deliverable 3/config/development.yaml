@@ -4,16 +4,31 @@ model:
   revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
   adapter_sha256: 68583e9dffa6647a5c0b89a74168363264daf246e4337ef1ae0c644243391151
   adapter_enabled:
-    analista: true
-    formulador: true
+    analista: false
+    formulador_plan: false
+    formulador_candidate: true
     verificador: true
 generation:
   do_sample: false
-  max_new_tokens_candidate: 1200
+  max_new_tokens:
+    analista: 1200
+    formulador_plan: 1200
+    formulador_candidate: 1200
+    verificador: 1200
+prompts:
+  analista: prompts/analista_v3.md
+  analista_no_evidence: prompts/analista_v3_noevidence.md
+  formulador: prompts/formulador_v2.md
+  formulador_no_plan: prompts/formulador_v1_noplan.md
+  verificador: prompts/verificador_v2.md
+  control: prompts/orquestador_v1.md
 budgets:
   clarifications: 1
   revisions: 1
   format_retries: 1
+  rereads: 1
+  audits_per_candidate: 1
+  model_calls: 20
 variants:
   - full
   - no_evidence
