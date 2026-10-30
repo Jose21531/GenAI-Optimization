@@ -79,7 +79,48 @@ def _declarations(text: str) -> tuple[dict[str, _Decl], bool]:
     return declarations, reliable
 
 
-def _expression(text: str) -> tuple[list[re.Match], set[str], str, bool]:
+def _sum_indices(subscript: str) -> set[str]:
+    bound = {i for m in _BIND.finditer(subscript) for i in re.findall(r"[a-z]", m[1])}
+    numeric = re.match(r"([a-z])\s*=", subscript)
+    return bound | ({numeric[1]} if numeric else set())
+
+
+def _scope_end(body: str, start: int) -> int:
+    """Fin del término que sigue a una sumatoria: un operador o paréntesis de cierre a nivel 0."""
+    depth = 0
+    for k in range(start, len(body)):
+        char = body[k]
+        if char in "({[":
+            depth += 1
+        elif char in ")}]":
+            depth -= 1
+            if depth < 0:
+                return k
+        elif depth == 0 and body[start:k].strip() and (
+                char in "+-=<>≤≥" or re.match(r"\\(?:leq?|geq?)\b", body[k:])):
+            return k
+    return len(body)
+
+
+def _out_of_scope(plain: str) -> set[str]:
+    """Índices ligados solo por una sumatoria que aparecen después de su alcance."""
+    body = _QUANT.split(plain)[0]
+    quantified = {i for m in _BIND.finditer(plain[len(body):]) for i in re.findall(r"[a-z]", m[1])}
+    sums = list(_SUM.finditer(body))
+    free = set()
+    for position, match in enumerate(sums):
+        end = _scope_end(body, match.end())
+        for index in _sum_indices(match[1]) - quantified:
+            # Una sumatoria posterior con el mismo índice abre un alcance nuevo.
+            stop = next((s.start() for s in sums[position + 1:]
+                         if s.start() >= end and index in _sum_indices(s[1])), len(body))
+            region = _SUM.sub(" ", body[end:stop])
+            if any(index in _indices(m["sub"] or "") for m in _SYMBOL.finditer(region)):
+                free.add(index)
+    return free
+
+
+def _expression(text: str) -> tuple[list[re.Match], set[str], str, bool, set[str]]:
     plain = _plain(text)
     bindings = set()
     for match in _BIND.finditer(plain):
@@ -106,7 +147,7 @@ def _expression(text: str) -> tuple[list[re.Match], set[str], str, bool]:
         reliable = False
     if any(len(index) > 1 and not index.isdigit() for m in tokens for index in _indices(m["sub"] or "")):
         reliable = False
-    return tokens, bindings, cleaned, reliable
+    return tokens, bindings, cleaned, reliable, _out_of_scope(plain)
 
 
 def audit_model(spec: ProblemSpec, draft: DraftModel, coverage: CoverageMap) -> AuditReport:
@@ -202,7 +243,7 @@ def audit_model(spec: ProblemSpec, draft: DraftModel, coverage: CoverageMap) -> 
                       "parametro_no_usado", "indice_libre", "no_lineal"):
             unknown(check, "Expresiones fuera del subconjunto soportado")
 
-    used = {m["name"] for tokens, _, _, _ in expressions for m in tokens}
+    used = {m["name"] for tokens, *_ in expressions for m in tokens}
     for name, declaration in variables.items():
         if not _DOMAIN.search(declaration.text):
             finding("variable_sin_dominio", "No se reconoció un dominio explícito",
@@ -233,9 +274,12 @@ def audit_model(spec: ProblemSpec, draft: DraftModel, coverage: CoverageMap) -> 
         if binding[2] not in sets:
             finding("simbolo_no_declarado", "Conjunto de un ligador sin declaración reconocida",
                     symbol=binding[2], location=binding[0])
-    for tokens, bindings, expression, reliable in expressions:
+    for tokens, bindings, expression, reliable, out_of_scope in expressions:
         if not reliable or not declarations_ok:
             continue
+        for index in sorted(out_of_scope):
+            finding("indice_libre", "Índice usado fuera del alcance de la sumatoria que lo liga",
+                    symbol=index, location=expression)
         for token in tokens:
             name, indices = token["name"], _indices(token["sub"] or "")
             if name not in declarations and name not in bindings:
@@ -251,10 +295,15 @@ def audit_model(spec: ProblemSpec, draft: DraftModel, coverage: CoverageMap) -> 
             unknown("indice_libre", "El alcance de los ligadores requiere inspección", expression)
         for left, right in zip(tokens, tokens[1:]):
             gap = expression[left.end():right.start()]
-            if left["name"] in variables and right["name"] in variables and re.fullmatch(r"\s*(?:\*|cdot|times)?\s*", gap):
+            if left["name"] in variables and right["name"] in variables and re.fullmatch(
+                    r"[\s()]*(?:\*|cdot|times)?[\s()]*", gap):
                 finding("no_lineal", "Producto entre variables", location=expression)
         for token in tokens:
             tail = expression[token.end():]
+            # Variable junto a un paréntesis: puede multiplicar una expresión con variables.
+            if token["name"] in variables and (re.match(r"\s*\(", tail)
+                                               or re.search(r"\)\s*$", expression[:token.start()])):
+                unknown("no_lineal", "Variable multiplicada por una expresión entre paréntesis", expression)
             if token["name"] in variables and re.match(r"\s*\^\s*\{?(?:[2-9]|[1-9][0-9])", tail):
                 finding("no_lineal", "Potencia no lineal de una variable", symbol=token["name"], location=expression)
             if token["name"] in variables and re.search(r"/\s*$", expression[:token.start()]):

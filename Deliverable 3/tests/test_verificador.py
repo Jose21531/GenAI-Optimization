@@ -249,6 +249,35 @@ class VerificadorTests(unittest.TestCase):
             with self.subTest(payload=payload), self.assertRaises(AgentFormatError):
                 run(payload)
 
+    def test_accept_inconsistente_se_rechaza(self):
+        empty = {"candidate_id": DRAFT.candidate_id, "elements": [], "links": []}
+        partial = copy.deepcopy(MAP)
+        partial["links"] = partial["links"][:2]
+        dangling = copy.deepcopy(MAP)
+        dangling["elements"] = dangling["elements"][:2]
+        cases = [review(coverage=empty), review(coverage=partial), review(coverage=dangling),
+                 review(decision=decision("accept", issues=[dict(ISSUE)]))]
+        for payload in cases:
+            with self.subTest(payload=payload), self.assertRaises(AgentFormatError):
+                run(payload)
+
+    def test_revise_y_stop_admiten_mapas_incompletos(self):
+        empty = {"candidate_id": DRAFT.candidate_id, "elements": [], "links": []}
+        for action in ("revise", "stop"):
+            with self.subTest(action=action):
+                _, step = run(review(action, coverage=empty))
+                self.assertEqual(step.output.decision.action, action)
+
+    def test_accept_tras_auditar_con_mapa_incompleto_se_rechaza(self):
+        partial = copy.deepcopy(MAP)
+        partial["links"] = partial["links"][:1]
+        coverage = CoverageMap.model_validate(partial)
+        report = AuditReport(candidate_id=DRAFT.candidate_id)
+        llm = MockLLM([json.dumps({"action": "review", "decision": decision()})])
+        with self.assertRaises(AgentFormatError):
+            verificar(llm, PROBLEM, SPEC, DRAFT, adapter_on=False,
+                      coverage=coverage, audit_report=report)
+
     def test_feedback_cambia_el_prompt_sin_reintentos_internos(self):
         llm = MockLLM(["JSON incompleto", json.dumps(review())])
         with self.assertRaises(AgentFormatError) as caught:

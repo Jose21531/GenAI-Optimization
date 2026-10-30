@@ -40,6 +40,10 @@ borrador y solicitudes de una segunda auditoría.
 
 El mapa puede describir cobertura incompleta: el agente y la herramienta deben
 mostrar las omisiones, sin fabricar ecuaciones o vínculos para llenar huecos.
+Eso vale para `revise` y `stop`. Un `accept` se rechaza como `AgentFormatError`
+si trae issues, si el mapa no tiene elementos o vínculos, o si algún requisito
+del `ProblemSpec` no está vinculado a un elemento existente del mapa. En la
+continuación tras auditar se aplica la misma regla al mapa conservado.
 La validación de tipos e identificadores del intercambio no sustituye los
 chequeos de referencias, cobertura y sintaxis de `audit_model`, ni la revisión
 semántica del LLM. El Verificador recibe el enunciado, el análisis y el texto
