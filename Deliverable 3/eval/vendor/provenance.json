@@ -1,0 +1,10 @@
+{
+  "source_notebook": "Deliverable 2/Deliverable_2.ipynb",
+  "source_commit": "243efe49f55499630d2601b0c8a3cd0845053917",
+  "kernel_cell": 15,
+  "calibration_cell": 16,
+  "kernel_sha256": "63b4008353cebd4a933c3083bf89eab820046b0b78e08f4c86a04e592f7869a9",
+  "calibration_sha256": "4e6cf372912e15bfefaee8f2804a69002e9d354ff530877fb1b097d67e06f2fc",
+  "judge_model": "Qwen/Qwen3-14B",
+  "judge_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+}
