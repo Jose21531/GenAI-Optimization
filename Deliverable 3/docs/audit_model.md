@@ -33,8 +33,14 @@ un aviso, nunca una eliminación automática.
 
 No hay un parser algebraico completo. Fracciones LaTeX, nombres matemáticos
 compuestos, texto incrustado, índices desplazados y declaraciones ambiguas se
-informan como `no_verificado`. Tampoco se prueba el alcance de sumatorias dentro
-de expresiones compuestas. Los chequeos no verificados nunca llevan gravedad.
+informan como `no_verificado`. El alcance de una sumatoria termina en el primer
+`+`, `-`, relación o paréntesis de cierre a nivel cero; un índice ligado solo por
+esa sumatoria que reaparece después produce `indice_libre` (por ejemplo
+`\sum_{i\in I} x_{it} = d_i \quad orall t\in T`). Esta regla sigue la
+convención habitual y no prueba otros alcances de expresiones compuestas. Una
+variable junto a un paréntesis (`x_i (x_i)`, `x_i (1 - y_j)`) se informa como
+producto si el otro factor es una variable reconocible y, en todo caso, como
+`no_lineal` `no_verificado`. Los chequeos no verificados nunca llevan gravedad.
 Un chequeo puede tener simultáneamente un hallazgo comprobable y otras partes
 no verificadas. Los hallazgos sintácticos se mantienen como `aviso` durante el
 desarrollo; su precisión en salidas reales debe revisarse en el piloto.

@@ -155,6 +155,26 @@ class AuditModelTests(unittest.TestCase):
                 self.assertTrue(checks(report, "no_lineal"))
                 self.assertTrue(all(f.level == "aviso" for f in checks(report, "no_lineal")))
 
+    def test_producto_con_parentesis_no_queda_sin_aviso(self):
+        for expression in ("c_i x_i (x_i)", "(x_i)(x_i)", "c_i x_i (1 - x_i)"):
+            with self.subTest(expression=expression):
+                spec, draft, coverage = artifacts()
+                draft.raw_text = draft.raw_text.replace("c_i x_i", expression)
+                report = audit_model(spec, draft, coverage)
+                self.assertTrue([f for f in report.findings if f.check == "no_lineal"])
+
+    def test_indice_fuera_del_alcance_de_la_sumatoria(self):
+        spec, draft, coverage = artifacts()
+        draft.raw_text = draft.raw_text.replace("c_i x_i", "c_i x_i - x_i")
+        report = audit_model(spec, draft, coverage)
+        self.assertIn("i", [f.symbol for f in checks(report, "indice_libre")])
+        for inside in ("(c_i x_i - x_i)", r"\left(c_i x_i - x_i\right)"):
+            with self.subTest(inside=inside):
+                spec, draft, coverage = artifacts()
+                draft.raw_text = draft.raw_text.replace("c_i x_i", inside)
+                report = audit_model(spec, draft, coverage)
+                self.assertFalse(checks(report, "indice_libre"))
+
     def test_latex_y_dominio_entero(self):
         spec, draft, coverage = artifacts()
         draft.raw_text = draft.raw_text.replace("sum_{i in I}", r"\sum_{i\in I}")

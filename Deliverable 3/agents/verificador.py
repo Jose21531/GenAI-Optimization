@@ -52,7 +52,19 @@ class VerifierOutput(ContractModel):
                 raise ValueError("review requiere decision")
             if self.decision.candidate_id != self.coverage.candidate_id:
                 raise ValueError("decision y coverage deben tener el mismo candidate_id")
+            # revise y stop admiten mapas incompletos; accept no.
+            if self.decision.action == "accept":
+                if self.decision.issues:
+                    raise ValueError("accept no admite issues; usa revise para pedir correcciones")
+                if not self.coverage.elements or not self.coverage.links:
+                    raise ValueError("accept requiere un CoverageMap con elements y links")
         return self
+
+
+def _requisitos_sin_cubrir(spec: ProblemSpec, coverage: CoverageMap) -> list[str]:
+    elements = {element.id for element in coverage.elements}
+    linked = {link.requirement_id for link in coverage.links if link.element_id in elements}
+    return [r.id for r in spec.requirements if r.id not in linked]
 
 
 def verificar(
@@ -132,6 +144,11 @@ def verificar(
             raise ValueError("coverage.candidate_id no corresponde al borrador")
         if output.action == "audit" and (not audit_allowed or audit_report is not None):
             raise ValueError("audit no está disponible en este paso; entrega review")
+        if output.action == "review" and output.decision.action == "accept":
+            missing = _requisitos_sin_cubrir(spec, output.coverage)
+            if missing:
+                raise ValueError("accept con requisitos sin vincular en el CoverageMap: "
+                                 + ", ".join(missing))
     except (ValueError, TypeError, AttributeError) as error:
         raise fail(f"VerifierOutput inválido: {error}") from None
 

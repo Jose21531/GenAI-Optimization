@@ -35,6 +35,19 @@ Esta lista se mantiene al día. Reemplaza las notas sueltas de las entradas anti
 
 ---
 
+## 2026-10-30 · Correcciones del Verificador y `audit_model` (revisión del PR #7)
+
+Son módulos de C. Los corrigió B porque la revisión los pidió antes de cerrar la verificación y José Luis no podía trabajar. Rama `fix/verificacion`, sin cambios de prompts ni de `schemas.py`.
+
+- **Aceptaciones inconsistentes:** `verificar` rechaza un `accept` con issues, con un mapa sin elementos o vínculos, o con algún requisito sin vincular. `revise` y `stop` siguen admitiendo mapas incompletos.
+- **Producto con paréntesis:** `x_i (x_i)` ahora es `no_lineal`; una variable junto a un paréntesis queda además como `no_verificado`.
+- **Índice fuera de la sumatoria:** `\sum_i c_i x_i - x_i` produce `indice_libre`. En la prueba temprana encontró dos errores reales del Formulador en dev06 (`= d_i` y `\le H_i` después de `\sum_{i}`).
+- Tests: 93 → 98. Detalle en [decisiones.md](decisiones.md).
+
+**Para C:** revisar el PR de `fix/verificacion`. El Formulador puede recibir ahora observaciones de índices libres que antes no aparecían.
+
+---
+
 ## 2026-10-30 · Correcciones de la revisión del PR #4
 
 La revisión pidió tres cambios antes de aprobar. Los tres se reprodujeron antes de corregirlos.
