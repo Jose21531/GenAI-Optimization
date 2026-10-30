@@ -3,7 +3,8 @@
 `agents/verificador.py` hace una llamada por invocación al mismo protocolo
 `LLM.generate(prompt, adapter_on)` usado por B. Devuelve `AgentStep`, con la
 llamada para la traza y un `VerifierOutput` local. No cambia `schemas.py`.
-El prompt es `prompts/verificador_v1.md`; no se ha probado con el modelo real.
+El prompt actual es `prompts/verificador_v2.md`; se conserva v1. Todavía no se
+ha probado con el modelo real.
 
 ## Interfaz para infraestructura
 
@@ -26,9 +27,9 @@ decision = output.decision
 ```
 
 `ejecutar_auditoria` representa el punto de integración del orquestador;
-`tools/audit_model.py` es una tarea siguiente, todavía no implementada aquí.
-El agente no importa esa herramienta ni inventa un informe vacío para simularla.
-Mientras no esté disponible, llamar con `audit_allowed=False`.
+`tools/audit_model.py` ya implementa la auditoría determinista y se puede pasar
+como función al orquestador. El agente no importa esa herramienta ni inventa
+un informe vacío para simularla. Para no_audit, llamar con `audit_allowed=False`.
 
 El contenedor local tiene `action` (`audit` o `review`), `coverage`, `decision`
 opcional y `reason` para justificar la solicitud de herramienta. Los artefactos
@@ -73,6 +74,7 @@ Validación local inicial: 75 tests pasan en Python 3.14, incluidos los 53 previ
 y 22 del Verificador. Con las dependencias de `requirements.txt` instaladas,
 ejecutar desde la raíz: `python -m unittest discover -s "Deliverable 3/tests"`.
 
-Sigue pendiente implementar y calibrar `audit_model`, integrar el orquestador,
-validar el prompt con Qwen2.5-1.5B y elegir la configuración. Después se congela
+La calibración determinista del auditor se documenta en `docs/audit_model.md`.
+Sigue pendiente validar el prompt y los chequeos sobre candidatos de
+Qwen2.5-1.5B en Colab T4 y elegir la configuración. Después se congela
 la configuración antes de ejecutar el experimento oficial.

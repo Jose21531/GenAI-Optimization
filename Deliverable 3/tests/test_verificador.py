@@ -121,7 +121,7 @@ class VerificadorTests(unittest.TestCase):
             raw = json.dumps(review())
             llm, step = run(raw, adapter_on=adapter)
             call = step.calls[0]
-            self.assertEqual(call.prompt_version, "verificador_v1")
+            self.assertEqual(call.prompt_version, "verificador_v2")
             self.assertEqual(call.adapter_on, adapter)
             self.assertEqual(call.raw, raw)
             self.assertEqual(llm.calls, [(call.prompt, adapter)])
@@ -231,7 +231,7 @@ class VerificadorTests(unittest.TestCase):
                 run(raw)
             self.assertEqual(caught.exception.raw, raw)
             self.assertEqual(len(caught.exception.calls), 1)
-            self.assertEqual(caught.exception.prompt_version, "verificador_v1")
+            self.assertEqual(caught.exception.prompt_version, "verificador_v2")
 
     def test_rechaza_tipos_y_combinaciones_de_control_invalidas(self):
         no_issues = review("revise")
@@ -272,7 +272,7 @@ class VerificadorTests(unittest.TestCase):
 class PromptAndIsolationTests(unittest.TestCase):
     def test_prompt_versionado_carga_todas_las_secciones(self):
         version, sections = load_prompt(DEFAULT_PROMPT)
-        self.assertEqual(version, "verificador_v1")
+        self.assertEqual(version, "verificador_v2")
         self.assertEqual(set(sections), {"user", "audit_available", "review_only",
                                          "audit_result", "format_feedback"})
 
@@ -288,7 +288,12 @@ class PromptAndIsolationTests(unittest.TestCase):
         llm = MockLLM([json.dumps(review())])
         verificar(llm, text, SPEC, DRAFT, adapter_on=False)
         self.assertIn(text, llm.calls[0][0])
-        self.assertNotIn("# verificador_v1", llm.calls[0][0])
+        self.assertNotIn("# verificador_v2", llm.calls[0][0])
+
+    def test_ejemplos_de_decision_no_contienen_lista_de_opciones(self):
+        _, step = run(review())
+        self.assertNotIn('"action":"accept o revise o stop"', step.calls[0].prompt)
+        self.assertTrue((DEFAULT_PROMPT.parent / "verificador_v1.md").is_file())
 
 
 if __name__ == "__main__":

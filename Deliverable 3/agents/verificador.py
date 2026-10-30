@@ -24,7 +24,7 @@ from agents.analista import (
 )
 from schemas import AuditReport, ContractModel, CoverageMap, DraftModel, ProblemSpec, ReviewDecision
 
-DEFAULT_PROMPT = PROMPTS_DIR / "verificador_v1.md"
+DEFAULT_PROMPT = PROMPTS_DIR / "verificador_v2.md"
 
 
 class VerifierOutput(ContractModel):
