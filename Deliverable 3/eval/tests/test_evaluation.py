@@ -2,6 +2,8 @@
 
 import ast
 import copy
+import contextlib
+import io
 import json
 import subprocess
 import sys
@@ -17,11 +19,11 @@ sys.path.insert(0, str(ROOT))
 import yaml
 
 from eval.artifacts import REPO, load_development, load_predictions, read_jsonl
-from eval.judge import JudgeFailure, JudgeReply, MockJudge, QwenFOM5Judge
+from eval.judge import JudgeFailure, JudgeReply, MockJudge, QwenFOM5Judge, TORCH_VERSION, load_qwen3
 from eval.legacy import calibration_spec, kernel_source, load_kernel
 from eval.pipeline import evaluate
 from eval.provenance import generation_context, write_generation_manifest
-from eval.run_eval import parse_sources, verify_archives
+from eval.run_eval import main, parse_sources, verify_archives
 from eval.statistics import paired_difference
 from schemas import RunResult
 
@@ -173,6 +175,55 @@ class PipelineTests(unittest.TestCase):
                     evaluate(self.sources, self.output, judge=judge)
                 self.assertEqual(judge.calls, [])
 
+    def test_claves_ausentes_en_checkpoint_son_errores_de_formato(self):
+        evaluate(self.sources, self.output, judge=CountingJudge())
+        path = self.output / "full/judgments.jsonl"
+        original = read_jsonl(path)
+        for key in ("id", "judge_v2_raw", "fatal_errors_v2"):
+            with self.subTest(key=key):
+                rows = copy.deepcopy(original)
+                rows[0].pop(key)
+                path.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+                judge = CountingJudge()
+                with self.assertRaisesRegex(ValueError, key):
+                    evaluate(self.sources, self.output, judge=judge)
+                self.assertEqual(judge.calls, [])
+        with contextlib.redirect_stderr(io.StringIO()) as error:
+            with self.assertRaises(SystemExit) as caught:
+                main(["evaluate", "--mode", "development", "--source", "full=" + str(self.sources["full"]),
+                      "--output", str(self.output), "--mock"])
+        self.assertEqual(caught.exception.code, 2)
+        self.assertIn("Evaluación detenida", error.getvalue())
+        self.assertNotIn("Traceback", error.getvalue())
+        invalid_annotations = self.folder / "invalid-review.jsonl"
+        invalid_annotations.write_text("{}\n", encoding="utf-8")
+        with contextlib.redirect_stderr(io.StringIO()) as error:
+            with self.assertRaises(SystemExit) as caught:
+                main(["audit-summary", "--annotations", str(invalid_annotations)])
+        self.assertEqual(caught.exception.code, 2)
+        self.assertIn("falta el campo requerido", error.getvalue())
+        self.assertNotIn("Traceback", error.getvalue())
+
+    def test_reanudar_con_ultima_fila_valida_sin_salto_final(self):
+        with self.assertRaises(RuntimeError):
+            evaluate(self.sources, self.output, judge=CountingJudge(fail_on="dev03"))
+        checkpoint = self.output / "full/judgments.jsonl"
+        checkpoint.write_bytes(checkpoint.read_bytes().rstrip(b"\n"))
+        evaluate(self.sources, self.output, judge=CountingJudge())
+        self.assertEqual(len(read_jsonl(checkpoint)), 8)
+
+    def test_recuperacion_explicita_permite_reanudar_tras_linea_cortada(self):
+        from eval.recovery import recover_jsonl_tail
+        with self.assertRaises(RuntimeError):
+            evaluate(self.sources, self.output, judge=CountingJudge(fail_on="dev03"))
+        checkpoint = self.output / "full/judgments.jsonl"
+        checkpoint.write_bytes(checkpoint.read_bytes() + b'{"id":"dev03","judge_v2_raw":"')
+        with self.assertRaises(ValueError):
+            evaluate(self.sources, self.output, judge=CountingJudge())
+        recover_jsonl_tail(checkpoint)
+        result = evaluate(self.sources, self.output, judge=CountingJudge())
+        self.assertEqual(result["groups"]["full"]["n"], 8)
+
     def test_no_sobrescribe_un_directorio_sin_manifiesto(self):
         self.output.mkdir()
         (self.output / "conservar.txt").write_text("conservar", encoding="utf-8")
@@ -251,6 +302,17 @@ class FreezeTests(unittest.TestCase):
 
 
 class BackendTests(unittest.TestCase):
+    def test_rechaza_otras_gpu_y_torch_distinto_antes_de_cargar_pesos(self):
+        for available, device, version, message in (
+                (False, "CPU", TORCH_VERSION, "T4"),
+                (True, "NVIDIA A100", TORCH_VERSION, "T4"),
+                (True, "Tesla T4", "otra-version", TORCH_VERSION)):
+            torch = SimpleNamespace(__version__=version,
+                cuda=SimpleNamespace(is_available=lambda: available, get_device_name=lambda _: device))
+            with self.subTest(device=device, version=version), mock.patch.dict(sys.modules, {"torch": torch}):
+                with self.assertRaisesRegex(RuntimeError, message.replace("+", r"\+")):
+                    load_qwen3()
+
     def backend(self, outputs, length=10, fallback=False):
         class Tensor:
             shape = (1, length)

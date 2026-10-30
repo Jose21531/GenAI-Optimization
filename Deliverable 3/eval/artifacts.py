@@ -31,23 +31,29 @@ def canonical_hash(value) -> str:
 
 
 def read_jsonl(path: Path) -> list[dict]:
+    return parse_jsonl(Path(path).read_text(encoding="utf-8"), str(path))
+
+
+def parse_jsonl(text: str, source: str) -> list[dict]:
     rows = []
-    for number, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+    for number, line in enumerate(text.splitlines(), 1):
         if not line.strip():
-            raise ValueError(f"{path}:{number}: línea vacía o checkpoint incompleto")
+            raise ValueError(f"{source}:{number}: línea vacía o checkpoint incompleto")
         try:
             record = json.loads(line)
         except json.JSONDecodeError as error:
-            raise ValueError(f"{path}:{number}: JSON incompleto o inválido") from error
+            raise ValueError(f"{source}:{number}: JSON incompleto o inválido") from error
         if not isinstance(record, dict):
-            raise ValueError(f"{path}:{number}: se requiere un objeto JSON")
+            raise ValueError(f"{source}:{number}: se requiere un objeto JSON")
         rows.append(record)
     return rows
 
 
 def by_id(rows, key="id"):
     result = {}
-    for row in rows:
+    for number, row in enumerate(rows, 1):
+        if not isinstance(row.get(key), str) or not row[key].strip():
+            raise ValueError(f"Fila {number}: falta {key} o no es un identificador válido")
         identifier = row[key]
         if identifier in result:
             raise ValueError(f"ID duplicado: {identifier}")

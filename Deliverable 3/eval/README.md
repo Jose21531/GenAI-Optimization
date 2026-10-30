@@ -41,10 +41,39 @@ comparación pareada. Excluye la fila diagnóstica de Entrega 1 de las medias.
 El informe `archive_validation.json` documenta esta comprobación offline; no es
 una nueva corrida. No se copian datos, respuestas archivadas ni pesos pesados.
 
-La validación inicial reúne 98 pruebas existentes y 27 de evaluación, 125 en
+La validación CPU actual reúne 98 pruebas existentes y 38 de evaluación, 136 en
 total, en Python 3.14. Incluye interrupciones, calibración fallida, checkpoints
 duplicados/truncados, identidad de candidatos, congelamiento, protocolo original
 del backend y revisión humana del auditor. No carga pesos reales.
+
+## Entorno GPU declarado para Entrega 3
+
+La versión de PyTorch del entorno histórico de Entrega 2 no quedó registrada:
+el notebook no fija torch y no conserva salidas de ejecución. Por ello no se
+afirma que el entorno nuevo sea una reconstrucción exacta de aquel runtime.
+
+Se declara para Entrega 3 `torch==2.6.0+cu124`, con
+`torchvision==0.21.0+cu124` y `torchaudio==2.6.0+cu124`, manteniendo las otras
+versiones de inferencia ya fijadas. El perfil CUDA 12.4 y esta combinación de
+paquetes siguen las [instrucciones oficiales de PyTorch](https://pytorch.org/get-started/previous-versions/#v260).
+Las versiones adicionales evitan mezclar torch con las versiones incompatibles
+de esos paquetes que pudiera traer un runtime preinstalado.
+
+Instalar `eval/requirements-gpu.txt` y reiniciar el runtime antes de importar
+torch. El cargador comprueba la versión que realmente está cargada. El perfil
+debe verificarse con la calibración original en el piloto T4; las pruebas CPU
+no certifican su ejecución GPU. Tampoco fijan la versión de Python de Colab.
+
+La restricción a **Colab con GPU T4 es intencional**, conforme a `AGENTS.md`.
+L4 y A100 se rechazan aunque tengan CUDA. Ampliar hardware requiere acordar
+otro protocolo; no basta con registrar un dispositivo diferente.
+
+La identidad incluye también Python, NumPy, las bibliotecas del backend y el
+código del evaluador. Para reanudar hay que restaurar esas versiones y el
+checkout registrados en `evaluation.json`. Fijar torch evita una fuente de
+variación, pero no permite mezclar entornos diferentes. Si no se puede restaurar
+el entorno original, usar un directorio nuevo; no editar la identidad para
+forzar una reanudación.
 
 ## Contrato con infraestructura
 
@@ -157,6 +186,34 @@ directorio. Se valida identidad y contenido de checkpoints antes de llamar al
 juez. Se repite la calibración y se evalúan solo los IDs pendientes. Un fallo
 del juez no recibe un puntaje inventado. Un checkpoint truncado o manipulado
 se rechaza y requiere inspección; no se borra ni repara silenciosamente.
+
+Si el corte dejó únicamente una última línea JSON incompleta **sin salto de
+línea final**, detener cualquier proceso que escriba el archivo y solicitar
+explícitamente su recuperación:
+
+```powershell
+python "Deliverable 3/eval/run_eval.py" recover-jsonl --path "Deliverable 3/results/evaluation-official/full/judgments.jsonl"
+```
+
+El comando valida todas las líneas anteriores antes de escribir. Conserva una
+copia completa `judgments.jsonl.before-recovery-<id>.bak`, retira solo la cola
+incompleta y crea `judgments.jsonl.recovery-<id>.json` con fecha UTC, número de
+registros conservados, bytes retirados y SHA-256 anteriores/posteriores. El
+reemplazo es atómico. El estado `prepared` indica una operación interrumpida:
+inspeccionar las huellas y el respaldo antes de continuar.
+
+Después, repetir el comando original de evaluación. Vuelve a validar candidatos,
+identidad y puntajes, repite la calibración y juzga los IDs pendientes. La
+recuperación de sintaxis no modifica la identidad ni permite reutilizar juicios
+de otro entorno o versión de código.
+
+Una última línea válida sin salto final se conserva y la escritura siguiente
+añade el separador necesario. Las líneas inválidas intermedias, los errores
+terminados con salto de línea y los objetos completos con claves faltantes no
+se descartan mediante recuperación. Se detienen con un diagnóstico, como
+`falta judge_v2_raw` o `falta id`. Restaurar el dato desde un respaldo o volver
+a juzgar el caso; no inventar IDs ni puntajes. Si el corte también afectó la
+cola de `judge_calls.jsonl`, se puede aplicar el mismo comando a ese archivo.
 
 Leer el resumen solo si `evaluation.json` está complete y comprobar mode y
 execution_kind. Las comparaciones oficiales usan los puntajes archivados de

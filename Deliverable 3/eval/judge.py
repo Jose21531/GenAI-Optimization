@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 
 from eval.legacy import JUDGE_MODEL, JUDGE_REVISION, bind_judge
 
+TORCH_VERSION = "2.6.0+cu124"
+
 
 @dataclass
 class JudgeReply:
@@ -93,6 +95,8 @@ def load_qwen3() -> QwenFOM5Judge:
 
     if not torch.cuda.is_available() or "T4" not in torch.cuda.get_device_name(0):
         raise RuntimeError("La evaluación real se ejecuta en una GPU T4 de Colab")
+    if str(torch.__version__) != TORCH_VERSION:
+        raise RuntimeError(f"El perfil de Entrega 3 exige torch=={TORCH_VERSION}; se cargó {torch.__version__}. Instala requirements-gpu.txt y reinicia el runtime")
     try:
         in_colab = importlib.util.find_spec("google.colab") is not None
     except ModuleNotFoundError:

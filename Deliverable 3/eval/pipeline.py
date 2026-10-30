@@ -27,8 +27,24 @@ def _write_json(path, value):
 
 
 def _append(path, value):
-    with path.open("a", encoding="utf-8") as stream:
-        stream.write(json.dumps(value, ensure_ascii=False, allow_nan=False) + "\n")
+    encoded = (json.dumps(value, ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8")
+    with path.open("ab+") as stream:
+        stream.seek(0, 2)
+        if stream.tell():
+            stream.seek(-1, 2)
+            if stream.read(1) != b"\n":
+                stream.seek(0)
+                tail = stream.read().rsplit(b"\n", 1)[-1]
+                try:
+                    valid_tail = isinstance(json.loads(tail), dict)
+                except (ValueError, UnicodeDecodeError):
+                    valid_tail = False
+                if not valid_tail:
+                    raise ValueError(f"{path}: cola incompleta; ejecutar recover-jsonl antes de reanudar")
+                stream.seek(0, 2)
+                stream.write(b"\n")
+        stream.seek(0, 2)
+        stream.write(encoded)
         stream.flush()
 
 
@@ -113,6 +129,10 @@ def _checkpoint(path, variant, predictions, items, identity):
     rows = by_id(read_jsonl(path)) if path.exists() else {}
     kernel = load_kernel()
     for identifier, row in rows.items():
+        if not isinstance(row.get("judge_v2_raw"), str):
+            raise ValueError(f"Checkpoint {path}, ID {identifier}: falta judge_v2_raw o no es texto")
+        if not isinstance(row.get("fatal_errors_v2"), list):
+            raise ValueError(f"Checkpoint {path}, ID {identifier}: falta fatal_errors_v2 o no es una lista")
         if identifier not in items:
             raise ValueError("El checkpoint contiene un ID ajeno a esta evaluación")
         expected = _base_record(variant, identifier, predictions[identifier], identity)

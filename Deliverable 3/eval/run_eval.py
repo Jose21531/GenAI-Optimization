@@ -15,6 +15,7 @@ from eval.judge import MockJudge
 from eval.pipeline import evaluate, load_items, prepare
 from eval.pilot import export_audit_review, summarize_audit_review
 from eval.provenance import write_generation_manifest
+from eval.recovery import recover_jsonl_tail
 from eval.statistics import paired_difference
 
 
@@ -59,6 +60,8 @@ def main(argv=None):
     review.add_argument("--output", type=Path, required=True)
     summary = commands.add_parser("audit-summary")
     summary.add_argument("--annotations", type=Path, required=True)
+    recovery = commands.add_parser("recover-jsonl", help="Respaldar y retirar solo una última línea truncada sin salto final")
+    recovery.add_argument("--path", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "verify-archives":
@@ -80,10 +83,14 @@ def main(argv=None):
                                   judge=MockJudge() if args.mock else None)
         elif args.command == "audit-review":
             result = export_audit_review(args.trace, args.output)
+        elif args.command == "recover-jsonl":
+            result = recover_jsonl_tail(args.path)
         else:
             result = summarize_audit_review(args.annotations)
     except (ValueError, FileNotFoundError, RuntimeError) as error:
         parser.exit(2, f"Evaluación detenida: {error}\n")
+    except KeyError as error:
+        parser.exit(2, f"Evaluación detenida: falta el campo requerido {error}\n")
     print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
     return result
 

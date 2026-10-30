@@ -1,5 +1,21 @@
 # Bitácora del rol C · verificación y evaluación
 
+## 2026-10-30 · Ajustes de revisión del PR #9
+
+Se declara un perfil GPU para Entrega 3: torch 2.6.0+cu124 y sus versiones
+compatibles de torchvision/torchaudio. No consta la versión histórica de torch
+de Entrega 2 y no se le atribuye este perfil. El cargador comprueba la versión
+cargada y conserva la exigencia de Colab T4 de AGENTS.md.
+
+Se añadió `recover-jsonl`, explícito, para respaldar y retirar únicamente una
+cola truncada sin salto final. Las líneas intermedias inválidas siguen siendo
+errores. Se preservan las últimas líneas válidas sin salto al seguir escribiendo.
+Las claves id/judge_v2_raw faltantes se rechazan con ValueError y el CLI también
+presenta un diagnóstico para KeyError. Se documentó cómo recuperar y reanudar.
+
+El README principal incluye ahora ambas suites CPU. Validación: 136 pruebas,
+98 existentes y 38 de evaluación, sin cargar pesos ni ejecutar el perfil GPU.
+
 ## 2026-10-30 · Evaluación posterior FOM-5 v2
 
 Se implementó `eval/` reutilizando sin cambios el núcleo de la celda 15 y la

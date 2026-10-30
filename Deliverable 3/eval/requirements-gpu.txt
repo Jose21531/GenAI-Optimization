@@ -1,5 +1,9 @@
 -r requirements.txt
-torch
+--extra-index-url https://download.pytorch.org/whl/cu124
+# Perfil declarado para Entrega 3; la versión histórica de Entrega 2 no consta.
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+torchaudio==2.6.0+cu124
 transformers==4.51.3
 accelerate==1.6.0
 bitsandbytes==0.45.5
