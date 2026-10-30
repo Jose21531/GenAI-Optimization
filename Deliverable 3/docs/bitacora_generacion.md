@@ -21,7 +21,7 @@ Esta lista se mantiene al día. Reemplaza las notas sueltas de las entradas anti
 
 4. **Aclaración:** cuando el Formulador devuelve `clarify`, llamar a `analizar(..., question=..., previous_spec=<el ProblemSpec anterior>)`. Sin `previous_spec` se lanza `ValueError`.
 5. **Revisión:** pasar a `formular` las `Issue` del Verificador en `observations` y el texto anterior en `previous_draft`.
-6. **Reintento por fallo de formato:** con decodificación determinista, el mismo prompt da la misma salida. El reintento tiene que agregar una observación sobre el error. `AgentFormatError` trae `raw` y `prompt_version` para la traza.
+6. **Reintento por fallo de formato:** con decodificación determinista, el mismo prompt da la misma salida. El reintento tiene que agregar una observación sobre el error. `AgentFormatError` trae `raw` (la última respuesta), `prompt_version` y, desde la revisión del PR #4, también `calls` y `warnings` con **todas** las llamadas del paso. Con eso, la traza no pierde la primera llamada del Formulador cuando falla la segunda.
 7. **`max_new_tokens` del Analista:** 1200 todavía no alcanza en dev01. Hay que decidir en el piloto si se sube. Descarta la propuesta de ~700 de la fase 1.
 8. **Trazas:** `model.QwenLLM.last_stats` entrega `tokens_in`, `tokens_out`, `latency_ms` y `reached_limit` de cada llamada, y `AgentStep.calls` y `AgentStep.warnings` traen los prompts, las salidas crudas y los avisos.
 9. **Windows (README):** PyTorch con CUDA falla si el entorno virtual está en una ruta larga (`WinError 206`). En Colab no pasa.
@@ -31,6 +31,22 @@ Esta lista se mantiene al día. Reemplaza las notas sueltas de las entradas anti
 2. Las referencias de los dev_cases están en `dev_cases/reference/dev_reference.jsonl`, con el mismo formato del benchmark. Los agentes no las leen.
 3. Un candidate incompleto llega con `parse_ok=False` y `parse_errors`; no lanza error.
 4. El Formulador nunca eligió aclarar en las pruebas. La revisión del Verificador es la única corrección que funciona de verdad.
+5. Los tests de aislamiento usan `tests/mock_llm.archivos_abiertos()`, que funciona desde Python 3.10. Sirve también para verificar que el Verificador y `audit_model` no abren el gold.
+
+---
+
+## 2026-10-30 · Correcciones de la revisión del PR #4
+
+La revisión pidió tres cambios antes de aprobar. Los tres se reprodujeron antes de corregirlos.
+
+**Cambiado**
+1. **Tipos inválidos en la salida del Analista** (prioridad alta). Con `"requirements": 1` o `"decisions": 1` se lanzaba `TypeError` en vez de `AgentFormatError`: la corrida se interrumpía y se saltaba el reintento. Ahora `_check_shape` valida que `sets`, `data`, `decisions`, `requirements` y `uncertainties` sean listas y que `objective` sea un objeto, antes de normalizar. Como respaldo, cualquier `TypeError` o `AttributeError` durante la normalización se convierte en `AgentFormatError`.
+2. **La excepción conservaba solo la última llamada** (prioridad media). `AgentFormatError` ahora incluye `calls` y `warnings` del paso completo, en el Analista y en el Formulador.
+3. **Las dudas del Analista no llegaban al Formulador** (prioridad media). `formatear_spec` agrega el bloque "Dudas del Analista:" con `uncertainties`, que llega a los dos prompts del Formulador. No cambia ningún archivo de prompt, así que no hay versión nueva.
+
+**Encontrado al corregir:** los tests que verifican que los agentes solo abren `prompts/` interceptaban `io.open`, y en Python 3.10 `pathlib` no pasa por ahí. En esa versión no detectaban nada. Ahora usan `archivos_abiertos()`, que intercepta `Path.open` y `open`. Se comprobó que registra una lectura del gold en 3.10 y en 3.14.
+
+**Tests:** 53 en total (6 tipos inválidos, llamadas conservadas, dudas en ambos prompts). Pasan en Python 3.10 y 3.14.
 
 ---
 

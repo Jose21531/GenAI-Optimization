@@ -1,10 +1,8 @@
 """Pruebas del Formulador con MockLLM, sin GPU."""
 
-import io
 import sys
 import unittest
 from pathlib import Path
-from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -17,7 +15,7 @@ from agents.formulador import (  # noqa: E402
     limpiar_candidate,
     separar_secciones,
 )
-from mock_llm import MockLLM  # noqa: E402
+from mock_llm import MockLLM, archivos_abiertos  # noqa: E402
 from schemas import Issue, ProblemSpec  # noqa: E402
 
 PROBLEMA = (
@@ -122,6 +120,27 @@ class FormularTests(unittest.TestCase):
         with self.assertRaisesRegex(AgentFormatError, "vacío"):
             run([DECISION, "   \n"])
 
+    def test_fallo_conserva_todas_las_llamadas(self):
+        # Revisión del PR #4: la excepción solo guardaba la última respuesta.
+        with self.assertRaises(AgentFormatError) as caught:
+            run([DECISION, "   \n"])
+        error = caught.exception
+        self.assertEqual([c.raw for c in error.calls], [DECISION, "   \n"])
+        self.assertEqual([c.adapter_on for c in error.calls], [False, True])
+        self.assertIn("plan con IDs fuera del ProblemSpec: U9", error.warnings)
+        self.assertEqual(error.raw, "   \n")
+
+    def test_dudas_del_analista_llegan_a_ambos_prompts(self):
+        # Revisión del PR #4: formatear_spec omitía uncertainties.
+        duda = "No queda claro si el límite de 40 hectáreas es por cultivo o total."
+        spec = SPEC.model_copy(update={"uncertainties": [duda]})
+        llm = MockLLM([DECISION, CANDIDATE])
+        formular(llm, PROBLEMA, spec, candidate_id="dev00-1", adapter_plan=False, adapter_candidate=True)
+        for prompt, _ in llm.calls:
+            self.assertIn(f"Dudas del Analista:\n- {duda}", prompt)
+        _, sin_dudas = run([DECISION, CANDIDATE])
+        self.assertNotIn("Dudas del Analista", sin_dudas.calls[0].prompt)
+
     def test_candidate_incompleto_no_lanza_y_se_marca(self):
         incompleto = CANDIDATE.replace("Función objetivo:", "Objetivo:")
         _, step = run([DECISION, incompleto + "\nU1 -> resto del plan"])
@@ -198,14 +217,7 @@ class PromptFormuladorTests(unittest.TestCase):
         self.assertEqual(set(load_prompt(NOPLAN)[1]), base)
 
     def test_formular_solo_abre_prompts(self):
-        abiertos = []
-        original = io.open
-
-        def registrar(file, *args, **kwargs):
-            abiertos.append(Path(file).resolve())
-            return original(file, *args, **kwargs)
-
-        with mock.patch("io.open", side_effect=registrar):
+        with archivos_abiertos() as abiertos:
             run([DECISION, CANDIDATE])
         self.assertTrue(abiertos)
         self.assertTrue(all(p.is_relative_to(PROMPTS_DIR) for p in abiertos), abiertos)

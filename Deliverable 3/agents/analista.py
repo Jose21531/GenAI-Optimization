@@ -56,12 +56,19 @@ class AgentStep:
 
 
 class AgentFormatError(Exception):
-    """La salida del modelo no cumple el contrato; el orquestador decide reintentar."""
+    """La salida del modelo no cumple el contrato; el orquestador decide reintentar.
 
-    def __init__(self, message: str, *, raw: str, prompt_version: str):
+    ``raw`` es la última respuesta; ``calls`` y ``warnings`` conservan todas las
+    llamadas y avisos del paso, para que la traza no pierda las anteriores.
+    """
+
+    def __init__(self, message: str, *, raw: str, prompt_version: str,
+                 calls: Optional[list[LLMCall]] = None, warnings: Optional[list[str]] = None):
         super().__init__(message)
         self.raw = raw
         self.prompt_version = prompt_version
+        self.calls = list(calls or [])
+        self.warnings = list(warnings or [])
 
 
 # ---------------------------------------------------------------- prompts
@@ -259,6 +266,18 @@ def _locate_evidence(spec: dict, problem: str, warnings: list[str]) -> None:
     visit(spec, "spec")
 
 
+_LIST_FIELDS = ("sets", "data", "decisions", "requirements", "uncertainties")
+
+
+def _check_shape(spec: dict) -> None:
+    """Rechaza contenedores con el tipo equivocado antes de recorrerlos."""
+    for key in _LIST_FIELDS:
+        if spec.get(key) is not None and not isinstance(spec[key], list):
+            raise ValueError(f"spec.{key} debe ser una lista, no {type(spec[key]).__name__}")
+    if spec.get("objective") is not None and not isinstance(spec["objective"], dict):
+        raise ValueError(f"spec.objective debe ser un objeto, no {type(spec['objective']).__name__}")
+
+
 def _normalize(data: dict, case_id: str, problem: str, warnings: list[str]) -> dict:
     action = _alias(data.get("action"), _ACTIONS)
     spec = data.get("spec")
@@ -274,6 +293,7 @@ def _normalize(data: dict, case_id: str, problem: str, warnings: list[str]) -> d
         return {"action": action, "reason": data.get("reason")}
     if not isinstance(spec, dict):
         return {"action": action, "spec": spec}
+    _check_shape(spec)
     spec = _prune(spec, ProblemSpec, "spec", warnings)
     spec["case_id"] = case_id
     _apply_aliases(spec, warnings)
@@ -332,13 +352,20 @@ def analizar(
     step = AgentStep(output=None, calls=[LLMCall(version, prompt, adapter_on, raw)])
 
     def fail(message: str) -> AgentFormatError:
-        return AgentFormatError(message, raw=raw, prompt_version=version)
+        return AgentFormatError(message, raw=raw, prompt_version=version,
+                                calls=step.calls, warnings=step.warnings)
 
     try:
         data = extraer_json(raw)
     except ValueError as error:
         raise fail(f"salida sin JSON válido: {error}") from None
-    normalized = _normalize(data, case_id, problem, step.warnings)
+    try:
+        normalized = _normalize(data, case_id, problem, step.warnings)
+    except ValueError as error:
+        raise fail(f"AnalystOutput inválido: {error}") from None
+    except (TypeError, AttributeError) as error:
+        # Respaldo: una forma no prevista no debe escapar como error de programa.
+        raise fail(f"AnalystOutput con estructura inesperada: {error}") from None
     if normalized["action"] == "reread" and spans is not None:
         raise fail("reread no permitido: los fragmentos ya fueron entregados")
     try:

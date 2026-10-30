@@ -1,12 +1,10 @@
 """Pruebas del Analista y de extract_data_spans con MockLLM, sin GPU."""
 
-import io
 import json
 import re
 import sys
 import unittest
 from pathlib import Path
-from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -19,7 +17,7 @@ from agents.analista import (  # noqa: E402
     extraer_json,
     load_prompt,
 )
-from mock_llm import MockLLM  # noqa: E402
+from mock_llm import MockLLM, archivos_abiertos  # noqa: E402
 from tools.extract_data_spans import extract_data_spans, localizar_cita  # noqa: E402
 
 PROBLEMA = (
@@ -171,6 +169,22 @@ class AnalistaTests(unittest.TestCase):
         with self.assertRaises(AgentFormatError):
             analizar(MockLLM(['{"action": "reread"}']), "dev01", PROBLEMA, adapter_on=False)
 
+    def test_tipos_incorrectos_son_fallo_de_formato(self):
+        # Revisión del PR #4: "requirements": 1 o "decisions": 1 lanzaban TypeError.
+        casos = {"requirements": 1, "decisions": 1, "sets": "I", "data": {"name": "u"},
+                 "uncertainties": "ninguna", "objective": "max"}
+        for campo, valor in casos.items():
+            with self.subTest(campo=campo):
+                raw = deliver(**{campo: valor})
+                with self.assertRaises(AgentFormatError) as caught:
+                    analizar(MockLLM([raw]), "dev01", PROBLEMA, adapter_on=False)
+                self.assertIn(f"spec.{campo}", str(caught.exception))
+                self.assertEqual([c.raw for c in caught.exception.calls], [raw])
+        # Mismo resultado con el spec aplanado en la raíz.
+        with self.assertRaises(AgentFormatError):
+            analizar(MockLLM(['{"action": "deliver", "requirements": 1}']), "dev01", PROBLEMA,
+                     adapter_on=False)
+
     def test_normaliza_formas_frecuentes(self):
         spec = spec_respuesta(
             requirements=[{"id": "R1", "kind": "objetivo", "text": "Maximizar"},
@@ -277,14 +291,7 @@ class AislamientoTests(unittest.TestCase):
         self.assertEqual(hallazgos, [])
 
     def test_analizar_solo_abre_prompts(self):
-        abiertos = []
-        original = io.open
-
-        def registrar(file, *args, **kwargs):
-            abiertos.append(Path(file).resolve())
-            return original(file, *args, **kwargs)
-
-        with mock.patch("io.open", side_effect=registrar):
+        with archivos_abiertos() as abiertos:
             analizar(MockLLM([deliver()]), "dev01", PROBLEMA, adapter_on=False,
                      spans=extract_data_spans(PROBLEMA))
         self.assertTrue(abiertos, "no se registró la lectura del prompt")

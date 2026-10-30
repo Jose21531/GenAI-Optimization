@@ -101,6 +101,10 @@ def formatear_spec(spec: ProblemSpec) -> str:
     lines.append(f"Objetivo: {spec.objective.sense} {spec.objective.description}")
     lines.append("Requisitos:")
     lines.extend(f"{r.id} ({_KINDS[r.kind]}): {r.text}" for r in spec.requirements)
+    if spec.uncertainties:
+        # Las dudas sustentan la decisión de pedir una aclaración.
+        lines.append("Dudas del Analista:")
+        lines.extend(f"- {doubt}" for doubt in spec.uncertainties)
     return "\n".join(lines)
 
 
@@ -183,7 +187,8 @@ def formular(
         return raw
 
     def fail(message: str) -> AgentFormatError:
-        return AgentFormatError(message, raw=step.calls[-1].raw, prompt_version=version)
+        return AgentFormatError(message, raw=step.calls[-1].raw, prompt_version=version,
+                                calls=step.calls, warnings=step.warnings)
 
     raw = call("decision", adapter_plan)
     plan = _parse_plan(raw, spec, step.warnings)
