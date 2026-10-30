@@ -1,0 +1,124 @@
+{
+  "scope": "eight manually written development controls; no LLM or official benchmark",
+  "syntax_level": "aviso",
+  "cases": {
+    "dev01": {
+      "findings": [],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 0
+    },
+    "dev02": {
+      "findings": [
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": "min c h +  f_k z_k"
+        },
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": "x_k + z_k >= d_k "
+        },
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": " t_k x_k <= H + h"
+        }
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 3
+    },
+    "dev03": {
+      "findings": [],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 0
+    },
+    "dev04": {
+      "findings": [],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 0
+    },
+    "dev05": {
+      "findings": [],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 0
+    },
+    "dev06": {
+      "findings": [
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": "min  f_l y_l +   c_pl x_pl"
+        }
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 1
+    },
+    "dev07": {
+      "findings": [
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": "x_2k + x_5k <= 1 "
+        }
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 1
+    },
+    "dev08": {
+      "findings": [
+        {
+          "check": "simbolo_no_declarado",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "aridad_inconsistente",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "variable_no_usada",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "parametro_no_usado",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "no_lineal",
+          "status": "no_verificado",
+          "message": "Expresiones fuera del subconjunto soportado"
+        },
+        {
+          "check": "indice_libre",
+          "status": "no_verificado",
+          "message": "El alcance de los ligadores requiere inspección",
+          "location": "min  (p_t q_t + h v_t)"
+        }
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "unverified": 7
+    }
+  }
+}
