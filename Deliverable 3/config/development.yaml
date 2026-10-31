@@ -7,7 +7,7 @@ model:
     analista: false
     formulador_plan: false
     formulador_candidate: true
-    verificador: true
+    verificador: false
 generation:
   do_sample: false
   max_new_tokens:
@@ -20,7 +20,7 @@ prompts:
   analista_no_evidence: prompts/analista_v5_noevidence.md
   formulador: prompts/formulador_v2.md
   formulador_no_plan: prompts/formulador_v1_noplan.md
-  verificador: prompts/verificador_v2.md
+  verificador: prompts/verificador_v3.md
   control: prompts/orquestador_v1.md
 budgets:
   clarifications: 1
