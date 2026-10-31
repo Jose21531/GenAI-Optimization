@@ -159,11 +159,15 @@ def _format_links(coverage: CoverageMap) -> str:
 
 
 def _format_report(report: AuditReport) -> str:
+    errors = [finding for finding in report.findings if finding.level == "error"]
+    other = [finding for finding in report.findings if finding.level != "error"]
     lines = []
-    for finding in report.findings:
+    for finding in [*errors, *other[:3]]:
         level = finding.level or finding.status
         where = " · ".join(x for x in (finding.requirement_id, finding.location) if x)
         lines.append(f"- [{level}] {finding.check}: {finding.message}" + (f" ({where})" if where else ""))
+    if len(other) > 3:
+        lines.append(f"- {len(other) - 3} avisos o comprobaciones no verificadas adicionales; el informe completo queda en la traza")
     return "\n".join(lines) or "- sin hallazgos"
 
 
@@ -304,7 +308,7 @@ def verificar(
         if format_feedback else ""
     )
     prompt = render(
-        sections["user"],
+        sections["after_audit"] if audit_report is not None and "after_audit" in sections else sections["user"],
         problem=problem,
         spec=spec.model_dump_json(exclude_none=True),
         candidate_id=draft.candidate_id,
