@@ -1,0 +1,38 @@
+status: frozen
+model:
+  id: Qwen/Qwen2.5-1.5B-Instruct
+  revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  adapter_sha256: 68583e9dffa6647a5c0b89a74168363264daf246e4337ef1ae0c644243391151
+  adapter_enabled:
+    analista: false
+    formulador_plan: false
+    formulador_candidate: true
+    verificador: false
+generation:
+  do_sample: false
+  max_new_tokens:
+    analista: 1800
+    formulador_plan: 1200
+    formulador_candidate: 1200
+    verificador: 1200
+prompts:
+  analista: prompts/analista_v6.md
+  analista_no_evidence: prompts/analista_v6_noevidence.md
+  formulador: prompts/formulador_v3.md
+  formulador_no_plan: prompts/formulador_v3_noplan.md
+  verificador: prompts/verificador_v10.md
+  control: prompts/orquestador_v1.md
+budgets:
+  clarifications: 1
+  revisions: 1
+  format_retries: 1
+  rereads: 1
+  audits_per_candidate: 1
+  model_calls: 20
+variants:
+  - full
+  - no_evidence
+  - no_plan
+  - no_audit
+  - no_review
+benchmark_inputs: data/benchmark_30_generation_only.jsonl
