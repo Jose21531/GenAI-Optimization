@@ -12,7 +12,7 @@ Este archivo distingue trabajo terminado de resultados pendientes. La rama de in
 
 ## Pendiente de medición
 
-No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. El puente MCP de Colab está conectado a una T4. Las pruebas diagnósticas y de desarrollo de `docs/decisiones.md` mostraron errores de formulación y formato. Un piloto provisional con `formulador_v2` completó dev01 y dev02, ambos con `fallo_formato`; se detuvo antes de dev03 para ensayar el prompt QLoRA más cercano a la Entrega 2. Sus resultados parciales están separados en la sesión Colab. El piloto con `formulador_v3` sigue pendiente.
+No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. Las pruebas diagnósticas y de desarrollo de `docs/decisiones.md` mostraron errores de formulación y formato. El piloto provisional con `formulador_v2` completó dev01 y dev02, ambos con `fallo_formato`; sus resultados parciales están separados en Colab. La configuración actual usa `formulador_v3`, `verificador_v9` y el Verificador sin adapter. Una corrida de los ocho casos de desarrollo se inició en T4 bajo el SHA `70d3877` en `/content/d3_artifacts/pilot_70d3877/verifier_off`; el puente MCP dejó de responder durante la lectura de progreso. Antes de reanudar o iniciar otra corrida, comprobar si ese proceso sigue activo y cuántos IDs completó. No mezclar ese directorio con otro SHA.
 
 ## Reanudación
 
