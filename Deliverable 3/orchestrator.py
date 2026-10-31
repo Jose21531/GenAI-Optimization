@@ -288,6 +288,21 @@ class Orchestrator:
                 raise ValueError("ningún requisito tiene una cita literal comprobable")
             if dropped:
                 warnings.append("requisitos sin cita literal comprobable descartados: " + ", ".join(dropped))
+            # La repetición literal del mismo requisito no crea obligaciones nuevas.
+            # Se conserva la primera cita, sin inferir requisitos a partir del gold.
+            unique, seen, duplicates = [], set(), []
+            for requirement in kept:
+                quote = requirement.evidence.text if requirement.evidence else None
+                key = (requirement.kind, " ".join(requirement.text.casefold().split()), quote)
+                if key in seen:
+                    duplicates.append(requirement.id)
+                else:
+                    seen.add(key)
+                    unique.append(requirement)
+            if duplicates:
+                kept = [requirement.model_copy(update={"id": f"U{i}"})
+                        for i, requirement in enumerate(unique, start=1)]
+                warnings.append(f"{len(duplicates)} requisitos duplicados descartados; IDs U renumerados")
             if not any(requirement.kind == "objective" for requirement in kept):
                 objective = output.spec.objective
                 evidence = objective.evidence

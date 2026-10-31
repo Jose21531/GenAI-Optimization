@@ -87,6 +87,23 @@ class OrchestratorTests(unittest.TestCase):
                             for event in runner.last_events if event.actor == "analista"
                             for warning in (event.output or {}).get("warnings", [])))
 
+    def test_requisito_repetido_se_deduplica_y_renumera_antes_de_formular(self):
+        analysis = json.loads(analyst())
+        duplicate = copy.deepcopy(analysis["spec"]["requirements"][1])
+        duplicate["id"] = "U3"
+        analysis["spec"]["requirements"].insert(2, duplicate)
+        analysis["spec"]["requirements"][3]["id"] = "U4"
+        result, runner, llm = self.run_flow([json.dumps(analysis), FORMULATE,
+                                           CANDIDATE, verifier()])
+        self.assertEqual(result.status, "aceptado")
+        prompt = llm.calls[1][0]
+        self.assertEqual(prompt.count("Respetar las horas disponibles"), 1)
+        self.assertIn("U3 (dominio)", prompt)
+        self.assertNotIn("U4 (dominio)", prompt)
+        self.assertTrue(any("1 requisitos duplicados" in warning
+                            for event in runner.last_events if event.actor == "analista"
+                            for warning in (event.output or {}).get("warnings", [])))
+
     def test_auditoria_se_ejecuta_solo_si_el_verificador_la_pide(self):
         result, runner, llm = self.run_flow([analyst(), FORMULATE, CANDIDATE,
                                            verifier(audit=True), verifier(continuation=True)])
