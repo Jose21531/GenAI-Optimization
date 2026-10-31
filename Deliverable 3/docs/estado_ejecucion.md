@@ -16,10 +16,13 @@ No hay aún piloto GPU completo, configuración congelada, resultados oficiales 
 
 ## Reanudación
 
-1. Abrir `Deliverable_3.ipynb` desde GitHub en una cuenta con T4. Ejecutar la sección 1 y después `RUN_PILOT=True` en la sección 5. Guardar los dos resúmenes de desarrollo y revisar trazas y hallazgos del auditor.
-2. Elegir el estado del adapter del Verificador con los ocho casos, registrar la justificación en `docs/decisiones.md`, copiar la configuración final a `config/frozen.yaml`, hacer commit y crear el tag `v3-freeze` antes de leer resultados oficiales.
-3. Ejecutar `RUN_GENERATE_30=True` y después `RUN_EVALUATE_30=True` en la sección 6, usando una ruta persistente en `ARTIFACT_ROOT` si la sesión puede cortarse. Repetir el mismo comando para reanudar; no mezclar identidades.
-4. Ejecutar el caso oftalmológico de la sección 2 y su juicio de la sección 4, analizar el contraste con las dos respuestas archivadas y publicar respuestas/trazas/juicios relevantes.
-5. Redactar y compilar el informe de una página con métricas **medidas**, verificarlo visualmente y publicar el enlace del video grabado por el equipo.
+El piloto usa `analista_v5` (ver `docs/decisiones.md`). El trabajo GPU se reparte entre sesiones de Colab; todas deben usar el mismo código.
+
+1. Piloto, en paralelo: sesión A con `PILOT_RUNS=['verifier_on']` y sesión B con `PILOT_RUNS=['verifier_off']`, ambas con `USE_DRIVE=True` y `RUN_PILOT=True` en la sección 5. Cada una deja `pilot-<rótulo>.zip`; revisar resúmenes, estados (`fallo_formato`) y hallazgos del auditor.
+2. Elegir el estado del adapter del Verificador (y v5 o v4 del Analista), registrar la justificación en `docs/decisiones.md`, copiar la configuración a `config/frozen.yaml` con `status: frozen`, hacer commit, crear y publicar el tag `v3-freeze` antes de leer resultados oficiales.
+3. Generación oficial repartida, con `USE_DRIVE=True` y `RUN_GENERATE_30=True`: José ejecuta `MY_VARIANTS=['full','no_evidence','no_plan']` (o una variante por cuenta) y la compañera `['no_audit','no_review']`. Todas las sesiones deben mostrar el mismo SHA de `v3-freeze`. Cada variante deja `exports/official-<variante>.zip`. Repetir la celda reanuda por ID.
+4. En la sesión evaluadora, copiar los cinco zips a `ARTIFACT_ROOT/imports/`, ejecutar la celda de importación (debe mostrar 30/30 por variante) y luego `RUN_EVALUATE_30=True`. El juez es secuencial y reanudable.
+5. Ejecutar el caso oftalmológico de la sección 2 y su juicio de la sección 4, analizar el contraste con las dos respuestas archivadas y publicar respuestas/trazas/juicios relevantes.
+6. Redactar y compilar el informe de una página con métricas **medidas**, verificarlo visualmente y publicar el enlace del video grabado por el equipo.
 
 Los resultados oficiales deben contener exactamente 30 IDs por cada una de `full`, `no_evidence`, `no_plan`, `no_audit` y `no_review`. El diagnóstico permanece fuera de esas medias.
