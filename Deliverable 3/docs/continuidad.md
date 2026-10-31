@@ -1,0 +1,11 @@
+# Estado de continuidad · Entrega 3
+
+Actualizado el 31-10-2026. `main` y `feat/entrega3-integracion` apuntan a `def8d19`; el tag inmutable `v3-freeze` apunta a `a5c9c82`. El cuaderno puede cambiar después del tag, pero `run.py`, agentes, herramientas, prompts y `config/frozen.yaml` conservan los bytes congelados que comprueba `eval/provenance.py`.
+
+- **Configuración:** Qwen2.5-1.5B-Instruct revisión `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, adapter QLoRA con SHA-256 `68583e9dffa6647a5c0b89a74168363264daf246e4337ef1ae0c644243391151`, encendido solo al redactar `candidate`; Verificador sin adapter; decodificación determinista. Prompts `analista_v6`, `formulador_v3`, `verificador_v10`.
+- **Piloto terminado:** ocho IDs de desarrollo por configuración, con salidas, manifiestos y trazas en `results/pilot/` y `traces/pilot/`. Verificador sin adapter: 1 fallo de formato; con adapter: 6. La configuración sin adapter está congelada. Los puntajes FOM-5 v2 del piloto no se calcularon.
+- **Diagnóstico terminado:** `results/diagnostic/initial/fom5_v2_diagnostic.json` puntúa 2,60/5 la salida de los tres agentes para centros oftalmológicos; baseline archivado 0,65/5 y Entrega 2 archivada 3,85/5. La traza correspondiente está en `traces/diagnostic/initial/`. Es un caso fuera de los 30 oficiales.
+- **Pruebas locales:** 187 aprobadas, 2 omitidas y 77 subpruebas. Comando: `python -m pytest -q "Deliverable 3/tests" "Deliverable 3/eval/tests"` con las dependencias de `eval/requirements.txt`.
+- **Pendiente:** cinco `outputs.jsonl` de 30 IDs cada uno, cinco manifiestos, evaluación FOM-5 v2 completa, comparación pareada, cifras en el informe y archivo final de video. Ninguna mejora oficial de Entrega 3 está demostrada hasta completar el juez.
+
+En Colab, abrir `Deliverable_3.ipynb` desde `main`, seleccionar T4, fijar `STAGE='oficial'` en la primera celda, preparar el modelo y ejecutar la sección 6 con `RUN_GENERATE_30=True`. `SAVE_TO_DRIVE=True` guarda checkpoints en `MyDrive/GenAI_Entrega3_oficial_v3freeze`; repetir la celda con esa misma ruta reanuda por ID. Una vez obtenidos 30/30 y manifiesto para las cinco variantes, ejecutar `RUN_EVALUATE_30=True` en una sesión T4 separada del generador y copiar las salidas, trazas y juicios al repositorio. No se ajustan prompts con estos 30 casos.
