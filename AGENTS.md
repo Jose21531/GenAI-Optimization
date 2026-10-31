@@ -40,7 +40,7 @@ Estos chequeos verifican presencia y consistencia sintáctica. Que un parámetro
 ## Experimento y archivos
 
 - Cada prompt vive en `Deliverable 3/prompts/<agente>_vN.md`. No se incrustan prompts de agente en código. Una revisión crea una nueva versión y queda registrada en `docs/decisiones.md`.
-- Las variantes son `full`, `no_evidence`, `no_plan`, `no_audit` y `no_review`. Se ejecutan sobre los mismos 30 enunciados, con decodificación determinista y límites fijados. Baseline y QLoRA usan las respuestas archivadas de la Entrega 2.
+- Las variantes son `full`, `no_evidence`, `no_plan`, `no_audit` y `no_review`. En la medición de cierre se ejecutan sobre los mismos primeros 15 enunciados (`opt_01`–`opt_15`) del benchmark de 30, con decodificación determinista y límites fijados. Baseline y QLoRA usan sus respuestas archivadas para esos mismos 15 IDs. La muestra de Entrega 3 se informa como 15 casos; las medias históricas de 30 se rotulan por separado.
 - Se ajustan los prompts únicamente con ocho casos nuevos en `dev_cases/`. La configuración de desarrollo está en `config/development.yaml`; tras el piloto se copia la elegida a `config/frozen.yaml` y se crea el tag `v3-freeze`. No se afinan prompts con los resultados oficiales.
 - Cada mensaje, decisión, llamada y observación de herramienta se registra en JSONL bajo `traces/`. Las salidas finales y juicios se guardan por variante en `results/`.
 - La lógica reside en `.py`. El notebook de Colab solo prepara el entorno y llama a `run.py`; se publica sin salidas. No se duplican archivos pesados de la Entrega 2.
@@ -53,4 +53,4 @@ Estos chequeos verifican presencia y consistencia sintáctica. Que un parámetro
 | B · Generación | Sebastián | `agents/analista.py`, `agents/formulador.py`, sus prompts, `tools/extract_data_spans.py` y `dev_cases/` |
 | C · Verificación y evaluación | Rayén | `agents/verificador.py`, su prompt, `tools/audit_model.py` y `eval/` |
 
-Una IA que trabaja para un integrante edita solo los módulos de ese integrante. Los contratos comunes se revisan con el equipo antes de cambiar `schemas.py`. El trabajo se desarrolla en ramas de cada responsable (`feat/infra`, `feat/generacion`, `feat/verificacion`) y se integra mediante PR revisado por otra persona. Antes de cada commit se revisan el diff y los tests del módulo. Para el desarrollo local se usa `MockLLM`; las corridas reales se realizan en Colab T4.
+José integra el cierre de la Entrega 3 y revisa el diff y las pruebas antes de publicar. Los módulos, prompts y la configuración de generación fijados en `v3-freeze` conservan sus bytes durante la medición; el cuaderno, evaluador, documentación e informe pueden completarse sin alterar esa configuración. Para el desarrollo local se usa `MockLLM`; las corridas reales se realizan en Colab T4.
