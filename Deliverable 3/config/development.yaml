@@ -16,8 +16,8 @@ generation:
     formulador_candidate: 1200
     verificador: 1200
 prompts:
-  analista: prompts/analista_v3.md
-  analista_no_evidence: prompts/analista_v3_noevidence.md
+  analista: prompts/analista_v4.md
+  analista_no_evidence: prompts/analista_v4_noevidence.md
   formulador: prompts/formulador_v2.md
   formulador_no_plan: prompts/formulador_v1_noplan.md
   verificador: prompts/verificador_v2.md

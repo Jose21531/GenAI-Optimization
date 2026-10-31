@@ -29,7 +29,7 @@ from schemas import (
 from tools.extract_data_spans import Span, localizar_cita
 
 PROMPTS_DIR = Path(__file__).resolve().parents[1] / "prompts"
-DEFAULT_PROMPT = PROMPTS_DIR / "analista_v3.md"
+DEFAULT_PROMPT = PROMPTS_DIR / "analista_v4.md"
 
 
 class LLM(Protocol):
@@ -241,6 +241,13 @@ def _apply_aliases(spec: dict, warnings: list[str]) -> None:
         spec["objective"]["sense"] = _alias(spec["objective"].get("sense"), _SENSES)
 
 
+def source_sentences(problem: str) -> list[str]:
+    """Fragmentos literales numerados para que el modelo cite sin parafrasear."""
+    return [match.group().strip() for match in
+            re.finditer(r"[^.!?]+(?:[.!?](?=\s|$)|$)", problem, re.DOTALL)
+            if match.group().strip()]
+
+
 def _locate_evidence(spec: dict, problem: str, warnings: list[str]) -> None:
     """Fija start/end y reemplaza la cita por el texto literal encontrado."""
     def visit(obj: Any, where: str) -> None:
@@ -252,6 +259,12 @@ def _locate_evidence(spec: dict, problem: str, warnings: list[str]) -> None:
             return
         evidence = obj.get("evidence")
         if isinstance(evidence, dict):
+            reference = re.fullmatch(r"E([1-9][0-9]*)", evidence["text"].strip())
+            if reference:
+                sentences = source_sentences(problem)
+                index = int(reference.group(1)) - 1
+                if index < len(sentences):
+                    evidence["text"] = sentences[index]
             span = localizar_cita(problem, evidence["text"])
             if span is None:
                 warnings.append(f"cita no encontrada en el enunciado: {where}")
@@ -346,8 +359,10 @@ def analizar(
                    if spans is not None else "")
     question_block = (sections["question"].substitute(
         question=question, previous_spec=compact_spec(previous_spec)) if question else "")
-    prompt = render(sections["user"], problem=problem, spans_block=spans_block,
-                    question_block=question_block)
+    source_lines = "\n".join(f"E{i}: {sentence}"
+                             for i, sentence in enumerate(source_sentences(problem), 1))
+    prompt = render(sections["user"], problem=problem, source_lines=source_lines,
+                    spans_block=spans_block, question_block=question_block)
     raw = llm.generate(prompt, adapter_on)
     step = AgentStep(output=None, calls=[LLMCall(version, prompt, adapter_on, raw)])
 

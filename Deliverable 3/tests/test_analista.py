@@ -16,6 +16,7 @@ from agents.analista import (  # noqa: E402
     analizar,
     extraer_json,
     load_prompt,
+    source_sentences,
 )
 from mock_llm import MockLLM, archivos_abiertos  # noqa: E402
 from tools.extract_data_spans import extract_data_spans, localizar_cita  # noqa: E402
@@ -113,7 +114,7 @@ class AnalistaTests(unittest.TestCase):
             step = analizar(llm, "dev01", PROBLEMA, adapter_on=adapter_on)
             self.assertEqual(llm.calls[0][1], adapter_on)
             call = step.calls[0]
-            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v3", adapter_on))
+            self.assertEqual((call.prompt_version, call.adapter_on), ("analista_v4", adapter_on))
             self.assertIn(PROBLEMA, call.prompt)
             self.assertEqual(call.raw, deliver())
 
@@ -161,7 +162,20 @@ class AnalistaTests(unittest.TestCase):
         with self.assertRaises(AgentFormatError) as caught:
             analizar(MockLLM([raw]), "dev01", PROBLEMA, adapter_on=True)
         self.assertEqual(caught.exception.raw, raw)
-        self.assertEqual(caught.exception.prompt_version, "analista_v3")
+        self.assertEqual(caught.exception.prompt_version, "analista_v4")
+
+    def test_referencia_numerada_se_resuelve_a_cita_literal(self):
+        spec = spec_respuesta(
+            objective={"sense": "max", "description": "utilidad total", "evidence": {"text": "E5"}},
+            requirements=[{"id": "U1", "kind": "objective", "text": "Maximizar utilidad",
+                           "evidence": {"text": "E5"}}],
+        )
+        raw = json.dumps({"action": "deliver", "spec": spec}, ensure_ascii=False)
+        step = analizar(MockLLM([raw]), "dev01", PROBLEMA, adapter_on=False)
+        citation = step.output.spec.requirements[0].evidence
+        self.assertEqual(citation.text, source_sentences(PROBLEMA)[4])
+        self.assertEqual(PROBLEMA[citation.start:citation.end], citation.text)
+        self.assertIn("E5: Se desea maximizar", step.calls[0].prompt)
 
     def test_spec_invalido_falla(self):
         with self.assertRaisesRegex(AgentFormatError, "AnalystOutput"):
@@ -231,7 +245,8 @@ class PromptTests(unittest.TestCase):
             self.assertEqual(version, path.stem)
             self.assertEqual(set(sections), {"user", "spans", "question"})
             texto = "Cuesta $ 10 por hora y US$5 por kilo."
-            prompt = sections["user"].substitute(problem=texto, spans_block="", question_block="")
+            prompt = sections["user"].safe_substitute(problem=texto, source_lines="E1: " + texto,
+                                                       spans_block="", question_block="")
             self.assertIn(texto, prompt)
             self.assertNotIn("# analista", prompt)
 

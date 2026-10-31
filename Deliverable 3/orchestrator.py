@@ -52,8 +52,8 @@ class TokenLimits(ContractModel):
 
 
 class PromptPaths(ContractModel):
-    analista: Path = ROOT / "prompts/analista_v3.md"
-    analista_no_evidence: Path = ROOT / "prompts/analista_v3_noevidence.md"
+    analista: Path = ROOT / "prompts/analista_v4.md"
+    analista_no_evidence: Path = ROOT / "prompts/analista_v4_noevidence.md"
     formulador: Path = ROOT / "prompts/formulador_v2.md"
     formulador_no_plan: Path = ROOT / "prompts/formulador_v1_noplan.md"
     verificador: Path = ROOT / "prompts/verificador_v2.md"

@@ -102,7 +102,7 @@ class OrchestratorTests(unittest.TestCase):
         result, _, llm = self.run_flow([analyst(), CLARIFY, analyst(), FORMULATE, CANDIDATE, verifier()])
         self.assertEqual(result.status, "aceptado")
         self.assertEqual(result.clarifications, 1)
-        self.assertIn("Tu análisis anterior fue:", llm.calls[2][0])
+        self.assertIn("Análisis anterior:", llm.calls[2][0])
         self.assertIn("¿El límite de horas es total?", llm.calls[2][0])
         self.assertIn("No quedan aclaraciones disponibles", llm.calls[3][0])
 
@@ -153,7 +153,7 @@ class OrchestratorTests(unittest.TestCase):
         result, runner, _ = self.run_flow([analyst(evidence=False), FORMULATE, CANDIDATE, verifier()], variant="no_evidence")
         self.assertEqual(result.status, "aceptado")
         versions = [e.prompt_version for e in runner.last_events if e.event == "llamada" and e.actor != "orquestador"]
-        self.assertEqual(versions, ["analista_v3_noevidence", "formulador_v2", "formulador_v2", "verificador_v2"])
+        self.assertEqual(versions, ["analista_v4_noevidence", "formulador_v2", "formulador_v2", "verificador_v2"])
 
     def test_no_plan_conserva_el_formato_del_candidate(self):
         result, runner, llm = self.run_flow([analyst(), "DECISION: formular", CANDIDATE, verifier()], variant="no_plan")
