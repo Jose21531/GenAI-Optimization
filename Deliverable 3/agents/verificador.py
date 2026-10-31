@@ -78,6 +78,8 @@ def _requisitos_sin_cubrir(spec: ProblemSpec, coverage: CoverageMap) -> list[str
 
 _DOMAIN_HINT = re.compile(r"\\ge(?:q)?\s*0|>=\s*0|≥\s*0|\\in|\bbinari|\benter|\bcontinu|\{0,\s*1\}", re.IGNORECASE)
 _LINK_LINE = re.compile(r"^[ \t*-]*(U[1-9][0-9]*)[ \t]*(?::|->|→|=>)[ \t]*(.+?)[ \t]*$", re.MULTILINE)
+_VERBOSE_REQUIREMENT = re.compile(r"^(?:IDENTIFICADOR[^:]*REQUISITO|REQUISITO)\s*:\s*(U[1-9][0-9]*)\s*$", re.IGNORECASE)
+_VERBOSE_PART = re.compile(r"^PARTES?\s*:\s*(.+)$", re.IGNORECASE)
 _ACTION_LINE = re.compile(r"^[ \t*]*ACCI[OÓ]N[ \t*]*:[ \t*]*(\w+)", re.IGNORECASE | re.MULTILINE)
 _ISSUE_LINE = re.compile(r"^[ \t*-]*PROBLEMA[ \t*]*:[ \t]*(.+)$", re.IGNORECASE | re.MULTILINE)
 _REASON_LINE = re.compile(r"^[ \t*]*MOTIVO[ \t*]*:[ \t]*(.+)$", re.IGNORECASE | re.MULTILINE)
@@ -156,6 +158,26 @@ def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[M
                     links.append({"requirement_id": rid, "element_id": target})
                 else:
                     unknown.append(target)
+        current_requirement = None
+        verbose_links = 0
+        for line in raw.splitlines():
+            line = line.strip()
+            requirement = _VERBOSE_REQUIREMENT.fullmatch(line)
+            if requirement:
+                current_requirement = requirement.group(1).upper()
+                continue
+            part = _VERBOSE_PART.fullmatch(line)
+            if part and current_requirement:
+                for target in re.findall(r"[A-Za-z]+[0-9]+", part.group(1)):
+                    target = target.upper()
+                    if target in known:
+                        links.append({"requirement_id": current_requirement, "element_id": target})
+                        verbose_links += 1
+                    else:
+                        unknown.append(target)
+                current_requirement = None
+        if verbose_links:
+            warnings.append("vínculos en bloques requisito/parte normalizados")
         if unknown:
             warnings.append("vínculos a partes inexistentes descartados: " + ", ".join(dict.fromkeys(unknown)))
         links = [dict(t) for t in dict.fromkeys(tuple(l.items()) for l in links)]

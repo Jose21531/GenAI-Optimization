@@ -126,6 +126,22 @@ class VerificadorTests(unittest.TestCase):
             verificar(MockLLM(["U#: ninguna\nACCION: auditar"]), PROBLEM, SPEC, draft,
                       adapter_on=False, prompt_path=ROOT / "prompts/verificador_v5.md")
 
+    def test_protocolo_admite_bloques_con_ids_reales_sin_inventar_vinculos(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        raw = ("ACCION: auditar\n"
+               "IDENTIFICADOR REAL DEL REQUISITO: U1\nPARTE: O1\n"
+               "REQUISITO: U2\nPARTE: C1\n"
+               "REQUISITO: U3\nPARTE: D1\n")
+        step = verificar(MockLLM([raw]), PROBLEM, SPEC, draft, adapter_on=False,
+                         prompt_path=ROOT / "prompts/verificador_v5.md")
+        self.assertEqual(step.output.action, "audit")
+        self.assertEqual([(x.requirement_id, x.element_id) for x in step.output.coverage.links],
+                         [("U1", "O1"), ("U2", "C1"), ("U3", "D1")])
+        self.assertTrue(any("normalizados" in warning for warning in step.warnings))
+
     def test_entrega_accept_revise_y_stop_sin_cambiar_la_decision(self):
         for action in ("accept", "revise", "stop"):
             with self.subTest(action=action):
