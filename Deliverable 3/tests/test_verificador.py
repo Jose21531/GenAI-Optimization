@@ -175,6 +175,33 @@ class VerificadorTests(unittest.TestCase):
         self.assertEqual(second.output.decision.issues[0].requirement_id, "U2")
         self.assertTrue(any("contradice errores" in warning for warning in second.warnings))
 
+    def test_revision_sin_correccion_se_detiene_sin_inventar_problema(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        coverage = CoverageMap.model_validate({**MAP, "candidate_id": draft.candidate_id})
+        step = verificar(MockLLM(["ACCION: revisar"]), PROBLEM, SPEC, draft,
+                         adapter_on=False, prompt_path=ROOT / "prompts/verificador_v10.md",
+                         coverage=coverage, audit_report=AuditReport(candidate_id=draft.candidate_id))
+        self.assertEqual(step.output.decision.action, "stop")
+        self.assertEqual(step.output.decision.issues, [])
+
+    def test_revision_sin_texto_conserva_errores_reales_del_auditor(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        coverage = CoverageMap.model_validate({**MAP, "candidate_id": draft.candidate_id})
+        report = AuditReport(candidate_id=draft.candidate_id, findings=[Finding(
+            check="cobertura_tipo_incorrecto", level="error", requirement_id="U2",
+            location="C1", message="Vínculo de tipo incorrecto")])
+        step = verificar(MockLLM(["ACCION: revisar"]), PROBLEM, SPEC, draft,
+                         adapter_on=False, prompt_path=ROOT / "prompts/verificador_v10.md",
+                         coverage=coverage, audit_report=report)
+        self.assertEqual(step.output.decision.action, "revise")
+        self.assertEqual(step.output.decision.issues[0].requirement_id, "U2")
+
     def test_entrega_accept_revise_y_stop_sin_cambiar_la_decision(self):
         for action in ("accept", "revise", "stop"):
             with self.subTest(action=action):

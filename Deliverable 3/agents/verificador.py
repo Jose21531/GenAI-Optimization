@@ -172,7 +172,8 @@ def _format_report(report: AuditReport) -> str:
 
 
 def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[ModelElement],
-                warnings: list[str], coverage: Optional[CoverageMap]) -> dict:
+                warnings: list[str], coverage: Optional[CoverageMap],
+                audit_has_errors: bool = False) -> dict:
     actions = list(_ACTION_LINE.finditer(raw))
     match = actions[0] if actions else None
     action = _TEXT_ACTIONS.get(match.group(1).lower()) if match else None
@@ -254,7 +255,15 @@ def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[M
                                "requirement_id": rid, "location": None,
                                "suggestion": f"Agregar la ecuación que exprese {rid}"})
         if not issues:
-            raise ValueError("ACCION: revisar requiere al menos una línea PROBLEMA:")
+            if audit_has_errors:
+                # El llamador añadirá los hallazgos concretos del informe.
+                warnings.append("revisión sin problema textual; se conservan los errores de audit_model")
+            else:
+                # Sin una corrección accionable no se devuelve el borrador al
+                # Formulador ni se inventa una observación matemática.
+                warnings.append("revisión sin problema concreto; se interpretó detener")
+                action = "stop"
+                reason = reason or "El Verificador no indicó una corrección concreta"
     decision = {"action": action, "candidate_id": draft.candidate_id, "issues": issues, "reason": reason}
     return {"action": "review", "coverage": coverage, "decision": decision}
 
@@ -333,7 +342,8 @@ def verificar(
 
     try:
         if text_protocol:
-            data = _parse_text(raw, spec, draft, elements, step.warnings, coverage)
+            data = _parse_text(raw, spec, draft, elements, step.warnings, coverage,
+                               audit_has_errors=bool(audit_report and audit_report.has_errors))
             if data["action"] == "audit" and (not audit_allowed or audit_report is not None):
                 raise ValueError("ACCION: auditar no está disponible en este paso; decide aceptar, revisar o detener")
             if data["action"] == "review" and audit_report is not None and audit_report.has_errors:
