@@ -3,6 +3,9 @@
 Desde la raíz del repositorio, por ejemplo:
 python "Deliverable 3/run.py" --mode development --variants full
 python "Deliverable 3/run.py" --mode official --variants full no_evidence no_plan no_audit no_review
+
+Con --git-sync, cada caso terminado se sube a la rama actual; otra sesión que
+clone esa rama y repita el comando continúa desde el siguiente ID.
 """
 
 from __future__ import annotations
@@ -12,6 +15,7 @@ import json
 import os
 import tempfile
 from pathlib import Path
+from typing import Callable, Optional
 from uuid import uuid4
 
 import yaml
@@ -88,7 +92,7 @@ def _ensure_identity(path: Path, identity: dict) -> None:
 
 def run_variant(llm, config: OrchestratorConfig, cases: dict[str, dict[str, str]],
                 variant: str, output_dir: Path, trace_dir: Path, *, mode: str,
-                identity: dict) -> dict[str, RunResult]:
+                identity: dict, after_case: Optional[Callable[[str], None]] = None) -> dict[str, RunResult]:
     """Reanuda por ID y escribe cada resultado inmediatamente después de su traza."""
     if variant not in VARIANTS:
         raise ValueError(f"Variante desconocida: {variant}")
@@ -113,6 +117,8 @@ def run_variant(llm, config: OrchestratorConfig, cases: dict[str, dict[str, str]
             os.fsync(stream.fileno())
         completed[identifier] = result
         print(f"{variant}/{identifier}: {result.status}; {result.tokens_total} tokens", flush=True)
+        if after_case is not None:
+            after_case(identifier)
     if len(completed) == len(cases) and mode in {"development", "official"}:
         manifest = manifest_path(predictions)
         expected = generation_manifest(predictions, variant, cases, mode=mode)
@@ -121,6 +127,8 @@ def run_variant(llm, config: OrchestratorConfig, cases: dict[str, dict[str, str]
                 raise ValueError(f"Manifiesto incompatible: {manifest}")
         else:
             write_generation_manifest(predictions, variant, cases, mode=mode)
+            if after_case is not None:
+                after_case("manifiesto")
     return completed
 
 
@@ -130,6 +138,8 @@ def main(argv=None):
     parser.add_argument("--variants", choices=VARIANTS, nargs="+", required=True)
     parser.add_argument("--output-root", type=Path, default=None)
     parser.add_argument("--trace-root", type=Path, default=None)
+    parser.add_argument("--git-sync", action="store_true",
+                        help="Subir salidas y trazas a la rama actual tras cada caso")
     parser.add_argument("--adapter-zip", type=Path,
                         default=REPO / "Deliverable 2/adapter_qlora_qwen25_final.zip")
     args = parser.parse_args(argv)
@@ -150,8 +160,15 @@ def main(argv=None):
         adapter = extract_adapter(args.adapter_zip, Path(temporary) / "adapter")
         llm = load_qwen(adapter)
         for variant in args.variants:
-            run_variant(llm, config, cases, variant, output_root / variant,
-                        trace_root / variant, mode=args.mode, identity=identity)
+            output_dir, trace_dir = output_root / variant, trace_root / variant
+            after_case = None
+            if args.git_sync:
+                from gitsync import checkpoint
+
+                def after_case(step, variant=variant, output_dir=output_dir, trace_dir=trace_dir):
+                    checkpoint([output_dir, trace_dir], f"Resultados {args.mode}/{variant}: {step}")
+            run_variant(llm, config, cases, variant, output_dir, trace_dir,
+                        mode=args.mode, identity=identity, after_case=after_case)
 
 
 if __name__ == "__main__":

@@ -16,12 +16,12 @@ No hay aún piloto GPU completo, configuración congelada, resultados oficiales 
 
 ## Reanudación
 
-El piloto usa `analista_v5` (ver `docs/decisiones.md`). El trabajo GPU se reparte entre sesiones de Colab; todas deben usar el mismo código.
+El piloto usa `analista_v5` (ver `docs/decisiones.md`). El trabajo GPU se reparte entre sesiones de Colab; el repositorio es el checkpoint común. Con `SYNC=True`, `run.py --git-sync` sube cada caso terminado a la rama de resultados (`resultados-piloto` o `resultados-oficiales`) y los juicios se suben cada 5 minutos. Cada cuenta necesita el secreto de Colab `GITHUB_TOKEN` con permiso de escritura en el repositorio. Si una sesión se corta, otra cuenta ejecuta la sección 1 con la misma `STAGE` y la misma celda; continúa por ID.
 
-1. Piloto, en paralelo: sesión A con `PILOT_RUNS=['verifier_on']` y sesión B con `PILOT_RUNS=['verifier_off']`, ambas con `USE_DRIVE=True` y `RUN_PILOT=True` en la sección 5. Cada una deja `pilot-<rótulo>.zip`; revisar resúmenes, estados (`fallo_formato`) y hallazgos del auditor.
+1. Piloto: `STAGE='piloto'`, `RUN_PILOT=True`; `PILOT_RUNS=['verifier_on']` y `['verifier_off']` pueden ir en dos sesiones. Resultados en `results/pilot/<rótulo>` de `resultados-piloto`; revisar resúmenes, estados (`fallo_formato`) y hallazgos del auditor.
 2. Elegir el estado del adapter del Verificador (y v5 o v4 del Analista), registrar la justificación en `docs/decisiones.md`, copiar la configuración a `config/frozen.yaml` con `status: frozen`, hacer commit, crear y publicar el tag `v3-freeze` antes de leer resultados oficiales.
-3. Generación oficial repartida, con `USE_DRIVE=True` y `RUN_GENERATE_30=True`: José ejecuta `MY_VARIANTS=['full','no_evidence','no_plan']` (o una variante por cuenta) y la compañera `['no_audit','no_review']`. Todas las sesiones deben mostrar el mismo SHA de `v3-freeze`. Cada variante deja `exports/official-<variante>.zip`. Repetir la celda reanuda por ID.
-4. En la sesión evaluadora, copiar los cinco zips a `ARTIFACT_ROOT/imports/`, ejecutar la celda de importación (debe mostrar 30/30 por variante) y luego `RUN_EVALUATE_30=True`. El juez es secuencial y reanudable.
+3. Generación oficial: `STAGE='oficial'`, `RUN_GENERATE_30=True`. José ejecuta `MY_VARIANTS=['full','no_evidence','no_plan']` y la compañera `['no_audit','no_review']`. Todas las sesiones deben mostrar el mismo SHA de `v3-freeze`.
+4. La celda de estado (sección 6) debe mostrar 30/30 y manifiesto en las cinco variantes; después una sola sesión ejecuta `RUN_EVALUATE_30=True`. El juez es secuencial y reanudable desde `results/evaluation-official`.
 5. Ejecutar el caso oftalmológico de la sección 2 y su juicio de la sección 4, analizar el contraste con las dos respuestas archivadas y publicar respuestas/trazas/juicios relevantes.
 6. Redactar y compilar el informe de una página con métricas **medidas**, verificarlo visualmente y publicar el enlace del video grabado por el equipo.
 
