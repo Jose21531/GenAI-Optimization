@@ -1,0 +1,55 @@
+{
+  "id": "diagnostic_oftalmo",
+  "scope": "diagnostic; excluded from the official 30-case mean",
+  "execution_kind": "real",
+  "valid_experiment": true,
+  "judge_model": "Qwen/Qwen3-14B",
+  "judge_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+  "candidate_sha256": "de21c385445ce88f3384a89f1230f5e4f6e67b037d29fc0cb1aea733b8972a41",
+  "candidate": "Conjuntos:\n\\(I\\): sitios potenciales.\n\\(J\\): sectores de demanda.\n\nParámetros:\n\\(d_{ij}\\): distancia entre el sitio \\(i\\) y el sector \\(j\\).\n\\(p_j\\): población del sector \\(j\\).\n\\(c_i\\in I\\times I\\): representa \\((i,j)\\) si \\(i\\) y \\(j\\) son dos sitios potenciales.\n\nVariables de decisión:\n\\(x_{ij}\\in\\{0,1\\}\\): vale 1 si el sitio \\(i\\) se selecciona como centro para el sector \\(j\\).\n\\(y_i\\in\\{0,1\\}\\): vale 1 si se instala el centro en \\(i\\).\n\nFunción objetivo:\n\\[\n\\min \\sum_{i\\in I}\\sum_{j\\in J}d_{ij}p_jx_{ij}\n\\]\n\nRestricciones:\n\\[\n\\sum_{j\\in J}x_{ij}=1 \\qquad \\forall i\\in I\n\\]\n\\[\n\\sum_{i\\in I}x_{ij}=1 \\qquad \\forall j\\in J\n\\]\n\\[\n\\sum_{i\\in I}x_{ij}\\le2 \\qquad \\forall j\\in J\n\\]\n\\[\n\\sum_{j\\in J}y_i=2 \\qquad \\forall i\\in I\n\\]",
+  "baseline_archived": 0.65,
+  "qlora_archived": 3.85,
+  "scores": {
+    "score_fom5_v2": 2.6,
+    "decision_domains_v2": 2.0,
+    "objective_v2": 5.0,
+    "constraints_logic_v2": 2.0,
+    "algebra_validity_v2": 2.0,
+    "generalization_v2": 2.0,
+    "requirement_coverage_v2": 0.6666666666666666,
+    "objective_coverage": 1.0,
+    "constraint_coverage": 0.5,
+    "domain_coverage": 1.0
+  },
+  "judge_v2_raw": "{\n  \"has_formulation\": true,\n  \"requirements\": {\n    \"R1\": \"met\",\n    \"R2\": \"wrong\",\n    \"R3\": \"met\",\n    \"R4\": \"wrong\",\n    \"R5\": \"met\",\n    \"R6\": \"met\"\n  },\n  \"scores\": {\n    \"decision_domains\": 2,\n    \"objective\": 5,\n    \"constraints_logic\": 2,\n    \"algebra_validity\": 2,\n    \"generalization\": 2\n  },\n  \"fatal_errors\": [\"La restricción que asegura que solo se abran exactamente 2 centros está incorrecta. La suma de y_i debe ser 2, no la suma de x_ij. Además, la restricción que limita la asignación a 2 centros por sector es redundante e incorrecta.\"]\n}",
+  "calibration": [
+    {
+      "id": "opt_02",
+      "score": 1.3,
+      "maximum": 2.8,
+      "passes": true,
+      "judge_v2_raw": "{\n  \"has_formulation\": true,\n  \"requirements\": {\n    \"R1\": \"wrong\",\n    \"R2\": \"wrong\",\n    \"R3\": \"wrong\",\n    \"R4\": \"met\",\n    \"R5\": \"met\",\n    \"R6\": \"met\"\n  },\n  \"scores\": {\n    \"decision_domains\": 2,\n    \"objective\": 2,\n    \"constraints_logic\": 2,\n    \"algebra_validity\": 2,\n    \"generalization\": 0\n  },\n  \"fatal_errors\": [\"La función objetivo no resta el costo de las horas extraordinarias, lo cual es esencial según R1. Además, las restricciones de recursos (R2 y R3) están incorrectamente formuladas: la materia prima y las horas de máquina no dependen de las horas extraordinarias, pero en la respuesta se incluyen términos con Y en estas restricciones.\"]\n}"
+    },
+    {
+      "id": "opt_10",
+      "score": 0.0,
+      "maximum": 1.5,
+      "passes": true,
+      "judge_v2_raw": "{\n  \"has_formulation\": false,\n  \"requirements\": {\n    \"R1\": \"missing\",\n    \"R2\": \"missing\",\n    \"R3\": \"missing\",\n    \"R4\": \"missing\",\n    \"R5\": \"missing\",\n    \"R6\": \"met\"\n  },\n  \"scores\": {\n    \"decision_domains\": 0,\n    \"objective\": 0,\n    \"constraints_logic\": 0,\n    \"algebra_validity\": 0,\n    \"generalization\": 0\n  },\n  \"fatal_errors\": [\"No se proporcionó una formulación matemática válida. La respuesta candidata describe un procedimiento y una solución numérica, pero no incluye una formulación de programación lineal o entera con variables, objetivo y restricciones matemáticas.\"]\n}"
+    },
+    {
+      "id": "opt_14",
+      "score": 0.0,
+      "maximum": 1.5,
+      "passes": true,
+      "judge_v2_raw": "{\n  \"has_formulation\": false,\n  \"requirements\": {\n    \"R1\": \"missing\",\n    \"R2\": \"missing\",\n    \"R3\": \"missing\",\n    \"R4\": \"missing\"\n  },\n  \"scores\": {\n    \"decision_domains\": 0,\n    \"objective\": 0,\n    \"constraints_logic\": 0,\n    \"algebra_validity\": 0,\n    \"generalization\": 0\n  },\n  \"fatal_errors\": [\"No se proporcionó una formulación matemática válida. La respuesta contiene un algoritmo y una solución numérica, lo cual no cumple con el requisito de formular el problema como una programación lineal o entera.\"]\n}"
+    },
+    {
+      "id": "opt_16",
+      "score": 0.0,
+      "maximum": 1.8,
+      "passes": true,
+      "judge_v2_raw": "{\n  \"has_formulation\": false,\n  \"requirements\": {\n    \"R1\": \"missing\",\n    \"R2\": \"missing\",\n    \"R3\": \"missing\",\n    \"R4\": \"missing\",\n    \"R5\": \"missing\"\n  },\n  \"scores\": {\n    \"decision_domains\": 0,\n    \"objective\": 0,\n    \"constraints_logic\": 0,\n    \"algebra_validity\": 0,\n    \"generalization\": 0\n  },\n  \"fatal_errors\": [\"La respuesta no contiene una formulación matemática válida. Se usan variables binarias en lugar de variables continuas de flujo, y las restricciones no reflejan correctamente el balance de flujo por producto y nodo. Además, no se incluyen las capacidades compartidas de los arcos como se especifica en el enunciado.\"]\n}"
+    }
+  ]
+}

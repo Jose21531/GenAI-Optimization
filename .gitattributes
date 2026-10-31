@@ -1,0 +1,6 @@
+"Deliverable 3/**/*.py" text eol=lf
+"Deliverable 3/**/*.md" text eol=lf
+"Deliverable 3/**/*.yaml" text eol=lf
+"Deliverable 3/**/*.json" text eol=lf
+"Deliverable 3/**/*.jsonl" text eol=lf
+"Deliverable 3/**/*.ipynb" text eol=lf
