@@ -8,11 +8,11 @@ Este archivo distingue trabajo terminado de resultados pendientes. La rama de in
 - `run.py` carga solo entradas de generación, escribe un `RunResult` y una traza por caso, reanuda por ID y crea manifiestos al completar una variante.
 - `Deliverable_3.ipynb` separa el caso diagnóstico, su juicio opcional, el piloto de ocho casos y la reproducción de cinco variantes × 30 casos.
 - El gold diagnóstico proviene del evaluador original de Entrega 2 y coincide con su enunciado archivado; queda separado del archivo que reciben los agentes.
-- Pruebas CPU: 146 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
+- Pruebas CPU: 147 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
 
 ## Pendiente de medición
 
-No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. El puente MCP de Colab está conectado a una T4. La prueba diagnóstica con `ea62459` y `dev07` con `c4deb89` alcanzaron los tres agentes, pero terminaron en `presupuesto_agotado`; `dev07` con `2fa1189` terminó en `fallo_formato`. Sus trazas están en la sesión Colab y se documentan en `docs/decisiones.md`. El parser de vínculos revisado espera validación T4.
+No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. El puente MCP de Colab está conectado a una T4. Las pruebas diagnósticas y de desarrollo de `docs/decisiones.md` mostraron errores de formulación y formato. Un piloto provisional con `formulador_v2` completó dev01 y dev02, ambos con `fallo_formato`; se detuvo antes de dev03 para ensayar el prompt QLoRA más cercano a la Entrega 2. Sus resultados parciales están separados en la sesión Colab. El piloto con `formulador_v3` sigue pendiente.
 
 ## Reanudación
 

@@ -60,6 +60,18 @@ def run(responses, **kwargs):
 
 
 class FormularTests(unittest.TestCase):
+    def test_v3_preserva_el_enunciado_al_final_de_la_llamada_qlora(self):
+        _, full = run([DECISION, CANDIDATE], prompt_path=PROMPTS_DIR / "formulador_v3.md")
+        full_prompt = full.calls[1].prompt
+        self.assertTrue(full_prompt.endswith(PROBLEMA))
+        self.assertIn("U2 -> \\sum_{c\\in C} x_c \\le L", full_prompt)
+        self.assertNotIn("Análisis del enunciado:", full_prompt)
+
+        _, no_plan = run(["DECISION: formular", CANDIDATE],
+                         prompt_path=PROMPTS_DIR / "formulador_v3_noplan.md")
+        self.assertEqual(no_plan.calls[1].prompt, PROBLEMA)
+        self.assertEqual(no_plan.output.plan, [])
+
     def test_formula_con_plan_separado(self):
         llm, step = run([DECISION, "Aquí está la formulación:\n\n" + CANDIDATE])
         out = step.output
