@@ -1,6 +1,6 @@
 # Entrega 3 · Sistema de agentes para formulación LP/MILP
 
-Esta carpeta contiene la estructura inicial del sistema. **Aún no hay una corrida de agentes ni resultados de la Entrega 3.** La implementación se repartirá entre infraestructura, generación y verificación conforme a [AGENTS.md](../AGENTS.md).
+Esta carpeta contiene los agentes de generación y verificación, la auditoría determinista y el orquestador, probados localmente con `MockLLM`. **Todavía no hay un piloto GPU completo ni resultados oficiales de la Entrega 3.** Los módulos se integran mediante PR conforme a [AGENTS.md](../AGENTS.md).
 
 La entrada es un enunciado en español. La salida evaluable conserva exactamente el formato textual de la columna `candidate` de la [Entrega 2](../Deliverable%202/): `Conjuntos`, `Parámetros`, `Variables de decisión`, `Función objetivo` y `Restricciones`. El sistema formula el problema; no obtiene el óptimo.
 
@@ -27,6 +27,8 @@ python -m unittest discover -s "Deliverable 3/eval/tests"
 ```
 
 La instalación de evaluación incluye las dependencias base; estas pruebas no cargan pesos GPU. El protocolo de evaluación, el perfil GPU declarado y la recuperación de checkpoints están en [eval/README.md](eval/README.md).
+
+La interfaz del orquestador, sus presupuestos, variantes y trazas se describen en [docs/orquestador.md](docs/orquestador.md). El Verificador está documentado en [docs/verificador.md](docs/verificador.md) y los alcances del auditor y su calibración en [docs/audit_model.md](docs/audit_model.md).
 
 | Ruta | Propósito |
 |---|---|
