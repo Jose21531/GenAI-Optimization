@@ -282,7 +282,16 @@ def _apply_aliases(spec: dict, warnings: list[str]) -> None:
                 warnings.append(f"ID de requisito {rid!r} renombrado a {requirement['id']}")
     for decision in spec.get("decisions") or []:
         if isinstance(decision, dict):
-            decision["domain"] = _alias(decision.get("domain"), _DOMAINS)
+            domain = _alias(decision.get("domain"), _DOMAINS)
+            if isinstance(domain, str) and domain not in ("continua", "entera", "binaria"):
+                # Variantes como "entero positivo" o "binaria (0/1)" conservan su tipo.
+                prefix = next((v for k, v in (("entero", "entera"), ("entera", "entera"), ("binari", "binaria"),
+                                              ("contin", "continua"), ("real", "continua"))
+                               if domain.strip().lower().startswith(k)), None)
+                if prefix:
+                    warnings.append(f"dominio {domain!r} normalizado a {prefix}")
+                    domain = prefix
+            decision["domain"] = domain
     if isinstance(spec.get("objective"), dict):
         spec["objective"]["sense"] = _alias(spec["objective"].get("sense"), _SENSES)
 

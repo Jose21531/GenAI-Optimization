@@ -282,9 +282,8 @@ class Orchestrator:
                     dropped.append(requirement.id)
                 else:
                     kept.append(requirement)
-            if not kept or not any(r.kind == "objective" for r in kept):
-                raise ValueError("ningún requisito de objetivo tiene una cita literal comprobable"
-                                 if kept else "ningún requisito tiene una cita literal comprobable")
+            if not kept:
+                raise ValueError("ningún requisito tiene una cita literal comprobable")
             if not dropped:
                 return []
             output.spec = output.spec.model_copy(update={"requirements": kept})
