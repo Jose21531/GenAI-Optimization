@@ -11,7 +11,7 @@ model:
 generation:
   do_sample: false
   max_new_tokens:
-    analista: 1200
+    analista: 1800
     formulador_plan: 1200
     formulador_candidate: 1200
     verificador: 1200
