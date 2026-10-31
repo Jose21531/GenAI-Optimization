@@ -18,7 +18,15 @@ flowchart LR
     V -->|aceptar o detener| S[Formulación final + traza]
 ```
 
-Los mensajes de control y cobertura se guardan separados de `candidate`. Las clases compartidas están en [schemas.py](schemas.py), su contrato en [docs/contratos.md](docs/contratos.md) y las decisiones en [docs/decisiones.md](docs/decisiones.md). Para validar el contrato localmente con Python 3.9 o superior: `python -m pip install -r "Deliverable 3/requirements.txt"` y `python -m unittest discover -s "Deliverable 3/tests"` desde la raíz del repositorio.
+Los mensajes de control y cobertura se guardan separados de `candidate`. Las clases compartidas están en [schemas.py](schemas.py), su contrato en [docs/contratos.md](docs/contratos.md) y las decisiones en [docs/decisiones.md](docs/decisiones.md). Para ejecutar las dos suites CPU con Python 3.10 o superior, desde la raíz del repositorio:
+
+```powershell
+python -m pip install -r "Deliverable 3/eval/requirements.txt"
+python -m unittest discover -s "Deliverable 3/tests"
+python -m unittest discover -s "Deliverable 3/eval/tests"
+```
+
+La instalación de evaluación incluye las dependencias base; estas pruebas no cargan pesos GPU. El protocolo de evaluación, el perfil GPU declarado y la recuperación de checkpoints están en [eval/README.md](eval/README.md).
 
 | Ruta | Propósito |
 |---|---|

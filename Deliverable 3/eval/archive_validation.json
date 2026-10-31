@@ -1,0 +1,22 @@
+{
+  "scope": "archived Entrega 2; no new model execution",
+  "cases": 30,
+  "means": {
+    "baseline": 0.5884,
+    "QLoRA": 0.8023666666666667
+  },
+  "QLoRA_minus_baseline": {
+    "n": 30,
+    "mean_difference": 0.21396666666666672,
+    "ci95": [
+      -0.21356999999999998,
+      0.7007266666666662
+    ],
+    "improve": 14,
+    "tie": 8,
+    "worse": 8,
+    "bootstrap_samples": 10000,
+    "bootstrap_seed": 42
+  },
+  "all_60_archived_scores_reproduced": true
+}
