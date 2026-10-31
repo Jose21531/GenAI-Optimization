@@ -8,15 +8,15 @@ Este archivo distingue trabajo terminado de resultados pendientes. La rama de in
 - `run.py` carga solo entradas de generación, escribe un `RunResult` y una traza por caso, reanuda por ID y crea manifiestos al completar una variante.
 - `Deliverable_3.ipynb` separa el caso diagnóstico, su juicio opcional, el piloto de ocho casos y la reproducción de cinco variantes × 30 casos.
 - El gold diagnóstico proviene del evaluador original de Entrega 2 y coincide con su enunciado archivado; queda separado del archivo que reciben los agentes.
-- Pruebas CPU: 143 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
+- Pruebas CPU: 144 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
 
 ## Pendiente de medición
 
-No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. El puente MCP de Colab está conectado a una T4. Una prueba diagnóstica con el commit `ea62459` alcanzó los tres agentes, pero terminó en `presupuesto_agotado`; su traza está en la sesión Colab y se documenta en `docs/decisiones.md`. Los cambios posteriores de extracción de ecuaciones y prompt del Verificador esperan validación T4.
+No hay aún piloto GPU completo, configuración congelada, resultados oficiales nuevos, puntuación nueva del caso diagnóstico, informe final ni video. El puente MCP de Colab está conectado a una T4. La prueba diagnóstica con `ea62459` y `dev07` con `c4deb89` alcanzaron los tres agentes, pero terminaron en `presupuesto_agotado`; sus trazas están en la sesión Colab y se documentan en `docs/decisiones.md`. `verificador_v5` espera validación T4.
 
 ## Reanudación
 
-El piloto usa `analista_v6` y ensaya `verificador_v4` (ver `docs/decisiones.md`). El trabajo GPU se reparte entre sesiones de Colab; el repositorio es el checkpoint común. Con `SYNC=True`, `run.py --git-sync` sube cada caso terminado a la rama de resultados (`resultados-piloto` o `resultados-oficiales`) y los juicios se suben cada 5 minutos. Cada cuenta necesita el secreto de Colab `GITHUB_TOKEN` con permiso de escritura en el repositorio. Si una sesión se corta, otra cuenta ejecuta la sección 1 con la misma `STAGE` y la misma celda; continúa por ID.
+El piloto usa `analista_v6` y ensaya `verificador_v5` (ver `docs/decisiones.md`). El trabajo GPU se reparte entre sesiones de Colab; el repositorio es el checkpoint común. Con `SYNC=True`, `run.py --git-sync` sube cada caso terminado a la rama de resultados (`resultados-piloto` o `resultados-oficiales`) y los juicios se suben cada 5 minutos. Cada cuenta necesita el secreto de Colab `GITHUB_TOKEN` con permiso de escritura en el repositorio. Si una sesión se corta, otra cuenta ejecuta la sección 1 con la misma `STAGE` y la misma celda; continúa por ID.
 
 1. Piloto: `STAGE='piloto'`, `RUN_PILOT=True`; `PILOT_RUNS=['verifier_on']` y `['verifier_off']` pueden ir en dos sesiones. Resultados en `results/pilot/<rótulo>` de `resultados-piloto`; revisar resúmenes, estados (`fallo_formato`) y hallazgos del auditor.
 2. Elegir el estado del adapter del Verificador y las versiones de prompt con los ocho casos de desarrollo, registrar la justificación en `docs/decisiones.md`, copiar la configuración a `config/frozen.yaml` con `status: frozen`, hacer commit, crear y publicar el tag `v3-freeze` antes de leer resultados oficiales.

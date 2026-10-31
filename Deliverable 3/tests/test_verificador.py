@@ -104,7 +104,7 @@ class VerificadorTests(unittest.TestCase):
             objective="max sum_{p en P} b_p x_p",
             constraints="sum_{p en P} a_p x_p <= H",
             variables="x_p >= 0, continua para todo p en P.")})
-        prompt = ROOT / "prompts/verificador_v4.md"
+        prompt = ROOT / "prompts/verificador_v5.md"
         first = verificar(MockLLM(["U1: O1\nU2: C1\nU3: D1\nACCION: auditar"]),
                          PROBLEM, SPEC, draft, adapter_on=False, prompt_path=prompt)
         self.assertEqual(first.output.action, "audit")
@@ -117,6 +117,14 @@ class VerificadorTests(unittest.TestCase):
         self.assertEqual(second.output.decision.action, "revise")
         self.assertEqual(second.output.decision.issues[0].requirement_id, "U2")
         self.assertEqual(second.output.coverage, first.output.coverage)
+
+    def test_protocolo_breve_rechaza_marcador_generico_sin_vinculos(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H")})
+        with self.assertRaisesRegex(AgentFormatError, "cobertura vacía"):
+            verificar(MockLLM(["U#: ninguna\nACCION: auditar"]), PROBLEM, SPEC, draft,
+                      adapter_on=False, prompt_path=ROOT / "prompts/verificador_v5.md")
 
     def test_entrega_accept_revise_y_stop_sin_cambiar_la_decision(self):
         for action in ("accept", "revise", "stop"):
@@ -331,8 +339,8 @@ class VerificadorTests(unittest.TestCase):
 
 class PromptAndIsolationTests(unittest.TestCase):
     def test_prompt_breve_sin_observaciones_de_otro_problema(self):
-        version, sections = load_prompt(ROOT / "prompts/verificador_v4.md")
-        self.assertEqual(version, "verificador_v4")
+        version, sections = load_prompt(ROOT / "prompts/verificador_v5.md")
+        self.assertEqual(version, "verificador_v5")
         self.assertEqual(set(sections), {"user", "audit_available", "review_only",
                                          "audit_result", "format_feedback"})
         self.assertNotIn("límite de agua", sections["user"].template)

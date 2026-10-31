@@ -160,6 +160,10 @@ def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[M
             warnings.append("vínculos a partes inexistentes descartados: " + ", ".join(dict.fromkeys(unknown)))
         links = [dict(t) for t in dict.fromkeys(tuple(l.items()) for l in links)]
         coverage = CoverageMap(candidate_id=draft.candidate_id, elements=elements, links=links)
+    if action in ("audit", "accept") and elements and spec.requirements and not coverage.links:
+        ids = ", ".join(requirement.id for requirement in spec.requirements)
+        parts = ", ".join(element.id for element in elements)
+        raise ValueError(f"cobertura vacía: usa identificadores concretos ({ids}) y partes existentes ({parts})")
     reason = _REASON_LINE.search(raw)
     reason = reason.group(1).strip() if reason else None
     if action == "audit":
