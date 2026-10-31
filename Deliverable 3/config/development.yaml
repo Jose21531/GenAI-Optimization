@@ -20,7 +20,7 @@ prompts:
   analista_no_evidence: prompts/analista_v6_noevidence.md
   formulador: prompts/formulador_v3.md
   formulador_no_plan: prompts/formulador_v3_noplan.md
-  verificador: prompts/verificador_v7.md
+  verificador: prompts/verificador_v8.md
   control: prompts/orquestador_v1.md
 budgets:
   clarifications: 1
