@@ -224,7 +224,7 @@ class Orchestrator:
                 step = function(llm)
                 if validate is not None:
                     try:
-                        validate(step.output)
+                        step.warnings.extend(validate(step.output) or [])
                     except ValueError as error:
                         raise AgentFormatError(str(error), raw=step.calls[-1].raw,
                                                prompt_version=path.stem, calls=step.calls,
@@ -271,13 +271,24 @@ class Orchestrator:
 
         def validate_spec(output):
             if output.action != "deliver" or state.variant == "no_evidence":
-                return
+                return []
+            # Un requisito sin cita comprobable se descarta; el Verificador lee
+            # el enunciado completo y puede pedir la condición omitida.
+            kept, dropped = [], []
             for requirement in output.spec.requirements:
                 evidence = requirement.evidence
-                if evidence is None or evidence.text not in problem:
-                    raise ValueError(f"{requirement.id}: falta una cita literal comprobable")
-                if evidence.start is not None and problem[evidence.start:evidence.end] != evidence.text:
-                    raise ValueError(f"{requirement.id}: offsets de evidencia incorrectos")
+                if (evidence is None or evidence.text not in problem
+                        or (evidence.start is not None and problem[evidence.start:evidence.end] != evidence.text)):
+                    dropped.append(requirement.id)
+                else:
+                    kept.append(requirement)
+            if not kept or not any(r.kind == "objective" for r in kept):
+                raise ValueError("ningún requisito de objetivo tiene una cita literal comprobable"
+                                 if kept else "ningún requisito tiene una cita literal comprobable")
+            if not dropped:
+                return []
+            output.spec = output.spec.model_copy(update={"requirements": kept})
+            return ["requisitos sin cita literal comprobable descartados: " + ", ".join(dropped)]
 
         def analysis(question=None, previous_spec=None):
             nonlocal spans

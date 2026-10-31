@@ -132,6 +132,8 @@ def _repair(candidate: str) -> str:
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
     # Strings partidos en varias líneas sin coma ("a" "b"), como en Python.
     repaired = re.sub(r'"\s*\n\s*"', " ", repaired)
+    # Comentarios // al final de una línea, fuera de los strings.
+    repaired = re.sub(r'(?<=[,\[{])[ \t]*//[^\n]*', "", repaired)
     repaired = re.sub(r"\bTrue\b", "true", repaired)
     repaired = re.sub(r"\bFalse\b", "false", repaired)
     repaired = re.sub(r"\bNone\b", "null", repaired)
@@ -139,12 +141,56 @@ def _repair(candidate: str) -> str:
     return re.sub(r'\\(?!["\\/]|u[0-9a-fA-F]{4}|[bfnrt](?![A-Za-z]))', r"\\\\", repaired)
 
 
-def extraer_json(raw: str) -> dict:
-    """Primer objeto JSON del texto; tolera vallas, prosa y errores menores."""
+def _salvage_truncated(text: str, start: int) -> Optional[dict]:
+    """Cierra un objeto cortado por el límite de tokens en el último elemento completo de una lista.
+
+    En el piloto T4 el Analista agotó 1800 tokens al enumerar un requisito por
+    semana; los requisitos completos anteriores al corte siguen siendo válidos.
+    """
+    stack, cuts = [], []
+    in_string = escape = False
+    for index in range(start, len(text)):
+        char = text[index]
+        if in_string:
+            if escape:
+                escape = False
+            elif char == "\\":
+                escape = True
+            elif char == '"':
+                in_string = False
+        elif char == '"':
+            in_string = True
+        elif char in "{[":
+            stack.append(char)
+        elif char in "}]" and stack:
+            stack.pop()
+            if char == "}" and stack and stack[-1] == "[":
+                cuts.append((index + 1, list(stack)))
+    for end, open_brackets in reversed(cuts[-40:]):
+        closing = "".join("]" if b == "[" else "}" for b in reversed(open_brackets))
+        try:
+            parsed = json.loads(_repair(text[start:end] + closing))
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+    return None
+
+
+def extraer_json(raw: str, warnings: Optional[list[str]] = None) -> dict:
+    """Primer objeto JSON del texto; tolera vallas, prosa y errores menores.
+
+    Con ``warnings``, un objeto cortado se cierra en el último elemento completo
+    de una lista y se registra el aviso; sin esa lista, el corte es un error.
+    """
     text = _FENCE.sub("", raw)
     for match in re.finditer(r"\{", text):
         candidate = _balanced_object(text, match.start())
         if candidate is None:
+            salvaged = _salvage_truncated(text, match.start()) if warnings is not None else None
+            if salvaged is not None:
+                warnings.append("JSON cortado; se conservaron los elementos completos")
+                return salvaged
             # Un objeto sin cerrar contiene a todos los que siguen: tomar uno
             # interno ocultaría que la salida se truncó.
             raise ValueError("JSON incompleto")
@@ -371,7 +417,7 @@ def analizar(
                                 calls=step.calls, warnings=step.warnings)
 
     try:
-        data = extraer_json(raw)
+        data = extraer_json(raw, step.warnings)
     except ValueError as error:
         raise fail(f"salida sin JSON válido: {error}") from None
     try:
