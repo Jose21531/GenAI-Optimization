@@ -12,9 +12,9 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from agents.analista import AgentFormatError, load_prompt  # noqa: E402
-from agents.verificador import DEFAULT_PROMPT, VerifierOutput, verificar  # noqa: E402
+from agents.verificador import DEFAULT_PROMPT, VerifierOutput, elementos_candidate, verificar  # noqa: E402
 from mock_llm import MockLLM, archivos_abiertos  # noqa: E402
-from schemas import AuditReport, CoverageMap, DraftModel, ProblemSpec  # noqa: E402
+from schemas import AuditReport, CoverageMap, DraftModel, DraftSections, ProblemSpec  # noqa: E402
 
 PROBLEM = (
     "Una planta produce cajas de varios tipos. Cada caja del tipo p deja una "
@@ -87,6 +87,37 @@ def run(payload, **options):
 
 
 class VerificadorTests(unittest.TestCase):
+    def test_partes_latex_no_tratan_delimitadores_como_restricciones(self):
+        candidate = DraftModel(
+            candidate_id="latex-dev", raw_text="Función objetivo:\n\\[\n\\min x\n\\]\n"
+            "Restricciones:\n\\[\nx \\le 2\n\\]\n\\[\nx \\ge 0\n\\]",
+            sections=DraftSections(objective="\\[\n\\min x\n\\]",
+                                   constraints="\\[\nx \\le 2\n\\]\n\\[\nx \\ge 0\n\\]"),
+        )
+        parts = elementos_candidate(candidate)
+        self.assertEqual([(p.id, p.excerpt) for p in parts],
+                         [("O1", r"\min x"), ("C1", r"x \le 2"), ("C2", r"x \ge 0")])
+        self.assertTrue(all(p.excerpt in candidate.raw_text for p in parts))
+
+    def test_protocolo_breve_entrega_mapa_auditable_y_revision(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        prompt = ROOT / "prompts/verificador_v4.md"
+        first = verificar(MockLLM(["U1: O1\nU2: C1\nU3: D1\nACCION: auditar"]),
+                         PROBLEM, SPEC, draft, adapter_on=False, prompt_path=prompt)
+        self.assertEqual(first.output.action, "audit")
+        self.assertEqual(len(first.output.coverage.elements), 3)
+        self.assertEqual(len(first.output.coverage.links), 3)
+        report = AuditReport(candidate_id=draft.candidate_id)
+        second = verificar(MockLLM(["ACCION: revisar\nPROBLEMA: U2 | C1 | el límite está mal | corregir el límite"]),
+                          PROBLEM, SPEC, draft, adapter_on=False, prompt_path=prompt,
+                          coverage=first.output.coverage, audit_report=report)
+        self.assertEqual(second.output.decision.action, "revise")
+        self.assertEqual(second.output.decision.issues[0].requirement_id, "U2")
+        self.assertEqual(second.output.coverage, first.output.coverage)
+
     def test_entrega_accept_revise_y_stop_sin_cambiar_la_decision(self):
         for action in ("accept", "revise", "stop"):
             with self.subTest(action=action):
@@ -299,6 +330,14 @@ class VerificadorTests(unittest.TestCase):
 
 
 class PromptAndIsolationTests(unittest.TestCase):
+    def test_prompt_breve_sin_observaciones_de_otro_problema(self):
+        version, sections = load_prompt(ROOT / "prompts/verificador_v4.md")
+        self.assertEqual(version, "verificador_v4")
+        self.assertEqual(set(sections), {"user", "audit_available", "review_only",
+                                         "audit_result", "format_feedback"})
+        self.assertNotIn("límite de agua", sections["user"].template)
+        self.assertNotIn("tierra usa", sections["user"].template)
+
     def test_prompt_versionado_carga_todas_las_secciones(self):
         version, sections = load_prompt(DEFAULT_PROMPT)
         self.assertEqual(version, "verificador_v2")

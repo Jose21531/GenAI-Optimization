@@ -21,7 +21,7 @@ from pydantic import Field
 from agents.analista import AgentFormatError, LLM, analizar, load_prompt, render
 from agents.formulador import formular, limpiar_candidate
 from agents.verificador import verificar
-from schemas import AuditReport, ContractModel, RunResult, TraceEvent, Variant
+from schemas import AuditReport, ContractModel, Requirement, RunResult, TraceEvent, Variant
 from tools.audit_model import audit_model
 from tools.extract_data_spans import extract_data_spans
 
@@ -270,24 +270,41 @@ class Orchestrator:
         spans = None
 
         def validate_spec(output):
-            if output.action != "deliver" or state.variant == "no_evidence":
+            if output.action != "deliver":
                 return []
             # Un requisito sin cita comprobable se descarta; el Verificador lee
             # el enunciado completo y puede pedir la condición omitida.
-            kept, dropped = [], []
+            kept, dropped, warnings = [], [], []
             for requirement in output.spec.requirements:
                 evidence = requirement.evidence
-                if (evidence is None or evidence.text not in problem
-                        or (evidence.start is not None and problem[evidence.start:evidence.end] != evidence.text)):
+                valid_evidence = (evidence is not None and evidence.text in problem
+                                  and (evidence.start is None
+                                       or problem[evidence.start:evidence.end] == evidence.text))
+                if state.variant != "no_evidence" and not valid_evidence:
                     dropped.append(requirement.id)
                 else:
                     kept.append(requirement)
             if not kept:
                 raise ValueError("ningún requisito tiene una cita literal comprobable")
-            if not dropped:
-                return []
-            output.spec = output.spec.model_copy(update={"requirements": kept})
-            return ["requisitos sin cita literal comprobable descartados: " + ", ".join(dropped)]
+            if dropped:
+                warnings.append("requisitos sin cita literal comprobable descartados: " + ", ".join(dropped))
+            if not any(requirement.kind == "objective" for requirement in kept):
+                objective = output.spec.objective
+                evidence = objective.evidence
+                valid_evidence = (evidence is not None and evidence.text in problem
+                                  and (evidence.start is None
+                                       or problem[evidence.start:evidence.end] == evidence.text))
+                if state.variant == "no_evidence" or valid_evidence:
+                    next_id = max(int(requirement.id[1:]) for requirement in kept) + 1
+                    kept.append(Requirement(id=f"U{next_id}", kind="objective",
+                                            text=objective.description,
+                                            evidence=None if state.variant == "no_evidence" else evidence))
+                    warnings.append("requisito de objetivo derivado de spec.objective")
+                else:
+                    warnings.append("el objetivo no tiene requisito ni cita comprobable")
+            if dropped or warnings:
+                output.spec = output.spec.model_copy(update={"requirements": kept})
+            return warnings
 
         def analysis(question=None, previous_spec=None):
             nonlocal spans

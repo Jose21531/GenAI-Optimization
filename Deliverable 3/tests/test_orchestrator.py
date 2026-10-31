@@ -73,6 +73,20 @@ class OrchestratorTests(unittest.TestCase):
         calls = [e for e in events if e.event == "llamada" and e.actor != "orquestador"]
         self.assertEqual([e.adapter_on for e in calls], [False, False, True, True])
 
+    def test_objetivo_del_analista_se_conserva_como_requisito(self):
+        analysis = json.loads(analyst())
+        analysis["spec"]["requirements"] = analysis["spec"]["requirements"][1:]
+        analysis["spec"]["objective"]["evidence"] = {"text": "Se busca maximizar la utilidad"}
+        review = json.loads(verifier())
+        review["coverage"]["links"].append({"requirement_id": "U4", "element_id": "O1"})
+        result, runner, llm = self.run_flow([json.dumps(analysis), FORMULATE, CANDIDATE,
+                                           json.dumps(review)])
+        self.assertEqual(result.status, "aceptado")
+        self.assertIn("U4 (objetivo): utilidad total", llm.calls[1][0])
+        self.assertTrue(any("requisito de objetivo derivado" in warning
+                            for event in runner.last_events if event.actor == "analista"
+                            for warning in (event.output or {}).get("warnings", [])))
+
     def test_auditoria_se_ejecuta_solo_si_el_verificador_la_pide(self):
         result, runner, llm = self.run_flow([analyst(), FORMULATE, CANDIDATE,
                                            verifier(audit=True), verifier(continuation=True)])

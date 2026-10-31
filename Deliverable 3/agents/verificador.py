@@ -89,15 +89,26 @@ def _lines(text: Optional[str]) -> list[str]:
     return [line.strip() for line in (text or "").splitlines() if line.strip()]
 
 
+def _math_excerpts(text: Optional[str]) -> list[str]:
+    """Extrae ecuaciones, sin convertir delimitadores LaTeX en restricciones."""
+    source = text or ""
+    blocks = [match.group(1).strip() for match in
+              re.finditer(r"\\\[(.*?)\\\]", source, re.DOTALL)
+              if match.group(1).strip()]
+    if blocks:
+        return blocks
+    return [line for line in _lines(source)
+            if line not in (r"\[", r"\]", "$$")]
+
+
 def elementos_candidate(draft: DraftModel) -> list[ModelElement]:
     """Objetivo, restricciones y líneas de dominio del candidate, con extractos literales."""
     sections = draft.sections or DraftSections()
     elements = []
-    objective = _lines(sections.objective)
+    objective = _math_excerpts(sections.objective)
     if objective:
-        elements.append(ModelElement(id="O1", kind="objective", excerpt=" ".join(objective)
-                                     if " ".join(objective) in draft.raw_text else objective[0]))
-    for index, line in enumerate(_lines(sections.constraints), 1):
+        elements.append(ModelElement(id="O1", kind="objective", excerpt=objective[0]))
+    for index, line in enumerate(_math_excerpts(sections.constraints), 1):
         elements.append(ModelElement(id=f"C{index}", kind="constraint", excerpt=line))
     domains = [line for line in _lines(sections.variables) if _DOMAIN_HINT.search(line)]
     for index, line in enumerate(domains, 1):
