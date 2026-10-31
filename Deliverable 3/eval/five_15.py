@@ -125,10 +125,6 @@ def make_summary(scored, archived):
 
 def score_candidates(sources: dict[str, Path], output: Path):
     _, gold, archived, predictions, hashes = prepare(sources)
-    judge = load_qwen3()
-    if not isinstance(judge, QwenFOM5Judge) or judge.kind != "real" or \
-            judge.model_id != JUDGE_MODEL or judge.revision != JUDGE_REVISION:
-        raise ValueError("La medición exige el juez Qwen3 real y su revisión original")
     metadata = {"design": "five_variants_first15", "sources_sha256": hashes,
                 "judge": JUDGE_MODEL, "judge_revision": JUDGE_REVISION,
                 "kernel_sha256": KERNEL_SHA256,
@@ -147,6 +143,18 @@ def score_candidates(sources: dict[str, Path], output: Path):
         items = {i: gold[i] for i in predictions[variant]}
         scored[variant] = _checkpoint(output / variant / "judgments.jsonl", variant,
                                       predictions[variant], items, identity)
+    counts = {variant: len(scored[variant]) for variant in VARIANTS}
+    if all(count == 15 for count in counts.values()):
+        for variant in VARIANTS:
+            write_scores(output / variant / "scored.csv", scored[variant])
+        _write_json(manifest, {"identity": identity, "metadata": metadata, "status": "complete"})
+        return {"identity": identity, "status": "complete", "judged_per_variant": counts,
+                "score_files": {variant: str(output / variant / "scored.csv")
+                                for variant in VARIANTS}}
+    judge = load_qwen3()
+    if not isinstance(judge, QwenFOM5Judge) or judge.kind != "real" or \
+            judge.model_id != JUDGE_MODEL or judge.revision != JUDGE_REVISION:
+        raise ValueError("La medición exige el juez Qwen3 real y su revisión original")
     _write_json(manifest, {"identity": identity, "metadata": metadata, "status": "running"})
     calls = output / "judge_calls.jsonl"
     calibration = output / f"calibration-{uuid4().hex}.jsonl"
