@@ -126,6 +126,31 @@ def _format_requirements(spec: ProblemSpec) -> str:
     return "\n".join(f"{r.id} ({r.kind}): {r.text}" for r in spec.requirements)
 
 
+def _coverage_suggestions(spec: ProblemSpec, elements: list[ModelElement]) -> str:
+    """Propone coincidencias superficiales sin consultar respuestas de referencia.
+
+    Son pistas para el Verificador, no vínculos aceptados ni prueba de
+    equivalencia: una ecuación puede contener el mismo número y ser incorrecta.
+    """
+    def numbers(text: str) -> set[str]:
+        values = re.findall(r"(?<![A-Za-z])\d[\d.,]*", text)
+        return {re.sub(r"[.,](?=\d{3}(?:\D|$))", "", value).rstrip(".,")
+                for value in values if value.rstrip(".,")}
+
+    lines = []
+    for requirement in spec.requirements:
+        if requirement.kind == "objective":
+            matches = [e.id for e in elements if e.kind == "objective"]
+        elif requirement.kind == "domain":
+            matches = [e.id for e in elements if e.kind == "domain"]
+        else:
+            expected = numbers(requirement.text)
+            matches = [e.id for e in elements if e.kind == "constraint"
+                       and expected and expected & numbers(e.excerpt)]
+        lines.append(f"{requirement.id}: {', '.join(matches) if matches else 'ninguna'}")
+    return "\n".join(lines)
+
+
 def _format_links(coverage: CoverageMap) -> str:
     targets = {}
     for link in coverage.links:
@@ -283,6 +308,7 @@ def verificar(
         elements=_format_elements(elements),
         requirements=_format_requirements(spec),
         coverage_skeleton="\n".join(f"{r.id}: O/C/D o ninguna" for r in spec.requirements),
+        coverage_suggestions=_coverage_suggestions(spec, elements),
     )
     raw = llm.generate(prompt, adapter_on)
     step = AgentStep(output=None, calls=[LLMCall(version, prompt, adapter_on, raw)])
