@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from agents.analista import AgentFormatError, load_prompt  # noqa: E402
 from agents.verificador import DEFAULT_PROMPT, VerifierOutput, elementos_candidate, verificar  # noqa: E402
 from mock_llm import MockLLM, archivos_abiertos  # noqa: E402
-from schemas import AuditReport, CoverageMap, DraftModel, DraftSections, ProblemSpec  # noqa: E402
+from schemas import AuditReport, CoverageMap, DraftModel, DraftSections, Finding, ProblemSpec  # noqa: E402
 
 PROBLEM = (
     "Una planta produce cajas de varios tipos. Cada caja del tipo p deja una "
@@ -141,6 +141,24 @@ class VerificadorTests(unittest.TestCase):
         self.assertEqual([(x.requirement_id, x.element_id) for x in step.output.coverage.links],
                          [("U1", "O1"), ("U2", "C1"), ("U3", "D1")])
         self.assertTrue(any("normalizados" in warning for warning in step.warnings))
+
+    def test_protocolo_no_acepta_con_error_de_auditoria(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        first = verificar(MockLLM(["U1: O1\nU2: C1\nU3: D1\nACCION: auditar"]),
+                         PROBLEM, SPEC, draft, adapter_on=False,
+                         prompt_path=ROOT / "prompts/verificador_v5.md")
+        report = AuditReport(candidate_id=draft.candidate_id, findings=[Finding(
+            check="cobertura_tipo_incorrecto", level="error", requirement_id="U2",
+            location="C1", message="El vínculo no representa U2")])
+        second = verificar(MockLLM(["ACCION: aceptar"]), PROBLEM, SPEC, draft,
+                          adapter_on=False, prompt_path=ROOT / "prompts/verificador_v5.md",
+                          coverage=first.output.coverage, audit_report=report)
+        self.assertEqual(second.output.decision.action, "revise")
+        self.assertEqual(second.output.decision.issues[0].requirement_id, "U2")
+        self.assertTrue(any("contradice errores" in warning for warning in second.warnings))
 
     def test_entrega_accept_revise_y_stop_sin_cambiar_la_decision(self):
         for action in ("accept", "revise", "stop"):

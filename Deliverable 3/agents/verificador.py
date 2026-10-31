@@ -295,6 +295,28 @@ def verificar(
             data = _parse_text(raw, spec, draft, elements, step.warnings, coverage)
             if data["action"] == "audit" and (not audit_allowed or audit_report is not None):
                 raise ValueError("ACCION: auditar no está disponible en este paso; decide aceptar, revisar o detener")
+            if data["action"] == "review" and audit_report is not None and audit_report.has_errors:
+                decision = data["decision"]
+                if decision["action"] == "accept":
+                    decision["action"] = "revise"
+                    step.warnings.append("aceptación contradice errores de audit_model; se interpretó revisar")
+                if decision["action"] == "revise":
+                    covered_issues = {issue["requirement_id"] for issue in decision["issues"]
+                                      if issue["requirement_id"] is not None}
+                    for finding in audit_report.findings:
+                        if finding.level != "error" or finding.requirement_id in covered_issues:
+                            continue
+                        suggestion = ("Vincular el requisito a una parte del tipo correcto o agregarla"
+                                      if finding.check == "cobertura_tipo_incorrecto" else
+                                      "Agregar la ecuación que represente el requisito o corregir su vínculo"
+                                      if finding.check == "requisito_sin_cubrir" else
+                                      "Corregir el símbolo, índice o ecuación indicado por la auditoría")
+                        decision["issues"].append({"description": f"{finding.check}: {finding.message}",
+                                                   "requirement_id": finding.requirement_id,
+                                                   "location": finding.location,
+                                                   "suggestion": suggestion})
+                        if finding.requirement_id is not None:
+                            covered_issues.add(finding.requirement_id)
             output = VerifierOutput.model_validate(data)
             step.output = output
             return step

@@ -8,7 +8,7 @@ Este archivo distingue trabajo terminado de resultados pendientes. La rama de in
 - `run.py` carga solo entradas de generación, escribe un `RunResult` y una traza por caso, reanuda por ID y crea manifiestos al completar una variante.
 - `Deliverable_3.ipynb` separa el caso diagnóstico, su juicio opcional, el piloto de ocho casos y la reproducción de cinco variantes × 30 casos.
 - El gold diagnóstico proviene del evaluador original de Entrega 2 y coincide con su enunciado archivado; queda separado del archivo que reciben los agentes.
-- Pruebas CPU: 145 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
+- Pruebas CPU: 146 del sistema y 38 de evaluación. `verify-archives` reprodujo los 60 puntajes archivados: baseline 0,5884/5 y QLoRA 0,8023667/5.
 
 ## Pendiente de medición
 
