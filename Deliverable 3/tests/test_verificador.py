@@ -142,6 +142,21 @@ class VerificadorTests(unittest.TestCase):
                          [("U1", "O1"), ("U2", "C1"), ("U3", "D1")])
         self.assertTrue(any("normalizados" in warning for warning in step.warnings))
 
+    def test_cobertura_no_mezcla_segunda_respuesta_del_modelo(self):
+        draft = DRAFT.model_copy(update={"sections": DraftSections(
+            objective="max sum_{p en P} b_p x_p",
+            constraints="sum_{p en P} a_p x_p <= H",
+            variables="x_p >= 0, continua para todo p en P.")})
+        raw = ("- **U1:** O1\n- **U2:** ninguna\n- **U3:** D1\n"
+               "**ACCION: auditar**\nExplicación adicional\n"
+               "U2: C1\nACCION: revisar")
+        step = verificar(MockLLM([raw]), PROBLEM, SPEC, draft, adapter_on=False,
+                         prompt_path=ROOT / "prompts/verificador_v9.md")
+        self.assertEqual(step.output.action, "audit")
+        self.assertEqual([(x.requirement_id, x.element_id) for x in step.output.coverage.links],
+                         [("U1", "O1"), ("U3", "D1")])
+        self.assertTrue(any("posteriores ignoradas" in warning for warning in step.warnings))
+
     def test_protocolo_no_acepta_con_error_de_auditoria(self):
         draft = DRAFT.model_copy(update={"sections": DraftSections(
             objective="max sum_{p en P} b_p x_p",

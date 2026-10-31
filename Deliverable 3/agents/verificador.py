@@ -169,14 +169,24 @@ def _format_report(report: AuditReport) -> str:
 
 def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[ModelElement],
                 warnings: list[str], coverage: Optional[CoverageMap]) -> dict:
-    match = _ACTION_LINE.search(raw)
+    actions = list(_ACTION_LINE.finditer(raw))
+    match = actions[0] if actions else None
     action = _TEXT_ACTIONS.get(match.group(1).lower()) if match else None
     if action is None:
         raise ValueError("falta ACCION: auditar, aceptar, revisar o detener")
+    if len(actions) > 1:
+        warnings.append("acciones posteriores ignoradas; se conservó la primera decisión")
+    # La respuesta puede contener explicaciones o una segunda tentativa. Solo
+    # las líneas anteriores a la primera decisión declaran la cobertura.
+    coverage_text = raw[:match.start()]
+    decision_text = raw[:actions[1].start()] if len(actions) > 1 else raw
+    # v5 permitía bloques requisito/parte después de ACCION. Se conserva
+    # ese formato solo cuando no existe una lista de cobertura previa.
+    link_text = coverage_text if _LINK_LINE.search(coverage_text) else decision_text
     if coverage is None:
         known = {e.id for e in elements}
         links, unknown = [], []
-        for rid, targets in _LINK_LINE.findall(raw):
+        for rid, targets in _LINK_LINE.findall(link_text):
             for target in re.findall(r"[A-Za-z]+[0-9]+", targets):
                 target = target.upper()
                 if target in known:
@@ -185,7 +195,7 @@ def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[M
                     unknown.append(target)
         current_requirement = None
         verbose_links = 0
-        for line in raw.splitlines():
+        for line in link_text.splitlines():
             line = line.strip()
             requirement = _VERBOSE_REQUIREMENT.fullmatch(line)
             if requirement:
@@ -211,12 +221,12 @@ def _parse_text(raw: str, spec: ProblemSpec, draft: DraftModel, elements: list[M
         ids = ", ".join(requirement.id for requirement in spec.requirements)
         parts = ", ".join(element.id for element in elements)
         raise ValueError(f"cobertura vacía: usa identificadores concretos ({ids}) y partes existentes ({parts})")
-    reason = _REASON_LINE.search(raw)
+    reason = _REASON_LINE.search(decision_text)
     reason = reason.group(1).strip() if reason else None
     if action == "audit":
         return {"action": "audit", "coverage": coverage, "reason": reason or "comprobar el mapa con audit_model"}
     issues = []
-    for line in _ISSUE_LINE.findall(raw):
+    for line in _ISSUE_LINE.findall(decision_text):
         parts = [p.strip() for p in line.split("|")]
         rid = parts[0] if parts and re.fullmatch(r"U[1-9][0-9]*", parts[0] or "") else None
         rest = parts[1:] if rid or (parts and parts[0] in ("", "-")) else parts
