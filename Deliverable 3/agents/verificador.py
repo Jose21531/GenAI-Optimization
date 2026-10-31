@@ -282,6 +282,7 @@ def verificar(
         feedback_block=feedback_block,
         elements=_format_elements(elements),
         requirements=_format_requirements(spec),
+        coverage_skeleton="\n".join(f"{r.id}: O/C/D o ninguna" for r in spec.requirements),
     )
     raw = llm.generate(prompt, adapter_on)
     step = AgentStep(output=None, calls=[LLMCall(version, prompt, adapter_on, raw)])
