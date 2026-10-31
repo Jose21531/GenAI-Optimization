@@ -123,7 +123,7 @@ def make_summary(scored, archived):
     return summary
 
 
-def evaluate(sources: dict[str, Path], output: Path):
+def score_candidates(sources: dict[str, Path], output: Path):
     _, gold, archived, predictions, hashes = prepare(sources)
     judge = load_qwen3()
     if not isinstance(judge, QwenFOM5Judge) or judge.kind != "real" or \
@@ -173,23 +173,52 @@ def evaluate(sources: dict[str, Path], output: Path):
                 _append(folder / "judgments.jsonl", record)
                 scored[variant][identifier] = record
             write_scores(folder / "scored.csv", scored[variant])
-        summary = make_summary(scored, archived)
-        summary.update(identity=identity, source_sha256=hashes)
-        _write_json(output / "summary.json", summary)
         _write_json(manifest, {"identity": identity, "metadata": metadata, "status": "complete"})
-        return summary
+        return {"identity": identity, "status": "complete", "judged_per_variant":
+                {variant: len(scored[variant]) for variant in VARIANTS},
+                "score_files": {variant: str(output / variant / "scored.csv")
+                                for variant in VARIANTS}}
     except Exception as error:
         _write_json(manifest, {"identity": identity, "metadata": metadata,
                                "status": "failed", "error": str(error)})
         raise
 
 
+def summarize_scores(sources: dict[str, Path], output: Path):
+    """Recalcula puntajes desde los juicios guardados y compara los 15 IDs."""
+    _, gold, archived, predictions, hashes = prepare(sources)
+    manifest = json.loads((output / "evaluation.json").read_text(encoding="utf-8"))
+    if manifest.get("status") != "complete":
+        raise ValueError("Completa primero los 75 juicios FOM-5 v2")
+    metadata = manifest["metadata"]
+    if metadata.get("design") != "five_variants_first15" or metadata.get("sources_sha256") != hashes:
+        raise ValueError("La identidad de los juicios no coincide con estas respuestas")
+    identity = canonical_hash(metadata)
+    if manifest.get("identity") != identity:
+        raise ValueError("La identidad del manifiesto de evaluación es incompatible")
+    scored = {}
+    for variant in VARIANTS:
+        items = {i: gold[i] for i in predictions[variant]}
+        scored[variant] = _checkpoint(output / variant / "judgments.jsonl", variant,
+                                      predictions[variant], items, identity)
+        if len(scored[variant]) != 15:
+            raise ValueError(f"Faltan juicios de {variant}")
+    summary = make_summary(scored, archived)
+    summary.update(identity=identity, source_sha256=hashes)
+    _write_json(output / "summary.json", summary)
+    return summary
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", action="append", required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    commands = parser.add_subparsers(dest="command", required=True)
+    for name in ("score", "summarize"):
+        command = commands.add_parser(name)
+        command.add_argument("--source", action="append", required=True)
+        command.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    result = evaluate(parse_sources(args.source), args.output)
+    sources = parse_sources(args.source)
+    result = (score_candidates if args.command == "score" else summarize_scores)(sources, args.output)
     print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
 
 
