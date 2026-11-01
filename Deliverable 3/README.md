@@ -4,6 +4,8 @@ El sistema transforma un enunciado en español en un **borrador paramétrico** c
 
 **Estado:** el piloto con ocho casos, el caso diagnóstico, las [75 respuestas de las cinco variantes](results/experiment_15/) y sus [75 juicios FOM-5 v2](results/evaluation-15/) están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). La comparación usa los primeros **15 casos** del benchmark; el conjunto completo de 30 de la Entrega 2 permanece como antecedente. [Informe de una página](informe/informe.pdf) · [Video de demostración](https://drive.google.com/drive/folders/1M359YtVCZHlfftQCqXL95YfEljeaWHqg?usp=sharing).
 
+El límite de cómputo llevó a ejecutar 15 de los 30 casos en cada variante, repartiendo la generación entre varias cuentas de Colab T4. FOM-5 v2 se aplicó después con un segundo modelo, Qwen3-14B, por lo que generación y evaluación requirieron cargas e inferencias distintas en GPU.
+
 ## Dónde está cada parte
 
 | Ruta | Contenido |
