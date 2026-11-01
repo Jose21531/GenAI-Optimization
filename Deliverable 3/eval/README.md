@@ -1,9 +1,18 @@
-# Evaluación FOM-5 v2 · rol C
+# Evaluación FOM-5 v2
 
 Este paquete evalúa formulaciones **después** de generarlas. Qwen3-14B es un
 juez externo; no se importa desde los agentes, herramientas u orquestador.
-El código de C queda implementado; el piloto GPU y el experimento completo
-requieren la integración ejecutable de infraestructura y sus salidas.
+La medición publicada usa los primeros 15 IDs y está completa: [75 juicios,
+cinco CSV y resumen](../results/evaluation-15/). `five_15.py score` puntúa
+las cinco variantes y guarda cada juicio; `five_15.py summarize` valida los
+juicios guardados y compara por ID con baseline y QLoRA archivados. El
+[cuaderno](../Deliverable_3.ipynb) ejecuta ambas etapas. El caso oftalmológico
+se evalúa por separado mediante `diagnostic.py`.
+
+`run_eval.py` conserva el protocolo general para 30 IDs, la verificación de
+archivos históricos y las herramientas de auditoría y recuperación descritas
+abajo. Las instrucciones de 30 IDs documentan esa capacidad; la muestra
+publicada de la Entrega 3 es de **15 casos por variante**.
 
 ## Qué se conserva de Entrega 2
 
@@ -41,10 +50,8 @@ comparación pareada. Excluye la fila diagnóstica de Entrega 1 de las medias.
 El informe `archive_validation.json` documenta esta comprobación offline; no es
 una nueva corrida. No se copian datos, respuestas archivadas ni pesos pesados.
 
-La validación CPU actual reúne 98 pruebas existentes y 38 de evaluación, 136 en
-total, en Python 3.14. Incluye interrupciones, calibración fallida, checkpoints
-duplicados/truncados, identidad de candidatos, congelamiento, protocolo original
-del backend y revisión humana del auditor. No carga pesos reales.
+La última validación local aprobó 189 pruebas y 77 subpruebas. Comprueba interrupciones, calibración, checkpoints, identidad de
+candidatos, congelamiento y el protocolo del juez. No carga pesos reales.
 
 ## Entorno GPU declarado para Entrega 3
 
@@ -75,7 +82,7 @@ variación, pero no permite mezclar entornos diferentes. Si no se puede restaura
 el entorno original, usar un directorio nuevo; no editar la identidad para
 forzar una reanudación.
 
-## Contrato con infraestructura
+## Contrato del protocolo general de 30 casos
 
 Por variante, run.py debe guardar un JSONL con **todos** sus `RunResult` de
 `schemas.py`, tal como los devuelve el orquestador. Cada fila tiene
@@ -109,7 +116,7 @@ Los puntajes de MockJudge son sintéticos: quedan rotulados `execution_kind=mock
 `valid_experiment=false` y `official_result=false`. No sirven para medir calidad
 ni para dar por validado el juez real. `--mock` está prohibido en modo oficial.
 
-## Piloto real en Colab T4
+## Procedimiento del piloto de desarrollo
 
 1. Infraestructura genera los ocho casos con Qwen2.5-1.5B y guarda resultados y
    trazas. Comparar el adapter del Verificador encendido/apagado en corridas
@@ -143,7 +150,7 @@ mostrando por separado inciertos y no verificados. No cambia severidades de
 forma automática. La elección final y sus limitaciones deben registrarse antes
 del congelamiento.
 
-## Evaluación oficial después de congelar
+## Protocolo general de evaluación de 30 casos
 
 El equipo debe terminar el piloto, copiar la configuración elegida a
 `config/frozen.yaml`, declarar sus prompts y crear el tag `v3-freeze`. El
@@ -222,11 +229,13 @@ Se usa el bootstrap pareado original: semilla 42, 10.000 remuestreos e IC 95 %.
 Las comparaciones son descriptivas; un intervalo que incluya cero no demuestra
 una mejora. No se seleccionan prompts con resultados oficiales.
 
-## Estado de cierre de C
+## Medición publicada
 
-La implementación de C incluye Verificador, prompts, auditoría y evaluación
-posterior, pruebas y protocolo de piloto. El cierre experimental requiere aún
-ejecutar y revisar el piloto T4, fijar la configuración del equipo y, después
-del congelamiento, obtener los juicios reales de las cinco variantes. No hay
-puntajes nuevos oficiales de Entrega 3 ni una validación GPU atribuida a estas
-pruebas CPU.
+El [piloto T4](../results/pilot/) comparó el Verificador con y sin adapter.
+La configuración elegida quedó en [`config/frozen.yaml`](../config/frozen.yaml)
+y `v3-freeze`. Las cinco variantes tienen 15 salidas en
+[`results/experiment_15/`](../results/experiment_15/) y 75 juicios reales en
+[`results/evaluation-15/`](../results/evaluation-15/). El
+[`summary.json`](../results/evaluation-15/summary.json) informa medias,
+diferencias, intervalos y costos. El sistema completo obtuvo 0,739/5 frente
+a 1,130/5 de QLoRA archivado sobre esos mismos 15 IDs; no se demostró mejora.

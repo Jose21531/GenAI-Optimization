@@ -4,6 +4,22 @@ El sistema transforma un enunciado en español en un **borrador paramétrico** c
 
 **Estado:** el piloto con ocho casos, el caso diagnóstico, las [75 respuestas de las cinco variantes](results/experiment_15/) y sus [75 juicios FOM-5 v2](results/evaluation-15/) están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). La comparación usa los primeros **15 casos** del benchmark; el conjunto completo de 30 de la Entrega 2 permanece como antecedente. [Informe de una página](informe/informe.pdf).
 
+## Dónde está cada parte
+
+| Ruta | Contenido |
+|---|---|
+| [`Deliverable_3.ipynb`](Deliverable_3.ipynb) | Entrada para ejecutar el caso oftalmológico y reproducir las cinco variantes. |
+| [`data/`](data/) | Enunciados de los 30 casos y entrada y referencia del caso diagnóstico. |
+| [`results/`](results/) y [`traces/`](traces/) | Salidas, juicios, métricas y trazas publicados. |
+| [`informe/`](informe/) | Informe final en LaTeX y PDF. |
+| [`agents/`](agents/), [`tools/`](tools/), [`run.py`](run.py), [`orchestrator.py`](orchestrator.py), [`model.py`](model.py), [`schemas.py`](schemas.py), [`config/`](config/) y [`prompts/`](prompts/) | Implementación y configuración congelada de la generación. |
+| [`eval/`](eval/) | Evaluador FOM-5 v2, reproducción de puntajes y pruebas de evaluación. |
+| [`dev_cases/`](dev_cases/), [`tests/`](tests/) y [`docs/`](docs/) | Casos de desarrollo, pruebas y registro de decisiones. Las versiones anteriores de prompts y las notas de desarrollo permiten auditar la selección final. |
+
+El recorrido breve para revisar la entrega es **cuaderno → respuestas y trazas → informe**. Los archivos de desarrollo permanecen porque sostienen las pruebas y la procedencia del experimento.
+
+## Resultados medidos
+
 | Sistema · mismos 15 casos | Media FOM-5 v2 / 5 | Diferencia frente a QLoRA |
 |---|---:|---:|
 | Prompt directo · Entrega 1 (archivado) | 0,909 | −0,221 |

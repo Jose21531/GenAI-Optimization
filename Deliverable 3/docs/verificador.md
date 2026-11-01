@@ -1,10 +1,16 @@
-# Verificador · implementación inicial del rol C
+# Verificador · registro de la implementación inicial
+
+Este documento conserva la integración y las pruebas iniciales del Verificador.
+Las menciones a `verificador_v2`, pruebas pendientes y número de tests describen
+esa etapa. La versión usada en la medición es `verificador_v10`, con el adapter
+apagado; la selecciona [`config/frozen.yaml`](../config/frozen.yaml) y su estado
+final está en [`estado_ejecucion.md`](estado_ejecucion.md).
 
 `agents/verificador.py` hace una llamada por invocación al mismo protocolo
 `LLM.generate(prompt, adapter_on)` usado por B. Devuelve `AgentStep`, con la
 llamada para la traza y un `VerifierOutput` local. No cambia `schemas.py`.
-El prompt actual es `prompts/verificador_v2.md`; se conserva v1. Todavía no se
-ha probado con el modelo real.
+En esta etapa se usó `prompts/verificador_v2.md`; se conservó v1. Aún no se
+había probado con el modelo real.
 
 ## Interfaz para infraestructura
 
