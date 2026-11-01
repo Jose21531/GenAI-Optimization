@@ -2,7 +2,7 @@
 
 El sistema transforma un enunciado en español en un **borrador paramétrico** con conjuntos, parámetros, variables y dominios, objetivo y restricciones. No resuelve la instancia. Usa Qwen2.5-1.5B-Instruct (revisión `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`) y el [adapter QLoRA público de Entrega 2](../Deliverable%202/adapter_qlora_qwen25_final.zip). El texto evaluable conserva el formato de la columna `candidate` de aquella entrega.
 
-**Estado:** el piloto con ocho casos, el caso diagnóstico, las [75 respuestas de las cinco variantes](results/experiment_15/) y sus [75 juicios FOM-5 v2](results/evaluation-15/) están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). La comparación usa los primeros **15 casos** del benchmark; el conjunto completo de 30 de la Entrega 2 permanece como antecedente. [Informe de una página](informe/informe.pdf).
+**Estado:** el piloto con ocho casos, el caso diagnóstico, las [75 respuestas de las cinco variantes](results/experiment_15/) y sus [75 juicios FOM-5 v2](results/evaluation-15/) están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). La comparación usa los primeros **15 casos** del benchmark; el conjunto completo de 30 de la Entrega 2 permanece como antecedente. [Informe de una página](informe/informe.pdf) · [Video de demostración](https://drive.google.com/drive/folders/1M359YtVCZHlfftQCqXL95YfEljeaWHqg?usp=sharing).
 
 ## Dónde está cada parte
 
