@@ -96,14 +96,15 @@ Sin revisión del borrador & 1,120 & $-0{,}010$ & $+0{,}380$\\
 \bottomrule
 \end{tabularx}
 \end{center}
-Por límite de cómputo, las cinco variantes se ejecutaron sobre los mismos primeros 15 de 30 casos, repartidas entre cuentas Colab T4. Baseline y QLoRA son respuestas archivadas. Cada $\Delta$ es la media de diferencias por ID. \emph{Full} quedó $0{,}391$ bajo QLoRA (3 mejoras, 6 empates, 6 deterioros; IC 95\% bootstrap $[-1{,}399;0{,}549]$) y $0{,}169$ bajo baseline: no se demuestra mejora. Sin citas la media baja respecto de \emph{full}; sin plan sube, pero sus IC pareados incluyen cero. Sin auditor o sin revisión sube $0{,}380$ (IC 95\% $[0{,}079;0{,}770]$); ambas variantes tienen igual puntuación y 14/15 textos idénticos. No prueba que los controles dañen formulaciones válidas.
-
-Ninguna de las 75 corridas alcanzó aceptación: 43 agotaron el reintento de formato y 32 los límites de interacción, incluida la revisión desactivada. Se guardó el último borrador disponible; solo cuatro quedaron vacíos. FOM-5 v2 puntuó las 75 salidas sin excluir fallos. \emph{Full} consumió 14\,560 tokens y 2,7 minutos de generación por caso.
+Por límite de cómputo ejecutamos los primeros 15 de los 30 enunciados y repartimos las cinco variantes entre varias cuentas de Colab T4; todas usan los mismos 15. Baseline y QLoRA son respuestas archivadas. Los $\Delta$ son diferencias pareadas por ID. Frente a QLoRA, \emph{full} mejora 3 casos, empata 6 y empeora 6; IC 95\% bootstrap de $\Delta$: $[-1{,}399;0{,}549]$. Frente al baseline, su $\Delta$ es $-0{,}169$. No se demuestra mejora. Sin auditor o sin revisión se obtienen las mismas puntuaciones, $+0{,}380$ frente a \emph{full} (IC 95\%: $[0{,}079;0{,}770]$); 14/15 textos finales coinciden entre ambas ablaciones. Las 75 generaciones acabaron sin aceptación: 43 fallos de formato, 32 presupuestos agotados y cuatro textos vacíos. FOM-5 v2 puntuó el texto final guardado. \emph{Full} consumió 14\,560 tokens y 2,7 minutos por caso.
 
 \sect{Lectura del resultado}
-El caso oftalmológico queda fuera de la media. En respuestas archivadas, FOM-5 v2 puntúa \textbf{0,65/5} el baseline, \textbf{3,85/5} QLoRA y \textbf{2,60/5} los tres agentes. Esta última recupera $p_j$, pero omite $x_{ij}\le y_i$ y escribe mal la apertura de dos centros. El auditor halló errores; el Verificador no indicó una corrección concreta y la corrida se detuvo. Superar el baseline no equivale a superar QLoRA.
+El caso oftalmológico es diagnóstico y queda fuera de la media de 15. En las respuestas archivadas, FOM-5 v2 puntúa \textbf{0,65/5} el baseline, \textbf{3,85/5} QLoRA y \textbf{2,60/5} los tres agentes. Esta última recupera $p_j$ en el objetivo, pero omite el vínculo $x_{ij}\le y_i$ y escribe mal la apertura de dos centros. El Verificador detectó problemas, pero agotó su salida sin una corrección concreta; por eso la mejor puntuación respecto del baseline no implica mejora sobre la Entrega 2.
 
 \sect{Límites y reproducción}
-\texttt{audit\_model} verifica sintaxis y cobertura, no equivalencia matemática; la traza diagnóstica evidencia una revisión fallida. El cuaderno usa \texttt{v3-freeze} y datos públicos; su sección 6 reanuda por ID en T4 con Drive. Las 75 salidas y juicios versionados permiten recalcular puntajes; el caso en vivo queda fuera de la media.
+La presencia de una ecuación o un símbolo no prueba equivalencia matemática. \texttt{audit\_model} detecta omisiones estructurales y notación inconsistente; el juicio semántico del Verificador puede fallar. La traza diagnóstica archivada muestra ese límite. El cuaderno público ejecuta el caso en vivo y presenta sus mensajes; la última sección reproduce las cinco variantes y la evaluación sobre 15 casos.
+
+\vfill
+{\scriptsize\color{navy}\textbf{Artefactos:} código, prompts, respuestas, trazas y métricas en el repositorio enlazado arriba.\par}
 \end{multicols}
 \end{document}
