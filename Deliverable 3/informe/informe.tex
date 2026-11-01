@@ -101,7 +101,7 @@ Las variantes comparten los primeros 15 enunciados del benchmark de 30; E1 y E2 
 El caso oftalmológico es diagnóstico y queda fuera de la media de 15. En las respuestas archivadas, FOM-5 v2 puntúa \textbf{0,65/5} el baseline, \textbf{3,85/5} QLoRA y \textbf{2,60/5} los tres agentes. Esta última recupera $p_j$ en el objetivo, pero omite el vínculo $x_{ij}\le y_i$ y escribe mal la apertura de dos centros. El Verificador detectó problemas, pero agotó su salida sin una corrección concreta; por eso la mejor puntuación respecto del baseline no implica mejora sobre la Entrega 2.
 
 \sect{Límites y reproducción}
-La presencia de una ecuación o un símbolo no prueba equivalencia matemática. \texttt{audit\_model} detecta omisiones estructurales y notación inconsistente; el juicio semántico del Verificador puede fallar. La traza diagnóstica muestra ese límite. El cuaderno público muestra los mensajes del caso archivado y permite repetirlo; su última sección genera las cinco variantes de 15 casos, las puntúa y calcula las diferencias en etapas separadas.
+La presencia de una ecuación o un símbolo no prueba equivalencia matemática. \texttt{audit\_model} detecta omisiones estructurales y notación inconsistente; el juicio semántico del Verificador puede fallar. La traza diagnóstica archivada muestra ese límite. El cuaderno público ejecuta el caso en vivo y presenta sus mensajes; la última sección reproduce las cinco variantes y la evaluación sobre 15 casos.
 
 \vfill
 {\scriptsize\color{navy}\textbf{Artefactos:} código, prompts, respuestas, trazas y métricas en el repositorio enlazado arriba.\par}
