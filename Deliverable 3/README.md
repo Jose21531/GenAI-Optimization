@@ -2,7 +2,19 @@
 
 El sistema transforma un enunciado en español en un **borrador paramétrico** con conjuntos, parámetros, variables y dominios, objetivo y restricciones. No resuelve la instancia. Usa Qwen2.5-1.5B-Instruct (revisión `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`) y el [adapter QLoRA público de Entrega 2](../Deliverable%202/adapter_qlora_qwen25_final.zip). El texto evaluable conserva el formato de la columna `candidate` de aquella entrega.
 
-**Estado:** el piloto con ocho casos y el caso diagnóstico están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). Las [75 respuestas de las cinco variantes](results/experiment_15/) ya están versionadas con sus identidades y hashes; FOM-5 v2 las puntuará con el juez externo. La comparación usa los primeros **15 casos** del benchmark. El benchmark completo de 30 casos de la Entrega 2 permanece archivado.
+**Estado:** el piloto con ocho casos, el caso diagnóstico, las [75 respuestas de las cinco variantes](results/experiment_15/) y sus [75 juicios FOM-5 v2](results/evaluation-15/) están archivados. La configuración de generación quedó fijada en [`v3-freeze`](https://github.com/Jose21531/GenAI-Optimization/tree/v3-freeze). La comparación usa los primeros **15 casos** del benchmark; el conjunto completo de 30 de la Entrega 2 permanece como antecedente. [Informe de una página](informe/informe.pdf).
+
+| Sistema · mismos 15 casos | Media FOM-5 v2 / 5 | Diferencia frente a QLoRA |
+|---|---:|---:|
+| Prompt directo · Entrega 1 (archivado) | 0,909 | −0,221 |
+| QLoRA · Entrega 2 (archivado) | 1,130 | referencia |
+| Tres agentes · `full` | 0,739 | −0,391 |
+| `no_evidence` | 0,563 | −0,567 |
+| `no_plan` | 1,099 | −0,031 |
+| `no_audit` | 1,120 | −0,010 |
+| `no_review` | 1,120 | −0,010 |
+
+En `full`, 3 casos mejoran, 6 empatan y 6 empeoran frente a Entrega 2; el intervalo bootstrap del 95 % para la diferencia media es [−1,399; 0,549]. **No se demuestra una mejora.** Los 75 resultados de generación terminaron con un estado de fallo (43 de formato, 32 de presupuesto); el juez puntuó el texto final guardado, incluidos cuatro textos vacíos. `no_audit` y `no_review` obtuvieron la misma puntuación en cada ID y compartieron 14 de 15 textos finales. El [resumen completo](results/evaluation-15/summary.json) contiene intervalos, conteos y costos.
 
 ## Recorrido de los agentes
 
@@ -40,7 +52,7 @@ El orquestador valida los mensajes, aplica los presupuestos y escribe una traza 
 
 5. Para generar la muestra, en la sección 6 fija `CONFIGURATION` en **1, 2, 3, 4 o 5**, `FIRST_CASE=1`, `LAST_CASE=15` y `RUN_VARIANT=True`. Ejecuta una variante por cuenta con T4. La celda monta Drive, comprueba que la carpeta compartida existe y escribe allí `results/<variante>/outputs.jsonl`, un manifiesto de subconjunto y las trazas al terminar cada caso. La celda de estado permite ver el avance de las cinco variantes. Si una sesión cae, otra cuenta con el acceso directo puede ejecutar la misma configuración y omitir los IDs completos. **No ejecutes dos sesiones de la misma variante a la vez.**
 6. Activa `RUN_EVALUATE_15=True` con una T4 disponible. El juez externo lee las [salidas completas y verificadas](results/experiment_15/) desde el repositorio y guarda y reanuda por ID los **75 juicios** y cinco CSV en la carpeta compartida `evaluation-15/`. La copia versionada evita la ambigüedad de carpetas homónimas creadas por varias cuentas en Drive.
-7. Activa `RUN_COMPARE_15=True` para calcular, sin GPU, medias, diferencias pareadas, intervalos bootstrap, conteos de mejora/empate/empeoramiento y costo. Esta etapa lee los puntajes archivados de baseline y QLoRA directamente de `Deliverable 2/output/`, filtra sus primeros 15 IDs y guarda `summary.json`. Los juicios y el resumen se incorporarán al repositorio al cerrar la medición.
+7. Activa `RUN_COMPARE_15=True` para recalcular, sin GPU, medias, diferencias pareadas, intervalos bootstrap, conteos de mejora/empate/empeoramiento y costo. Esta etapa lee los puntajes archivados de baseline y QLoRA directamente de `Deliverable 2/output/`, filtra sus primeros 15 IDs y guarda `summary.json`. La última celda también muestra el [resumen versionado](results/evaluation-15/summary.json) al abrir una copia reciente del cuaderno.
 
 Para el video de hasta tres minutos, abre este README y el enlace de Colab. Prepara la T4 y el modelo antes de grabar; fija `RUN_LIVE_DIAGNOSTIC=True` en la sección 2 y **ejecuta ese caso durante la grabación**. Muestra los mensajes del Analista, Formulador y Verificador y la respuesta final. La sección 3 permite contrastarla con las respuestas archivadas; no atribuyas a la nueva respuesta el puntaje de la corrida anterior. Si deseas mostrar un puntaje de esa respuesta exacta, activa su juez en la sección 4. Exporta el ZIP diagnóstico para publicar la traza del video. Puedes editar pausas de carga para mantener el video en tres minutos. La generación de los 15 casos se ejecuta por separado.
 
@@ -50,7 +62,7 @@ Las cinco variantes usan el mismo modelo, enunciados y criterio de evaluación. 
 
 `data/benchmark_30_generation_only.jsonl` contiene únicamente `id`, `title` y `problem`. El gold de los 30 casos se abre solo en `eval/`. Para el caso diagnóstico, `data/diagnostic_oftalmo_input.jsonl` es la entrada de los agentes y `data/diagnostic_oftalmo_gold.json` es la referencia del evaluador, extraída del evaluador original de Entrega 2. Ningún prompt ni herramienta de generación recibe el gold.
 
-`run.py` genera un `RunResult` por ID y variante en `outputs.jsonl`, más una traza por ID bajo `traces/`. Guarda cada resultado al terminar y omite IDs completos al reanudar con la misma identidad de código y configuración. Para los ocho casos de desarrollo:
+`run.py` genera un `RunResult` por ID y variante en `outputs.jsonl`, más una traza por ID bajo `traces/`. Guarda cada resultado al terminar y omite IDs completos al reanudar con la misma identidad de código y configuración. Se conserva una [traza oficial representativa de fallo](traces/experiment_15/no_evidence/official_segment-no_evidence-opt_01-1429aaef.jsonl). Para los ocho casos de desarrollo:
 
 ```bash
 python "Deliverable 3/run.py" --mode development --variants full

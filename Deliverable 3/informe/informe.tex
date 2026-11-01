@@ -1,0 +1,109 @@
+\documentclass[10pt,a4paper]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[top=11mm,bottom=10mm,left=12mm,right=12mm]{geometry}
+\usepackage{lmodern,microtype,amsmath,booktabs,tabularx,multicol,xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage[colorlinks=true,urlcolor=linkblue,linkcolor=navy]{hyperref}
+
+\definecolor{navy}{HTML}{1B3A5C}
+\definecolor{blue}{HTML}{2C6AA0}
+\definecolor{orange}{HTML}{E08A2C}
+\definecolor{linkblue}{HTML}{3A78B8}
+\definecolor{light}{HTML}{EEF1F4}
+\definecolor{green}{HTML}{1F7A5A}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\columnsep}{6mm}
+\renewcommand{\arraystretch}{1.12}
+\newcommand{\sect}[1]{\par\vspace{4pt}{\color{blue}\bfseries\large #1}\par\vspace{1pt}{\color{orange}\rule{9mm}{1.1pt}}\par\vspace{1pt}}
+\newcommand{\taglink}[2]{\colorbox{navy}{\color{white}\bfseries\scriptsize\strut #1}\,\href{#2}{\scriptsize abrir}}
+
+\begin{document}
+\begin{center}
+{\color{navy}\fontsize{15}{17}\selectfont\bfseries Formulación LP/MILP con tres agentes}\par\vspace{2pt}
+{\color{blue}\bfseries Universidad de Concepción · Departamento de Ingeniería Civil Industrial}\par
+{\small Inteligencia Artificial Generativa (580694) · Entrega 3 · 31 de octubre de 2026}\par
+{\small Rayen Muñoz · Isidora Rivera · Sebastián Soto · José Luis Erices}\par\vspace{3pt}
+\taglink{Código}{https://github.com/Jose21531/GenAI-Optimization/tree/main/Deliverable\%203}\quad
+\taglink{Colab}{https://colab.research.google.com/github/Jose21531/GenAI-Optimization/blob/main/Deliverable\%203/Deliverable_3.ipynb}
+\end{center}
+\vspace{-3pt}
+
+\begin{center}
+\begin{tikzpicture}[>=Stealth,font=\scriptsize,
+  box/.style={draw=navy,rounded corners=2pt,fill=white,align=center,minimum height=8mm,text width=24mm,inner sep=2pt},
+  agent/.style={box,fill=navy,text=white,font=\scriptsize\bfseries},
+  tool/.style={box,fill=light,text width=27mm,minimum height=6mm},
+  flow/.style={->,line width=.65pt,draw=navy}]
+\node[box,text width=19mm] (input) at (0,0) {Enunciado\\sin referencia};
+\node[agent] (a) at (3.6,0) {Analista\\requisitos y citas};
+\node[agent] (f) at (7.7,0) {Formulador\\plan y borrador};
+\node[agent] (v) at (11.8,0) {Verificador\\cobertura y juicio};
+\node[box,text width=22mm] (out) at (15.7,0) {Respuesta final\\y traza};
+\node[tool] (spans) at (3.6,-1.45) {extract\_data\_spans};
+\node[tool] (audit) at (11.8,-1.45) {audit\_model};
+\node[tool,text width=27mm] (judge) at (15.7,-1.45) {FOM-5 v2 externo\\con referencia};
+\draw[flow] (input)--node[above,font=\tiny]{enunciado} (a);
+\draw[flow] (a)--node[above,font=\tiny]{spec} (f);
+\draw[flow] (f)--node[above,font=\tiny]{plan+borrador} (v);
+\draw[flow] (v)--node[above,font=\tiny]{acepta/para} (out);
+\draw[flow] (a.south) -- node[left]{consulta} (spans.north);
+\draw[flow] (spans.east) to[out=20,in=-20] node[right]{fragmentos} (a.east);
+\draw[flow] (v.south) -- node[left]{consulta} (audit.north);
+\draw[flow] (audit.east) to[out=20,in=-20] node[right]{informe} (v.east);
+\draw[flow,orange] (f.north west) to[out=135,in=45,looseness=1.1] node[above]{aclaración, máx. 1} (a.north east);
+\draw[flow,orange] (v.north west) to[out=135,in=45,looseness=1.1] node[above]{revisión, máx. 1} (f.north east);
+\draw[flow] (out.south)--node[right]{candidate} (judge.north);
+\end{tikzpicture}
+\end{center}
+\vspace{-9pt}
+
+\begin{multicols}{2}
+\sect{Problema y continuidad}
+Traducimos enunciados de optimización en español a conjuntos, parámetros, variables y dominios, objetivo y restricciones paramétricas. Un borrador incorrecto puede cambiar las decisiones admisibles de una empresa. En el caso de centros oftalmológicos, el prompting directo incluyó la población $p_j$ en el objetivo, pero omitió la variable de apertura y su vínculo con la asignación. La Entrega 2 ajustó Qwen con QLoRA: recuperó esas restricciones y mejoró el formato, pero omitió $p_j$ en el objetivo. Su media fue 0,802/5 en los 30 problemas del benchmark anterior.
+
+\sect{Roles, mensajes y técnicas}
+\textbf{Analista.} Recibe ID, título y enunciado; devuelve \texttt{ProblemSpec} JSON con requisitos \texttt{U1…Un} y citas literales. La evidencia ancla cada condición al texto; puede releer una vez con \texttt{extract\_data\_spans} y luego entrega el análisis.
+
+\textbf{Formulador.} Recibe el análisis y redacta un plan requisito--ecuación separado. Con el adaptador QLoRA produce \texttt{candidate} en las cinco secciones textuales de la Entrega 2. Puede pedir una aclaración al Analista; entrega el borrador al Verificador.
+
+\textbf{Verificador.} Recibe enunciado, análisis y borrador. Construye \texttt{CoverageMap}, consulta opcionalmente \texttt{audit\_model} y decide aceptar, pedir una revisión concreta o detenerse. El auditor comprueba estructura y cobertura; el agente juzga el significado matemático. El orquestador registra mensajes; topes: 20 llamadas, una aclaración, una revisión y 1\,800/1\,200 tokens de salida (Analista/otros). La referencia se reserva al juez.
+
+\sect{Modelo y protocolo}
+Los tres roles usan \textbf{Qwen2.5-1.5B-Instruct}, revisión \texttt{989aa79}, con decodificación determinista en T4. El adaptador QLoRA de la Entrega 2 se activa solo al redactar \texttt{candidate}. En ocho casos de desarrollo, apagarlo en el Verificador redujo los fallos de formato de seis a uno. La configuración quedó fijada en \texttt{v3-freeze} antes de medir la muestra de 15 casos.
+
+La métrica \textbf{FOM-5 v2} (0--5) aplica el mismo juez externo Qwen3-14B a todas las respuestas: $0{,}15D+0{,}20O+0{,}35R+0{,}15A+0{,}15G$, con límites por requisitos omitidos. $D$: decisiones/dominios; $O$: objetivo; $R$: restricciones; $A$: álgebra; $G$: generalización. El juez ve referencia y requisitos; los agentes no.
+
+\columnbreak
+\sect{Comparación pareada · 15 problemas}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+\toprule
+\textbf{Sistema} & \textbf{Media} & \textbf{$\Delta$ E2} & \textbf{$\Delta$ full}\\
+\midrule
+Prompt directo · Entrega 1 & 0,909 & $-0{,}221$ & --\\
+QLoRA · Entrega 2 & 1,130 & ref. & --\\
+Tres agentes · completo & 0,739 & $-0{,}391$ & ref.\\
+Sin citas del Analista & 0,563 & $-0{,}567$ & $-0{,}177$\\
+Sin plan del Formulador & 1,099 & $-0{,}031$ & $+0{,}360$\\
+Sin \texttt{audit\_model} & 1,120 & $-0{,}010$ & $+0{,}380$\\
+Sin revisión del borrador & 1,120 & $-0{,}010$ & $+0{,}380$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+Las variantes comparten los primeros 15 enunciados del benchmark de 30; E1 y E2 son respuestas archivadas. Los $\Delta$ son diferencias pareadas por ID. Frente a E2, \emph{full} mejora 3 casos, empata 6 y empeora 6; IC 95\% bootstrap de $\Delta$: $[-1{,}399;0{,}549]$. Frente al baseline, su $\Delta$ es $-0{,}169$. No se demuestra mejora. Sin auditor o sin revisión se obtienen las mismas puntuaciones, $+0{,}380$ frente a \emph{full} (IC 95\%: $[0{,}079;0{,}770]$); 14/15 textos finales coinciden entre ambas ablaciones. Las 75 generaciones acabaron sin aceptación: 43 fallos de formato, 32 presupuestos agotados y cuatro textos vacíos. FOM-5 v2 puntuó el texto final guardado. \emph{Full} consumió 14\,560 tokens y 2,7 minutos por caso.
+
+\sect{Lectura del resultado}
+El caso oftalmológico es diagnóstico y queda fuera de la media de 15. FOM-5 v2 puntúa \textbf{0,65/5} el baseline, \textbf{3,85/5} QLoRA y \textbf{2,60/5} los tres agentes. La última respuesta recupera $p_j$ en el objetivo, pero omite el vínculo $x_{ij}\le y_i$ y escribe mal la apertura de dos centros. El Verificador detectó problemas, pero agotó su salida sin una corrección concreta; por eso la mejor puntuación respecto del baseline no implica mejora sobre la Entrega 2.
+
+\sect{Límites y reproducción}
+La presencia de una ecuación o un símbolo no prueba equivalencia matemática. \texttt{audit\_model} detecta omisiones estructurales y notación inconsistente; el juicio semántico del Verificador puede fallar. La traza diagnóstica muestra ese límite. El cuaderno público muestra los mensajes del caso archivado y permite repetirlo; su última sección genera las cinco variantes de 15 casos, las puntúa y calcula las diferencias en etapas separadas.
+
+\vfill
+{\scriptsize\color{navy}\textbf{Artefactos:} código, prompts, respuestas, trazas y métricas en el repositorio enlazado arriba.\par}
+\end{multicols}
+\end{document}

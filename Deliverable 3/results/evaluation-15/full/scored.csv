@@ -1,0 +1,872 @@
+﻿id,variant,evaluation_identity,candidate,candidate_sha256,generation_status,rounds,clarifications,tool_calls,tokens_total,latency_ms_total,score_fom5_v2,decision_domains_v2,objective_v2,constraints_logic_v2,algebra_validity_v2,generalization_v2,requirement_coverage_v2,objective_coverage,constraint_coverage,domain_coverage,judge_v2_raw,judge_model,judge_input_tokens,judge_output_tokens,judge_latency_sec,fatal_errors_v2,execution_kind
+opt_01,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): tipos de medios de publicidad.
+\(G\): grupos demográficos (jóvenes y adultos).
+\(A\): tipos de anuncios disponibles.
+
+Parámetros:
+\(p_i\): costo unitario del medio \(i\).
+\(c_{agi}\): contactos generados por la inserción del medio \(i\) en el grupo \(g\) con anuncio \(a\).
+\(b_g\): contactos mínimos requeridos en el grupo \(g\).
+\(u_i\): presupuesto disponible para el medio \(i\).
+\(M\): cota máxima de inserciones disponibles.
+
+Variables de decisión:
+\(x_{ig}\in\mathbb Z^{+}\): número de inserciones del medio \(i\) en el grupo \(g\).
+
+Función objetivo:
+\[
+\min \sum_{i\in I}\sum_{g\in G}p_i x_{ig}
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}c_{agi}x_{ig}\ge b_g \qquad \forall g\in G
+\]
+\[
+\sum_{i\in I}p_ix_{ig}\le u_i M \qquad \forall i\in I
+\]
+\[
+x_{ig}\ge0 \qquad \forall i\in I,\ \forall g\in G
+\]",947c1f944e2292d90702c40c602700f01971f5caeeb5b8854fa0a4274072c046,presupuesto_agotado,1,0,2,12697,100365.93004099999,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La variable de decisión está mal definida (x_ig en lugar de x_i), lo que lleva a errores en la lógica de las restricciones y en la función objetivo. Las restricciones no reflejan correctamente los mínimos de contactos ni el presupuesto. La definición de dominios es incorrecta.""]
+}",Qwen/Qwen3-14B,1538,182,24.246360930000264,"[""La variable de decisión está mal definida (x_ig en lugar de x_i), lo que lleva a errores en la lógica de las restricciones y en la función objetivo. Las restricciones no reflejan correctamente los mínimos de contactos ni el presupuesto. La definición de dominios es incorrecta.""]",real
+opt_02,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(U\): tipos de artículo.
+\(B\): recursos: trabajo, máquina, materia prima.
+\(C\): topes de venta.
+
+Parámetros:
+\(c_u^{(b)}\): costo unitario no extraordinario de producción de \(u\) en \(b\).
+\(h^{(b)}\): costo extraordinario de una hora de trabajo extra en \(b\).
+\(w_b\): disponibilidad del recurso \(b\).
+\(p_u\): ganancia unitaria de \(u\).
+\(M\): constante suficientemente grande para manejar horas extras fraccionarias.
+
+Variables de decisión:
+\(x_{ub}\ge 0\): cantidad producida del tipo \(u\) en el recurso \(b\).
+\(y_b\in\{0,1\}\): vale 1 si se utilizan horas extras en el recurso \(b\).
+\(z_u\in\{0,1\}\): vale 1 si se produce un unidad del artículo \(u\).
+
+Función objetivo:
+\[
+\max \sum_{u\in U}\sum_{b\in B}(c_u^{(b)}x_{ub}-h^{(b)}y_b)p_u
+\]
+
+Restricciones:
+\[
+\sum_{u\in U}x_{ub}\le C_u z_u \qquad \forall b\in B
+\]
+\[
+\sum_{u\in U}x_{ub}\le M y_b z_u \qquad \forall b\in B
+\]
+\[
+\sum_{b\in B}x_{ub}\le w_b z_u \qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}+y_b\le C_u+z_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le C_u z_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le w_b z_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le C_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le w_b z_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le C_u+z_u
+\qquad \forall u\in U
+\]
+\[
+\sum_{b\in B}x_{ub}\le C_u
+\qquad \forall u\in U
+\]",5ead0205ed6aed1424323e0ada35ba9ef1d5d973f3af440402e40b5c505a7121,presupuesto_agotado,1,0,2,21275,245278.71603200003,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""missing"",
+    ""R3"": ""missing"",
+    ""R4"": ""missing"",
+    ""R5"": ""missing"",
+    ""R6"": ""missing""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La formulación presenta variables y restricciones redundantes e incorrectas, incluyendo variables binarias no justificadas y restricciones repetidas. La función objetivo no representa correctamente la maximización de la ganancia neta, sino una expresión inválida. No se cumplen los requisitos de la tarea.""]
+}",Qwen/Qwen3-14B,1873,187,26.168779517000075,"[""La formulación presenta variables y restricciones redundantes e incorrectas, incluyendo variables binarias no justificadas y restricciones repetidas. La función objetivo no representa correctamente la maximización de la ganancia neta, sino una expresión inválida. No se cumplen los requisitos de la tarea.""]",real
+opt_03,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(B\): paquetes básicos.
+\(A\): actividades.
+\(V\): avanzados.
+
+Parámetros:
+\(I_b\): cuadernos disponibles para \(b\in B\).
+\(I_a\): carpetas disponibles para \(a\in A\).
+\(I_v\): lápices disponibles para \(v\in V\).
+\(D_b\): demanda máxima del paquete \(b\).
+\(s_b\): margen mínimo del paquete \(b\).
+\(C_{ba}\): cantidad requerida del insumo \(a\) para una unidad del paquete \(b\).
+\(C_{bv}\): cantidad requerida del insumo \(v\) para una unidad del paquete \(b\).
+
+Variables de decisión:
+\(x_b\in\mathbb Z_{\ge s_b}:\) paquetes de tipo \(b\) a producir.
+\(u_a\in\mathbb Z_{\ge0}:\) carpetas disponibles del insumo \(a\).
+\(u_v\in\mathbb Z_{\ge0}:\) lápices disponibles del insumo \(v\).
+
+Función objetivo:
+\[
+\max \sum_{b\in B}C_{ba}x_b
+\]
+
+Restricciones:
+\[
+I_bx_b+I_ax_a+I_vx_v\le I_b+s_bD_b
+\qquad \forall b\in B
+\]
+\[
+u_a+C_{ba}x_b\ge D_b-s_bD_b
+\qquad \forall a\in A,\ \forall b\in B
+\]
+\[
+u_v+C_{bv}x_b\ge D_b-s_bD_b
+\qquad \forall v\in V,\ \forall b\in B
+\]
+\[
+x_b\ge s_bu_b
+\qquad \forall b\in B
+\]
+\[
+u_a+u_v\le I_a+s_aD_a
+\qquad \forall a\in A
+\]
+\[
+x_b\le u_b+s_bD_b
+\qquad \forall b\in B
+\]
+\[
+u_a,u_v\in\{0,I_a,s_aD_a\}
+\qquad \forall a\in A
+\]",a82b160c73e6bb8f7803df6f82abbbb258940dcfa5b177b1f9cc26565d77feb3,fallo_formato,1,0,1,16520,198956.5453799998,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La función objetivo está definida incorrectamente, usando C_{ba}x_b en lugar del margen unitario multiplicado por x_k."",
+    ""Las restricciones de inventario no están correctamente formuladas, mezclando variables de decisión y parámetros de forma inconsistente."",
+    ""No se refleja la composición de los paquetes en las restricciones de inventario, ni se usa la notación adecuada para los insumos."",
+    ""La variable de decisión u_a y u_v no son necesarias y no están definidas correctamente en el contexto del problema."",
+    ""La restricción de mínimo de paquetes básicos (R4) no se cumple, ya que no se incluye x_B >= 20.""
+  ]
+}",Qwen/Qwen3-14B,1755,276,37.0236773000006,"[""La función objetivo está definida incorrectamente, usando C_{ba}x_b en lugar del margen unitario multiplicado por x_k."", ""Las restricciones de inventario no están correctamente formuladas, mezclando variables de decisión y parámetros de forma inconsistente."", ""No se refleja la composición de los paquetes en las restricciones de inventario, ni se usa la notación adecuada para los insumos."", ""La variable de decisión u_a y u_v no son necesarias y no están definidas correctamente en el contexto del problema."", ""La restricción de mínimo de paquetes básicos (R4) no se cumple, ya que no se incluye x_B >= 20.""]",real
+opt_04,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): grados de naranja.
+\(J\): tipos de producto (fruta fresca, jugo).
+
+Parámetros:
+\(u_i\): capacidad disponible del grado \(i\).
+\(p_j\): precio unitario del producto \(j\).
+\(a_{ij}\): cantidad del grado \(i\) destinada al producto \(j\).
+\(c_{ij}\): requerimiento mínimo de la calidad del grado \(i\) en el producto \(j\).
+\(b_j\): oferta mínima del producto \(j\).
+
+Variables de decisión:
+\(x_{ij}\ge0\): cantidad del grado \(i\) enviada al producto \(j\).
+
+Función objetivo:
+\[
+\max \sum_{i\in I}\sum_{j\in J}(p_ja_{ij}x_{ij})
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}x_{ij}\le u_i \qquad \forall j\in J
+\]
+\[
+\sum_{j\in J}c_{ij}x_{ij}\ge b_j \qquad \forall i\in I
+\]
+\[
+\sum_{i\in I}x_{ij}\ge b_j \qquad \forall j\in J
+\]
+\[
+\sum_{i\in I}x_{ij}\le u_i \qquad \forall j\in J
+\]
+\[
+\frac{1}{8}\sum_{i\in I}x_{ij}\ge b_j \qquad \forall j\in J
+\]
+\[
+\frac{1}{7.5}\sum_{i\in I}x_{ij}\le b_j \qquad \forall j\in J
+\]",2c3dcd4d6c2a06d01b565b06ea7967c56248e703113b9eb1cf271cfd2faddd63,presupuesto_agotado,1,0,2,16422,176774.97389199995,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La función objetivo está mal definida: incluye un parámetro 'a_ij' que no está definido y multiplica incorrectamente 'p_j' y 'a_ij' en lugar de simplemente multiplicar por 'p_j'."",
+    ""Las restricciones de disponibilidad (R2) están mal formuladas: la suma sobre 'i' no puede ser menor o igual a 'u_i' para cada 'j', ya que 'u_i' es la disponibilidad por grado, no por producto."",
+    ""Las restricciones de mínimo y máximo de producción (R3) están mal formuladas: la estructura es incorrecta y no refleja las cantidades mínimas y máximas por producto."",
+    ""Las restricciones de calidad promedio (R4) están mal formuladas: no se representa correctamente el promedio ponderado de calidad, y las desigualdades son inválidas o no coherentes con el enunciado."",
+    ""Las variables decisionales no están correctamente definidas: 'a_ij' no es una variable de decisión, sino una cantidad destinada, que ya está representada por 'x_ij'.""
+  ]
+}",Qwen/Qwen3-14B,1639,360,47.48978506000003,"[""La función objetivo está mal definida: incluye un parámetro 'a_ij' que no está definido y multiplica incorrectamente 'p_j' y 'a_ij' en lugar de simplemente multiplicar por 'p_j'."", ""Las restricciones de disponibilidad (R2) están mal formuladas: la suma sobre 'i' no puede ser menor o igual a 'u_i' para cada 'j', ya que 'u_i' es la disponibilidad por grado, no por producto."", ""Las restricciones de mínimo y máximo de producción (R3) están mal formuladas: la estructura es incorrecta y no refleja las cantidades mínimas y máximas por producto."", ""Las restricciones de calidad promedio (R4) están mal formuladas: no se representa correctamente el promedio ponderado de calidad, y las desigualdades son inválidas o no coherentes con el enunciado."", ""Las variables decisionales no están correctamente definidas: 'a_ij' no es una variable de decisión, sino una cantidad destinada, que ya está representada por 'x_ij'.""]",real
+opt_05,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(D\): días de la semana.
+\(P\): patrones de inicio disponibles.
+
+Parámetros:
+\(c_p\): costo por vendedor según su patrón \(p\).
+\(b_d\): mínimo requerimiento de vendedores del día \(d\).
+\(u\): máximo número de vendedores a contratar.
+
+Variables de decisión:
+\(x_{dp}\in\{0,1\}\): vale 1 si el vendedor \(p\) trabaja el día \(d\).
+
+Función objetivo:
+\[
+\min \sum_{d\in D}\sum_{p\in P}c_px_{dp}
+\]
+
+Restricciones:
+\[
+\sum_{p\in P}x_{dp}=1 \qquad \forall d\in D
+\]
+\[
+\sum_{d\in D}x_{dp}\ge b_d \qquad \forall p\in P
+\]
+\[
+\sum_{d\in D}x_{dp}\le u \qquad \forall p\in P
+\]
+\[
+\sum_{p\in P}x_{dp}\sum_{k=p+1}^{p+\delta-1}x_{dk}\le u
+\qquad \forall d\in D,\ \delta\in\{1,2\}
+\]
+\[
+\sum_{d\in D}x_{dp}\in\mathbb Z
+\]",7239db6dcfa3b6e98e7495fdc4f863be25eaf03bda9ac375555f89113aae8367,presupuesto_agotado,1,0,2,17139,154517.82977899988,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La variable de decisión está mal definida: x_{dp} indica si un vendedor p trabaja en día d, pero no representa la cantidad de vendedores asignados a un patrón de inicio."",
+    ""La función objetivo está definida sobre x_{dp} que no representa la cantidad de vendedores, sino su presencia en un día, lo que hace que el objetivo esté mal formulado."",
+    ""Las restricciones no modelan correctamente la relación entre patrones de inicio y cobertura diaria. La restricción que menciona 'sum_{p}x_{dp}=1' es inválida y no tiene sentido en el contexto del problema."",
+    ""La variable de decisión no es entera no negativa por patrón, sino binaria y mal definida, violando R4."",
+    ""La formulación no modela el ciclo de 5 días trabajados y 2 días libres, esencial para R2.""
+  ]
+}",Qwen/Qwen3-14B,1538,310,41.051088841999444,"[""La variable de decisión está mal definida: x_{dp} indica si un vendedor p trabaja en día d, pero no representa la cantidad de vendedores asignados a un patrón de inicio."", ""La función objetivo está definida sobre x_{dp} que no representa la cantidad de vendedores, sino su presencia en un día, lo que hace que el objetivo esté mal formulado."", ""Las restricciones no modelan correctamente la relación entre patrones de inicio y cobertura diaria. La restricción que menciona 'sum_{p}x_{dp}=1' es inválida y no tiene sentido en el contexto del problema."", ""La variable de decisión no es entera no negativa por patrón, sino binaria y mal definida, violando R4."", ""La formulación no modela el ciclo de 5 días trabajados y 2 días libres, esencial para R2.""]",real
+opt_06,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): ingredientes.
+\(P\): proteínas.
+\(F\): fibras.
+\(C\): recursos.
+\(K\): tipos de alimentos.
+
+Parámetros:
+\(p_i\): precio del unidad del ingrediente \(i\in I\).
+\(c_{ki}\): requerimiento del ingrediente \(i\) de la formula \(k\in K\).
+\(a_{ki}\): disponibilidad del ingrediente \(i\) de la formula \(k\).
+\(u_k\): requisito mínimo de proteínas de la formula \(k\).
+\(v_k\): requisito máximo de fibras de la formula \(k\).
+
+Variables de decisión:
+\(x_{ik}\ge0\): cantidad del ingrediente \(i\) utilizado en la formula \(k\).
+
+Función objetivo:
+\[
+\min \sum_{i\in I}\sum_{k\in K}p_i x_{ik}
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}x_{ik}=80 \qquad \forall k\in K
+\]
+\[
+\sum_{i\in I}c_{ki}x_{ik}\le60 \qquad \forall k\in K
+\]
+\[
+\frac{\sum_{i\in I}a_{ki}x_{ik}}{\sum_{i\in I}p_i x_{ik}}\ge u_k \qquad \forall k\in K
+\]
+\[
+\frac{\sum_{i\in I}a_{ki}x_{ik}}{\sum_{i\in I}p_i x_{ik}}\le v_k \qquad \forall k\in K
+\]
+\[
+\sum_{k\in K}x_{ik}\le70,\qquad \sum_{k\in K}x_{ik}\le90,\qquad \sum_{k\in K}x_{ik}\le100 \qquad \forall i\in I
+\]
+\[
+\sum_{i\in I}x_{ik}=140 \qquad \forall k\in K
+\]",b2b9795670fad4bd0834314860b1829b414cfe8b2a6be8a64573a895e0b6dfca,fallo_formato,1,0,1,22513,245981.58080999978,0.8,0.0,4.0,0.0,0.0,0.0,0.16666666666666666,1.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""met"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong"",
+    ""R6"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 4,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La formulación presenta múltiples errores en las restricciones: R2 se viola al imponer que la suma de x_ik sea 80 y 60, pero luego se añade una restricción que exige que la suma sea 140, lo cual es contradictorio. R3 está mal formulado al usar parámetros c_ki y a_ki que no están definidos en el enunciado. R4 y R5 usan una relación incorrecta entre proteínas y fibras, usando una fracción que no corresponde a la proporción del peso final del alimento. Además, las variables de decisión no están correctamente definidas ni relacionadas con los ingredientes y alimentos especificados en el enunciado.""
+  ]
+}",Qwen/Qwen3-14B,1809,286,39.29744272100015,"[""La formulación presenta múltiples errores en las restricciones: R2 se viola al imponer que la suma de x_ik sea 80 y 60, pero luego se añade una restricción que exige que la suma sea 140, lo cual es contradictorio. R3 está mal formulado al usar parámetros c_ki y a_ki que no están definidos en el enunciado. R4 y R5 usan una relación incorrecta entre proteínas y fibras, usando una fracción que no corresponde a la proporción del peso final del alimento. Además, las variables de decisión no están correctamente definidas ni relacionadas con los ingredientes y alimentos especificados en el enunciado.""]",real
+opt_07,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): proyectos.
+\(T\): períodos o años.
+
+Parámetros:
+\(c_i^t\): costo del proyecto \(i\) en el período \(t\).
+\(v_i^t\): beneficio del proyecto \(i\) en el período \(t\).
+\(B_t\): presupuesto disponible en el período \(t\).
+
+Variables de decisión:
+\(x_i\in\{0,1\}\): vale 1 si se selecciona el proyecto \(i\).
+
+Función objetivo:
+\[
+\max \sum_{i\in I}\sum_{t\in T}v_i^t x_i
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}c_i^tx_i\le B_t \qquad \forall t\in T
+\]
+\[
+x_a+x_b\le x_c \qquad \forall(a,b)\in\{(1,3),(2,3)\}
+\]
+\[
+x_a+x_b\ge x_c+1 \qquad (a,b)=(1,2)
+\]",8ebcaa266e41fc2cf10cec96ea63eeb7deb71c01917ab2fd872fd081c9239a8b,fallo_formato,1,0,1,12807,148286.38299999997,0.8,2.0,0.0,1.0,1.0,0.0,0.4,0.0,0.3333333333333333,1.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""met"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""met""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 2,
+    ""constraints_logic"": 1,
+    ""algebra_validity"": 1,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La función objetivo está incorrecta: suma de beneficios por período en lugar de valor presente total. Las restricciones lógicas son incorrectas o no representan las relaciones descritas (C implica A y B/D incompatibles).""]
+}",Qwen/Qwen3-14B,1415,164,22.509425479999663,"[""La función objetivo está incorrecta: suma de beneficios por período en lugar de valor presente total. Las restricciones lógicas son incorrectas o no representan las relaciones descritas (C implica A y B/D incompatibles).""]",real
+opt_08,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(P\): jugadores.
+\(S\): posiciones.
+\(L\): divisiones locales.
+
+Parámetros:
+\(w_s\): puntaje de la posición \(s\).
+\(a_{ps}\in\{0,1\}\): vale 1 si el jugador \(p\) está habilitado para la posición \(s\).
+\(b_{lp}\in\{0,1\}\in\{(i,j)\in L\times S:a_{ij}=1\}\): vale 1 si el jugador \(p\) juega en la posición \(s\) de la división \(i\).
+
+Variables de decisión:
+\(x_p\in\{0,1\}\): vale 1 si el jugador \(p\) juega.
+\(y_{ps}\in\{0,1\}\): vale 1 si el jugador \(p\) juega en la posición \(s\).
+
+Función objetivo:
+\[
+\max \sum_{p\in P}\sum_{s\in S}w_s y_{ps}
+\]
+
+Restricciones:
+\[
+\sum_{p\in P}x_p=5
+\]
+\[
+\sum_{p\in P}a_{ps}x_p=\sum_{p\in P}a_{ps}y_{ps}
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}b_{ps}y_{ps}\le|L|
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}a_{ps}x_p\ge2
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}a_{ps}x_p\le5
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}a_{ps}x_p\le7
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}b_{ps}y_{ps}\ge2
+\qquad \forall s\in S
+\]
+\[
+\sum_{p\in P}a_{ps}x_p\le|P|
+\qquad \forall s\in S
+\]",382ba71d307d35f1fe2e3d48386af60584a7c4f5a8c3d83119c19af70e7b6d9c,presupuesto_agotado,1,0,1,15508,209395.79337600007,0.7,2.0,2.0,0.0,0.0,0.0,0.16666666666666666,0.5,0.0,0.5,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""partial"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong"",
+    ""R6"": ""partial""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 2,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La formulación no modela correctamente las restricciones de asignación única por posición y jugador, la elegibilidad de jugador-posición y la cuota de formación local. Las variables y restricciones son inconsistentes con el enunciado.""]
+}",Qwen/Qwen3-14B,1791,171,24.69063759600067,"[""La formulación no modela correctamente las restricciones de asignación única por posición y jugador, la elegibilidad de jugador-posición y la cuota de formación local. Las variables y restricciones son inconsistentes con el enunciado.""]",real
+opt_09,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): tipos de viviendas.
+\(P\): categorías de precios.
+
+Parámetros:
+\(p_i\): costo unitario de la vivienda \(i\).
+\(c_{ip}\): costo adicional del precio \(p\) de la vivienda \(i\) siendo protegida.
+\(a_{ij}\): capacidad del terreno ocupada por una unidad de la vivienda \(i\) de categoría \(p\).
+\(b_{jp}\): presupuesto disponible para la vivienda \(i\) de categoría \(p\).
+\(u\): capacidad máxima de terreno.
+\(v\): presupuesto máximo de construcción.
+
+Variables de decisión:
+\(x_{ij}\ge0\): número de viviendas de la vivienda \(i\) de categoría \(p\) que se construyen protegidas.
+\(y_{ij}\ge0\): número de viviendas de la vivienda \(i\) de categoría \(p\) que se construyen estandarizadas.
+\(z_i\ge0\): número total de viviendas de la vivienda \(i\).
+
+Función objetivo:
+\[
+\max \sum_{i\in I}\sum_{p\in P}(p_i-c_{ip}x_{ip}-b_{ip}y_{ip})z_i
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}\sum_{p\in P}x_{ip}+\sum_{i\in I}\sum_{p\in P}y_{ip}=z_i
+\qquad \forall i\in I
+\]
+\[
+\sum_{i\in I}\sum_{p\in P}a_{ip}x_{ip}+\sum_{i\in I}\sum_{p\in P}b_{ip}y_{ip}\le u
+\qquad \forall p\in P
+\]
+\[
+\sum_{i\in I}\sum_{p\in P}a_{ip}x_{ip}+\sum_{i\in I}\sum_{p\in P}b_{ip}y_{ip}\le v
+\qquad \forall p\in P
+\]
+\[
+\sum_{i\in I}x_{ip}+\sum_{i\in I}y_{ip}\ge z_i
+\qquad \forall p\in P
+\]
+\[
+\sum_{i\in I}z_i=v
+\]
+\[
+\sum_{i\in I}x_{ip}\ge u/4 \qquad \forall p\in P
+\]
+\[
+\sum_{i\in I}y_{ip}\ge (v-u)/4
+\qquad \forall p\in P
+\]
+\[
+\sum_{i\in I}z_i\ge20
+\qquad \sum_{i\in I}z_i\ge80
+\]",93e667fd2e0108d14364f30907fd038bbf118148f3d2c0298535f52733666e52,fallo_formato,0,0,0,10992,150469.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong"",
+    ""R6"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La formulación presenta múltiples errores esenciales en la definición de variables, parámetros y restricciones. Las variables de decisión no están correctamente definidas ni relacionadas con el problema original. La función objetivo no refleja el margen total correctamente, sino que parece mezclar costos y presupuestos de forma incorrecta. Las restricciones de área y presupuesto están mal formuladas y no reflejan las condiciones del problema. La restricción de al menos 25% de viviendas protegidas está completamente mal formulada. Las variables no están definidas como enteras no negativas, violando R6.""
+  ]
+}",Qwen/Qwen3-14B,1974,260,36.865961628999685,"[""La formulación presenta múltiples errores esenciales en la definición de variables, parámetros y restricciones. Las variables de decisión no están correctamente definidas ni relacionadas con el problema original. La función objetivo no refleja el margen total correctamente, sino que parece mezclar costos y presupuestos de forma incorrecta. Las restricciones de área y presupuesto están mal formuladas y no reflejan las condiciones del problema. La restricción de al menos 25% de viviendas protegidas está completamente mal formulada. Las variables no están definidas como enteras no negativas, violando R6.""]",real
+opt_10,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(U\): restricciones.
+\(S\): sitios candidatos.
+\(C\): costo de explorar \(s\in S\).
+\(B\): presupuesto.
+
+Parámetros:
+\(c_s\): costo de explorar \(s\).
+\(u_{ij}\in\{-1,1\}\): vale +1 si \(i\) y \(j\) no pueden ser seleccionados juntos, -1 si no hay restricción y 0 si no hay información sobre ellas.
+\(b\): presupuesto.
+
+Variables de decisión:
+\(x_s\in\{0,1\}\): vale 1 si se selecciona \(s\).
+
+Función objetivo:
+\[
+\min \sum_{s\in S}c_s x_s
+\]
+
+Restricciones:
+\[
+\sum_{s\in S}u_{is}x_s\le0 \qquad \forall i\in U
+\]
+\[
+\sum_{s\in S}c_s x_s\le B
+\]
+\[
+x_i+x_j\le1 \qquad \forall(i,j)\in U\times U\setminus\{(i,i):\ i\in U\}
+\]
+\[
+x_s+b\le1 \qquad \forall s\in S,\ q\in B:\ (s,q-b)\in U
+\]
+\[
+\sum_{s\in S}u_{is}x_s\le2 \qquad \forall i\in S,\ q\in B:\ (i,q-2)\in U
+\]",6575baa0cce31d4b037a9ef53e25a7c48ad72a9bc52ade6c8e79486466e688b9,fallo_formato,0,0,0,7558,63758.4,1.3,2.0,5.0,0.0,0.0,0.0,0.3333333333333333,1.0,0.0,1.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""met"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong"",
+    ""R6"": ""met""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 5,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La formulación contiene restricciones genéricas y no específicas al problema, lo que hace que no se cumplan las restricciones R2, R3, R4 y R5. La representación mediante parámetros como u_{ij} y B no corresponde al problema original, y las restricciones no están correctamente definidas ni enlazadas a las condiciones del enunciado.""]
+}",Qwen/Qwen3-14B,1613,205,28.390251598999384,"[""La formulación contiene restricciones genéricas y no específicas al problema, lo que hace que no se cumplan las restricciones R2, R3, R4 y R5. La representación mediante parámetros como u_{ij} y B no corresponde al problema original, y las restricciones no están correctamente definidas ni enlazadas a las condiciones del enunciado.""]",real
+opt_11,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(U\): universidades.
+\(A\): áreas de estudio.
+\(C\): opciones de matrícula disponibles en cada universidad.
+
+Parámetros:
+\(p_{uc}\): costo unitario de un curso \(u\) en la universidad \(c\).
+\(f_c\): costo fijo de matricularse en \(c\).
+
+Variables de decisión:
+\(y_u\in\{0,1\}\): vale 1 si se selecciona la universidad \(u\).
+\(x_{uc}\in\{0,1\}\): vale 1 si se selecciona el curso \(u\) en la universidad \(c\).
+\(z_c\in\{0,1\}\): vale 1 si se selecciona la matrícula \(c\).
+
+Función objetivo:
+\[
+\min \sum_{u\in U}f_u y_u+\sum_{u\in U}\sum_{c\in C}p_{uc}x_{uc}
+\]
+
+Restricciones:
+\[
+\sum_{u\in U}x_{uc}=1 \qquad \forall c\in C
+\]
+\[
+\sum_{c\in C}z_c=1
+\]
+\[
+x_{uc}\le y_u z_c \qquad \forall u\in U,\ \forall c\in C
+\]
+\[
+\sum_{u\in U}y_u=1
+\]",e3f380eb6f6c1b7a25a1496aeab5c59ddb90ebe05b1896ae2909f92d4757e52e,presupuesto_agotado,1,0,1,14902,170394.89197000008,1.1,0.0,4.0,0.0,1.0,1.0,0.2,1.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""met"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 4,
+    ""constraints_logic"": 1,
+    ""algebra_validity"": 1,
+    ""generalization"": 1
+  },
+  ""fatal_errors"": [""Restricciones incorrectas: la restricción de que cada área debe ser cubierta exactamente una vez no se modela correctamente. La vinculación entre cursos y matrículas no se establece de forma correcta. La restricción de usar como máximo dos universidades no se modela. Las variables de decisión no reflejan correctamente el problema (ej. se incluye una variable z_c redundante).""]
+}",Qwen/Qwen3-14B,1625,203,28.168012664000344,"[""Restricciones incorrectas: la restricción de que cada área debe ser cubierta exactamente una vez no se modela correctamente. La vinculación entre cursos y matrículas no se establece de forma correcta. La restricción de usar como máximo dos universidades no se modela. Las variables de decisión no reflejan correctamente el problema (ej. se incluye una variable z_c redundante).""]",real
+opt_12,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): plantas.
+\(J\): puntos de control.
+
+Parámetros:
+\(C_{ij}\): costo fijo de instalar el tratamiento en \(i\)-ma planta y \(j\)-punto de control.
+\(D_j\): costo variable por unidad retirada del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(E_j\): beneficio observable del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(F_j\): costo fijo de instalar el tratamiento en \(i\)-ma planta y \(j\)-punto de control.
+\(G_{ij}\): costo variable por unidad retirada del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(H_{ij}\): beneficio observable del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(I_{ij}\): costo fijo de instalar el tratamiento en \(i\)-ma planta y \(j\)-punto de control.
+\(J_{ij}\): beneficio observable del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(K_{ij}\): costo variable por unidad retirada del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(L_{ij}\): beneficio observable del tratamiento en \(i\)-ma planta en \(j\)-punto de control.
+\(x_{ij}\in\{0,1\}\): vale 1 si se instala el tratamiento en \(i\)-ma planta y \(j\)-punto de control.
+
+Variables de decisión:
+\(y_i\in\{0,1\}\): vale 1 si se instala el tratamiento en la planta \(i\).
+\(u_{ij}\ge0\): cantidad de residuos retirados de la planta \(i\) en el punto de control \(j\).
+
+Función objetivo:
+\[
+\min \sum_{i\in I}\sum_{j\in J}(C_{ij}y_i+D_ju_{ij})
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}y_i\le1 \qquad \forall j\in J
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}D_ju_{ij}\le50
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}E_ju_{ij}\le40
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}F_ju_{ij}\le60
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}G_{ij}y_i+H_{ij}\ge50
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}I_{ij}u_{ij}+J_{ij}\ge55
+\]
+\[
+\sum_{i\in I}\sum_{j\in J}K_{ij}y_i+L_{ij}\ge45
+\]
+\[
+x_{ij}\ge u_{ij}-y_i \qquad \forall i\in I,\ \forall j\in J
+\]
+\[
+x_{ij}\ge0 \qquad \forall i\in I,\ \forall j\in J
+\]",907529a84cabacaaab68a741a301a70cd07cef7c577aa6b494fefa48d7e04e5b,presupuesto_agotado,1,0,0,15701,216819.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""wrong"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 0,
+    ""objective"": 0,
+    ""constraints_logic"": 0,
+    ""algebra_validity"": 0,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [
+    ""La formulación presenta múltiples errores esenciales: conjuntos y parámetros definidos incorrectamente, variables de decisión mal definidas, función objetivo incorrecta, restricciones lógicas y algebraicas inválidas. La formulación no refleja el problema original ni cumple con los requisitos establecidos.""
+  ]
+}",Qwen/Qwen3-14B,2028,185,27.292955210999935,"[""La formulación presenta múltiples errores esenciales: conjuntos y parámetros definidos incorrectamente, variables de decisión mal definidas, función objetivo incorrecta, restricciones lógicas y algebraicas inválidas. La formulación no refleja el problema original ni cumple con los requisitos establecidos.""]",real
+opt_13,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(N\): nodos.
+\(C=\{(i,j)\in N\times N:i<j\}\): arcos bidireccionados.
+\(s\in N\): origen.
+\(t\in N\): destino.
+
+Parámetros:
+\(c_{ij}\): costo de la arista \((i,j)\in C\).
+
+Variables de decisión:
+\(x_{ij}\in\{0,1\}\): vale 1 si se utiliza la arista \((i,j)\).
+\(u_i\in\mathbb Z_{\ge0}\): número de veces que \(i\) se visita.
+
+Función objetivo:
+\[
+\min \sum_{(i,j)\in C}c_{ij}x_{ij}
+\]
+
+Restricciones:
+\[
+\sum_{j:(i,j)\in C}x_{ij}=1 \qquad \forall i\in N
+\]
+\[
+\sum_{i:(i,j)\in C}x_{ij}=1 \qquad \forall j\in N
+\]
+\[
+\sum_{i:(i,j)\in C}x_{ij}-\sum_{i:(j,i)\in C}x_{ji}=1-u_j-u_s \qquad \forall j\in N
+\]
+\[
+u_s+u_t-2\sum_{i\in N}x_{si}\le1
+\]
+\[
+u_s+u_t-2\sum_{i\in N}x_{ti}\ge1
+\]
+\[
+\sum_{i\in N}x_{si}+\sum_{i\in N}x_{ti}=1
+\]
+\[
+u_s+u_t-2\sum_{i\in N}x_{ci}\le1
+\]
+\[
+u_s+u_t-2\sum_{i\in N}x_{ci}\ge1
+\]
+\[
+\sum_{i\in N}x_{ci}+\sum_{i\in N}x_{ti}=1
+\]",bc96fc739c0dea683af00c4401c08c796ff7dddfe3d5c23617e82725d9acd3fc,fallo_formato,1,0,0,13952,145558.19999999998,1.542,2.0,4.0,0.8333333333333333,1.0,0.0,0.5,1.0,0.16666666666666666,1.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""met"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""partial"",
+    ""R5"": ""met""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 4,
+    ""constraints_logic"": 1,
+    ""algebra_validity"": 1,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La formulación presenta restricciones contradictorias y no modela correctamente la conservación de flujo ni la visita obligatoria a C. Además, define arcos como bidireccionales cuando el problema especifica que son dirigidos.""]
+}",Qwen/Qwen3-14B,1656,159,22.768463501000042,"[""La formulación presenta restricciones contradictorias y no modela correctamente la conservación de flujo ni la visita obligatoria a C. Además, define arcos como bidireccionales cuando el problema especifica que son dirigidos.""]",real
+opt_14,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,,e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855,fallo_formato,0,0,0,4645,52568.399999999994,4.3,5.0,5.0,3.0,5.0,5.0,0.75,1.0,0.6666666666666666,1.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""met"",
+    ""R2"": ""met"",
+    ""R3"": ""missing"",
+    ""R4"": ""met""
+  },
+  ""scores"": {
+    ""decision_domains"": 5,
+    ""objective"": 5,
+    ""constraints_logic"": 3,
+    ""algebra_validity"": 5,
+    ""generalization"": 5
+  },
+  ""fatal_errors"": [""La restricción R3 no fue formulada correctamente. No se incluyó la relación entre la salida neta de S y la entrada neta de T, que debe ser igual al flujo total F.""]
+}",Qwen/Qwen3-14B,1143,148,19.8790414719997,"[""La restricción R3 no fue formulada correctamente. No se incluyó la relación entre la salida neta de S y la entrada neta de T, que debe ser igual al flujo total F.""]",real
+opt_15,full,50d8075e6187a2e9f7729c1ed639c8d326e5ace2e0785388cc7aed88eec8e7b1,"Conjuntos:
+\(I\): plantas.
+\(J\): clientes.
+\(K\): centros de transbordo.
+
+Parámetros:
+\(s_i\): capacidad máxima de la planta \(i\).
+\(d_j\): pedido del cliente \(j\).
+\(c_{ik}\): costo por unidad de envío directo de \(i\) a \(k\).
+\(u_{jk}\): oferta máxima del centro \(k\) para el cliente \(j\).
+
+Variables de decisión:
+\(x_{ijk}\ge0\): flujo por el arco \((i,k)\).
+\(B_i\ge0\): oferta disponible de la planta \(i\).
+
+Función objetivo:
+\[
+\min \sum_{i\in I}\sum_{k\in K}c_{ik}x_{ik}
+\]
+
+Restricciones:
+\[
+\sum_{i\in I}x_{ij}=d_j \qquad \forall j\in J
+\]
+\[
+\sum_{k\in K}x_{ik}\le s_i B_i \qquad \forall i\in I
+\]
+\[
+B_i\le u_{ij}+x_{ij}\qquad \forall i\in I,\ \forall j\in J
+\]
+\[
+\sum_{j\in J}x_{ij}\le s_i B_i \qquad \forall i\in I
+\]",9a684db523355bff878ff61e76cc7d82edb0dcdce4303f85cc92a4e8c92ac5f9,fallo_formato,1,0,1,15766,155683.75359500005,0.55,0.0,2.0,0.0,1.0,0.0,0.08333333333333333,0.5,0.0,0.0,"{
+  ""has_formulation"": true,
+  ""requirements"": {
+    ""R1"": ""partial"",
+    ""R2"": ""wrong"",
+    ""R3"": ""wrong"",
+    ""R4"": ""wrong"",
+    ""R5"": ""wrong"",
+    ""R6"": ""wrong""
+  },
+  ""scores"": {
+    ""decision_domains"": 2,
+    ""objective"": 2,
+    ""constraints_logic"": 1,
+    ""algebra_validity"": 1,
+    ""generalization"": 0
+  },
+  ""fatal_errors"": [""La formulación introduce variables y parámetros no mencionados en el enunciado (B_i, u_ij)."", ""Las restricciones no reflejan correctamente la conservación de flujo en los centros ni la demanda de los clientes."", ""La formulación no incluye los costos de los arcos centro-cliente."", ""La estructura de las restricciones es incorrecta y no representa el problema descrito.""]
+}",Qwen/Qwen3-14B,1599,212,29.62764774000061,"[""La formulación introduce variables y parámetros no mencionados en el enunciado (B_i, u_ij)."", ""Las restricciones no reflejan correctamente la conservación de flujo en los centros ni la demanda de los clientes."", ""La formulación no incluye los costos de los arcos centro-cliente."", ""La estructura de las restricciones es incorrecta y no representa el problema descrito.""]",real
